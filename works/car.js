@@ -21,12 +21,14 @@ export default class car {
     const cylinder = new THREE.Mesh(CylinderGeometry, cylinderMaterial)
     return cylinder
   }
+  
   createCube(x, y, z) {
     const geometry = new THREE.BoxGeometry(x, y, z)
     const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 })
     const cube = new THREE.Mesh(geometry, material)
     return cube
   }
+
   createCar() {
     //Adding car to the scene
     var tire1 = this.createTire()
