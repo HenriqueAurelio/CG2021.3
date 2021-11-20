@@ -7,6 +7,9 @@ import {
   InfoBox,
   onWindowResize,
 } from '../libs/util/util.js'
+import car from './car.js';
+import camera from './camera.js';
+import tracks from './tracks.js';
 
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
