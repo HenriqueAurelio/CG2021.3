@@ -42,16 +42,16 @@ export default class car {
     var backAxis = this.createAxis()
     this.scene.add(backAxis)
 
-    var front = this.createCube(1, 2, 2.6)
+    var front = this.createCube(1, 2, 2.5)
     front.add(frontAxis)
     front.position.set(0, 0, 1.5)
     frontAxis.position.set(0, 0, -1.126)
     this.scene.add(front)
 
-    var back = this.createCube(6, 2, 4)
+    var back = this.createCube(4, 2, 4)
     back.add(backAxis)
-    back.position.set(3.5, 0, 2.2)
-    backAxis.position.set(0, 0, -1.62)
+    back.position.set(2.5, 0, 2.24)
+    backAxis.position.set(1, 0, -1.865)
     this.scene.add(back)
 
     //Grouping tires with axis
