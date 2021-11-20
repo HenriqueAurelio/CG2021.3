@@ -26,9 +26,9 @@ scene.add(axesHelper)
 
 // create the ground plane
 var planeGeometry = new THREE.PlaneGeometry(400, 400)
-planeGeometry.translate(0.0, 0.0, -10) // To avoid conflict with the axeshelper
+planeGeometry.translate(0.0, 0.0, -0.3) // To avoid conflict with the axeshelper
 var planeMaterial = new THREE.MeshBasicMaterial({
-  color: 'rgba(150, 150, 150)',
+  color: 0xff0ab,
   side: THREE.DoubleSide,
 })
 var plane = new THREE.Mesh(planeGeometry, planeMaterial)
