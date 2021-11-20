@@ -8,9 +8,6 @@ import {
   onWindowResize,
   initDefaultBasicLight,
 } from '../libs/util/util.js'
-import car from './car.js';
-import camera from './camera.js';
-import tracks from './tracks.js';
 
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
@@ -90,7 +87,7 @@ window.addEventListener(
 render()
 
 function createTire() {
-  const geometry = new THREE.TorusGeometry(0.3, 0.08, 8, 100)
+  const geometry = new THREE.TorusGeometry(0.25, 0.08, 8, 100)
   const material = new THREE.MeshPhongMaterial({ color: 'rgb(0, 0, 213)' })
   const torus = new THREE.Mesh(geometry, material)
   return torus
