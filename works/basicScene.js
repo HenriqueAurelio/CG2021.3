@@ -35,7 +35,6 @@ var plane = new THREE.Mesh(planeGeometry, planeMaterial)
 // add the plane to the scene
 scene.add(plane)
 
-
 // Use this to show information onscreen
 var controls = new InfoBox()
 controls.add('Basic Scene')
@@ -62,7 +61,6 @@ if(inspectCar == false){
   new tracks(scene,1);
 
 }
-
 
 render()
 
