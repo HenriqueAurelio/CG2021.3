@@ -58,7 +58,7 @@ var inspectCar = false;
 
 new car(scene);
 if(inspectCar == false){
-  new tracks(scene,1);
+  new tracks(scene,2);
 
 }
 
