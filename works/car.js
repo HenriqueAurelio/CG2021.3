@@ -21,7 +21,7 @@ export default class car {
     const cylinder = new THREE.Mesh(CylinderGeometry, cylinderMaterial)
     return cylinder
   }
-  
+
   createCube(x, y, z) {
     const geometry = new THREE.BoxGeometry(x, y, z)
     const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 })
@@ -47,13 +47,13 @@ export default class car {
     var front = this.createCube(1, 2, 2.5)
     front.add(frontAxis)
     front.position.set(0, 0, 1.5)
-    frontAxis.position.set(0, 0, -1.126)
+    frontAxis.position.set(0, 0, -0.95)
     this.scene.add(front)
 
     var back = this.createCube(4, 2, 4)
     back.add(backAxis)
-    back.position.set(2.5, 0, 2.24)
-    backAxis.position.set(1, 0, -1.865)
+    back.position.set(2.5, 0, 2.239)
+    backAxis.position.set(1, 0, -1.69)
     this.scene.add(back)
 
     //Grouping tires with axis
