@@ -65,7 +65,7 @@ if(inspectMode){
 
 }
 else{
-  new tracks(scene,1);
+  new tracks(scene,2);
 }
 
 render();
