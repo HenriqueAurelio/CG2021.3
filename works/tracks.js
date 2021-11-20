@@ -14,8 +14,9 @@ export default class tracks{
             ]
 
             for(let i = 0; i < layout.length;i++){
-                for(let i = 0; i < layout[i][3];i++){
-                    scene.add(new road(i,i));
+                let dir = layout[i]; 
+                for(let i = 0; i < dir[3];i++){
+                    scene.add(new road(dir[0],dir[1]));
                 }
             }   
         }
