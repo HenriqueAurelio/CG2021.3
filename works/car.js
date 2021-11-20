@@ -14,7 +14,7 @@ export default class car {
   }
 
   createAxis() {
-    const CylinderGeometry = new THREE.CylinderGeometry(0.125, 0.125, 4)
+    const CylinderGeometry = new THREE.CylinderGeometry(0.125, 0.125, 3)
     const cylinderMaterial = new THREE.MeshPhongMaterial({
       color: 'rgb(255, 0, 0)',
     })
@@ -44,11 +44,17 @@ export default class car {
     var backAxis = this.createAxis()
     this.scene.add(backAxis)
 
-    var front = this.createCube(2, 3, 2.7)
+    var front = this.createCube(1, 2, 2.5)
     front.add(frontAxis)
     front.position.set(0, 0, 1.5)
     frontAxis.position.set(0, 0, -1.126)
     this.scene.add(front)
+
+    var back = this.createCube(4, 2, 4)
+    back.add(backAxis)
+    back.position.set(2.5, 0, 2.24)
+    backAxis.position.set(1, 0, -1.865)
+    this.scene.add(back)
 
     //Grouping tires with axis
     frontAxis.add(tire1)
@@ -57,15 +63,14 @@ export default class car {
     backAxis.add(tire4)
 
     //Setting position to the axis and tire
-    tire1.position.set(0, 2.0, 0)
+    tire1.position.set(0, 1.5, 0)
     tire1.rotateX(Math.PI / 2)
-    tire2.position.set(0, -2.0, 0)
+    tire2.position.set(0, -1.5, 0)
     tire2.rotateX(Math.PI / 2)
 
-    backAxis.position.set(10, 0, 0.38)
-    tire3.position.set(0, 2.0, 0)
+    tire3.position.set(0, 1.5, 0)
     tire3.rotateX(Math.PI / 2)
-    tire4.position.set(0, -2.0, 0)
+    tire4.position.set(0, -1.5, 0)
     tire4.rotateX(Math.PI / 2)
   }
 }
