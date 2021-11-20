@@ -1,5 +1,6 @@
 import * as THREE from '../build/three.module.js'
 import Stats from '../build/jsm/libs/stats.module.js'
+import KeyboardState from '../libs/util/KeyboardState.js'
 import { TrackballControls } from '../build/jsm/controls/TrackballControls.js'
 import {
   initRenderer,
@@ -23,6 +24,8 @@ var trackballControls = new TrackballControls(camera, renderer.domElement)
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
+
+var keyboard = new KeyboardState();
 
 // create the ground plane
 var planeGeometry = new THREE.PlaneGeometry(400, 400)
@@ -54,19 +57,28 @@ window.addEventListener(
   false
 )
 
-var inspectCar = false;
+var inspectMode = false;
 
 new car(scene);
-if(inspectCar == false){
-  new tracks(scene,1);
+if(inspectMode){
+  
 
 }
+else{
+  new tracks(scene,1);
+}
 
-render()
+render();
+
+function keyboardUpdate(){
+  keyboard.update();
+  if(keyboard.pressed("space")) inspectMode = !inspectMode;
+}
 
 function render() {
   stats.update() // Update FPS
   trackballControls.update() // Enable mouse movements
+  keyboardUpdate();
   requestAnimationFrame(render)
   renderer.render(scene, camera) // Render scene
 }
