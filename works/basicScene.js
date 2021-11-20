@@ -10,6 +10,7 @@ import {
 } from '../libs/util/util.js'
 
 import car from './car.js'
+import tracks from './tracks.js'
 
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
@@ -24,8 +25,8 @@ var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
 
 // create the ground plane
-var planeGeometry = new THREE.PlaneGeometry(60, 60)
-planeGeometry.translate(0.0, 0.0, -0.02) // To avoid conflict with the axeshelper
+var planeGeometry = new THREE.PlaneGeometry(400, 400)
+planeGeometry.translate(0.0, 0.0, -10) // To avoid conflict with the axeshelper
 var planeMaterial = new THREE.MeshBasicMaterial({
   color: 'rgba(150, 150, 150)',
   side: THREE.DoubleSide,
@@ -54,11 +55,16 @@ window.addEventListener(
   false
 )
 
+var inspectCar = false;
+
 new car(scene);
+if(inspectCar == false){
+  new tracks(scene,1);
+
+}
+
 
 render()
-
-
 
 function render() {
   stats.update() // Update FPS

@@ -1,8 +1,14 @@
-import road from 'road.js';
+import road from './road.js';
 
 export default class tracks{
-    constructor(){
-        this.roadModel = new road();
-        return true;
+    constructor(scene,track){
+        this.scene = scene;
+
+        if(track == 1){
+            new road(scene,1,2)
+        }
+        else{
+            //nothing here!
+        }
     }
 }
