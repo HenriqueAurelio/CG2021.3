@@ -34,7 +34,6 @@ var plane = new THREE.Mesh(planeGeometry, planeMaterial)
 // add the plane to the scene
 scene.add(plane)
 
-
 // Use this to show information onscreen
 var controls = new InfoBox()
 controls.add('Basic Scene')
@@ -54,11 +53,9 @@ window.addEventListener(
   false
 )
 
-new car(scene);
+new car(scene)
 
 render()
-
-
 
 function render() {
   stats.update() // Update FPS

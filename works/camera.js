@@ -1,7 +1,5 @@
-
-
-export default class camera{
-    constructor(){
-        return true;
-    }
+export default class camera {
+  constructor() {
+    return true
+  }
 }
