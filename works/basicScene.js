@@ -14,10 +14,10 @@ import {
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 
-var acc = 0;
-var speed = 0;
-var maxSpeed = 500;
-var maxReverseSpeed = -300;
+var acc = 0
+var speed = 0
+var maxSpeed = 500
+var maxReverseSpeed = -300
 
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
@@ -30,7 +30,7 @@ var trackballControls = new TrackballControls(camera, renderer.domElement)
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
-var angle = degreesToRadians(1);
+var angle = degreesToRadians(1)
 var keyboard = new KeyboardState()
 
 // create the ground plane
@@ -54,8 +54,6 @@ controls.add('* Right button to translate (pan)')
 controls.add('* Scroll to zoom in/out.')
 controls.show()
 
-
-
 // Listen window size changes
 window.addEventListener(
   'resize',
@@ -67,66 +65,58 @@ window.addEventListener(
 
 var inspectMode = false
 
-var car = new carGroup();
+var car = new carGroup()
 
-if(inspectMode){
-
-
-} else{
-  new tracks(scene, 2);
-  scene.add(car);
-  var roda1 = car.children.filter((part) => part.name == 'tire1')[0];
-  var roda2 = car.children.filter((part) => part.name == 'tire2')[0];
+if (inspectMode) {
+} else {
+  new tracks(scene, 2)
+  scene.add(car)
+  var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
+  var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
 }
-  
-
 
 render()
 
-function keyboardUpdate(){
-  keyboard.update();
-  if(keyboard.pressed("space")) inspectMode = !inspectMode;
-  if (keyboard.pressed("up"))  acc = 6; 
-  else if (keyboard.pressed("down")) acc = -4;
-  else acc = 0;
+function keyboardUpdate() {
+  keyboard.update()
+  if (keyboard.pressed('space')) inspectMode = !inspectMode
+  if (keyboard.pressed('up')) acc = 6
+  else if (keyboard.pressed('down')) acc = -4
+  else acc = 0
 
-  if(speed>0){
-    acc-=2;
-  }
-  else if(speed<0){
-    acc+=2;
+  if (speed > 0) {
+    acc -= 2
+  } else if (speed < 0) {
+    acc += 2
   }
   // if(speed < 0){
   //   acc+=2;
   //   if(acc>0) acc
   // }
 
-  speed += acc;
+  speed += acc
 
-  if (speed > maxSpeed) speed = maxSpeed;
-  if (speed < maxReverseSpeed) speed = maxReverseSpeed;
+  if (speed > maxSpeed) speed = maxSpeed
+  if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
+  console.log('ACC: ' + acc + 'Speed: ' + speed)
+  car.translateX(-speed / 1000)
 
-  console.log("ACC: " +acc + "Speed: "+speed);
-  car.translateX(-speed/1000);
-
-
-
-  if (keyboard.pressed("right")) {
-    if(roda1.rotation.y >= -0.37){
-      roda1.rotateY(-angle);
-      roda2.rotateY(-angle);
+  if (keyboard.pressed('right')) {
+    if (roda1.rotation.y >= -0.37) {
+      roda1.rotateY(-angle)
+      roda2.rotateY(-angle)
     }
-    if(speed > 0) car.rotateZ(-angle);
-    else if(speed < 0) car.rotateZ(angle);
+    if (speed > 0) car.rotateZ(-angle)
+    else if (speed < 0) car.rotateZ(angle)
   }
-  if (keyboard.pressed("left")) {
-    if(roda1.rotation.y <= 0.37){
-      roda1.rotateY(angle);
-      roda2.rotateY(angle);
+  if (keyboard.pressed('left')) {
+    if (roda1.rotation.y <= 0.37) {
+      roda1.rotateY(angle)
+      roda2.rotateY(angle)
     }
-    if(speed > 0) car.rotateZ(angle);
-    else if(speed < 0) car.rotateZ(-angle);      
+    if (speed > 0) car.rotateZ(angle)
+    else if (speed < 0) car.rotateZ(-angle)
   }
 }
 
