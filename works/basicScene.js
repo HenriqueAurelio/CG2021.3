@@ -28,7 +28,7 @@ scene.add(axesHelper)
 var keyboard = new KeyboardState()
 
 // create the ground plane
-var planeGeometry = new THREE.PlaneGeometry(400, 400)
+var planeGeometry = new THREE.PlaneGeometry(250, 250)
 planeGeometry.translate(0.0, 0.0, -0.3) // To avoid conflict with the axeshelper
 var planeMaterial = new THREE.MeshBasicMaterial({
   color: 0xff0ab,
@@ -64,7 +64,8 @@ scene.add(carGroup)
 if (inspectMode) {
 } else {
   new tracks(scene, 2)
-}
+new car(scene);
+
 
 render()
 
