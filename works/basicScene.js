@@ -10,7 +10,7 @@ import {
   initDefaultBasicLight,
 } from '../libs/util/util.js'
 
-import car from './car.js'
+import car from './carGroup.js'
 import tracks from './tracks.js'
 
 var acc = 0;
@@ -29,7 +29,7 @@ var trackballControls = new TrackballControls(camera, renderer.domElement)
 var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
 
-var keyboard = new KeyboardState();
+var keyboard = new KeyboardState()
 
 // create the ground plane
 var planeGeometry = new THREE.PlaneGeometry(250, 250)
@@ -61,19 +61,20 @@ window.addEventListener(
   false
 )
 
-var inspectMode = false;
+var inspectMode = false
 
+var carGroup = new car()
+scene.add(carGroup)
+if (inspectMode) {
+} else {
+  new tracks(scene, 2)
 new car(scene);
 
 if(inspectMode){
   
 
-}
-else{
-  new tracks(scene,1,-50,-50);
-}
 
-render();
+render()
 
 function keyboardUpdate(){
   keyboard.update();
@@ -105,7 +106,7 @@ function keyboardUpdate(){
 function render() {
   stats.update() // Update FPS
   trackballControls.update() // Enable mouse movements
-  keyboardUpdate();
+  keyboardUpdate()
   requestAnimationFrame(render)
   renderer.render(scene, camera) // Render scene
 }
