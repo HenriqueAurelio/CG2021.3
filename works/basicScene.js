@@ -13,6 +13,10 @@ import {
 import car from './car.js'
 import tracks from './tracks.js'
 
+var acc = 0;
+var speed = 0;
+var maxSpeed = 5;
+
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
@@ -60,6 +64,7 @@ window.addEventListener(
 var inspectMode = false;
 
 new car(scene);
+
 if(inspectMode){
   
 
@@ -73,6 +78,28 @@ render();
 function keyboardUpdate(){
   keyboard.update();
   if(keyboard.pressed("space")) inspectMode = !inspectMode;
+  // if (keyboard.pressed("up") && acc < 1) acc += 0.05; //group.translateZ(1);
+  // if (keyboard.pressed("down") && acc > -1) acc -= 0.04; //group.translateZ(-1);
+  // if (speed >= 0 && speed <= maxSpeed) {
+  //     if (!(speed == 0 && acc < 0) && !(speed == maxSpeed && acc > 0)) speed += acc;
+  //     if (speed < 0) speed = 0;
+  //     if (speed > maxSpeed) speed = maxSpeed;
+  // }
+  // acc -= 0.02;
+  // carGroup.translateZ(speed);
+
+
+
+  // if (keyboard.pressed("left")) {
+  //     if(speed > 0) car.rotateY(angle);
+  //     // roda1.rotateY(angle);
+  //     // roda2.rotateY(angle);
+  // }
+  // if (keyboard.pressed("right")) {
+  //     if(speed > 0) car.rotateY(-angle);
+  //     // roda1.rotateY(-angle);
+  //     // roda2.rotateY(-angle);
+  // }
 }
 
 function render() {
