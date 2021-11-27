@@ -22,10 +22,12 @@ var maxReverseSpeed = -300
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
-var camera = initCamera(new THREE.Vector3(0, -30, 15)) // Init camera in this position
+//var camera = initCamera(new THREE.Vector3(0, -30, 15)) // Init camera in this position
+
+
 initDefaultBasicLight(scene, true)
 // Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls(camera, renderer.domElement)
+//var trackballControls = new TrackballControls(camera, renderer.domElement)
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper(12)
@@ -67,6 +69,21 @@ var inspectMode = false
 
 var car = new carGroup()
 
+let SCREEN_WIDTH = window.innerWidth;
+let SCREEN_HEIGHT = window.innerHeight;
+let aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+var camera = new THREE.PerspectiveCamera( 50, 0.5*aspect , 1, 500 );
+camera.position.z = 40;
+
+function cameraUpdate(){
+  camera.position.y = car.position.y -20;
+  camera.position.x = car.position.x + 20;
+  camera.lookAt(car.position)
+}
+
+camera.add(car)
+scene.add(camera)
+
 if (inspectMode) {
 } else {
   new tracks(scene, 2)
@@ -99,7 +116,7 @@ function keyboardUpdate() {
   if (speed > maxSpeed) speed = maxSpeed
   if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
-  console.log('ACC: ' + acc + 'Speed: ' + speed)
+  //console.log('ACC: ' + acc + 'Speed: ' + speed)
   car.translateX(-speed / 1000)
 
   if (keyboard.pressed('right')) {
@@ -121,9 +138,10 @@ function keyboardUpdate() {
 }
 
 function render() {
-  stats.update() // Update FPS
-  trackballControls.update() // Enable mouse movements
-  keyboardUpdate()
-  requestAnimationFrame(render)
-  renderer.render(scene, camera) // Render scene
+  stats.update(); // Update FPS
+  cameraUpdate();
+  //trackballControls.update() // Enable mouse movements
+  keyboardUpdate();
+  requestAnimationFrame(render);
+  renderer.render(scene, camera); // Render scene
 }
