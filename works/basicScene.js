@@ -98,14 +98,21 @@ function keyboardUpdate() {
   keyboard.update()
   if (keyboard.pressed('space')) inspectMode = !inspectMode
   if (keyboard.pressed('up')) acc = 6
-  else if (keyboard.pressed('down')) acc = -4
+  else if (keyboard.pressed('down')) acc = -3
   else acc = 0
 
   if (speed > 0) {
+    if (keyboard.pressed('right') || keyboard.pressed('left')) {
+      acc -= 1;
+    }
     acc -= 2
   } else if (speed < 0) {
+    if (keyboard.pressed('right') || keyboard.pressed('left')) {
+      acc += 1;
+    }
     acc += 2
   }
+  
   // if(speed < 0){
   //   acc+=2;
   //   if(acc>0) acc
@@ -117,7 +124,7 @@ function keyboardUpdate() {
   if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
   //console.log('ACC: ' + acc + 'Speed: ' + speed)
-  car.translateX(-speed / 1000)
+  car.translateX(-speed / 1500)
 
   if (keyboard.pressed('right')) {
     if (roda1.rotation.y >= -0.37) {
