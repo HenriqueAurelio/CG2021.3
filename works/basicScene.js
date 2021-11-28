@@ -7,6 +7,7 @@ import {
   initCamera,
   InfoBox,
   onWindowResize,
+  SecondaryBox,
   initDefaultBasicLight,
   degreesToRadians,
 } from '../libs/util/util.js'
@@ -24,7 +25,6 @@ var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
 //var camera = initCamera(new THREE.Vector3(0, -30, 15)) // Init camera in this position
 
-
 initDefaultBasicLight(scene, true)
 // Enable mouse rotation, pan, zoom etc.
 //var trackballControls = new TrackballControls(camera, renderer.domElement)
@@ -34,7 +34,7 @@ var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
 var angle = degreesToRadians(1)
 var keyboard = new KeyboardState()
-var coeficienteVelocidade = 1500;
+var coeficienteVelocidade = 1500
 
 // create the ground plane
 var planeGeometry = new THREE.PlaneGeometry(250, 250)
@@ -56,6 +56,7 @@ controls.add('* Left button to rotate')
 controls.add('* Right button to translate (pan)')
 controls.add('* Scroll to zoom in/out.')
 controls.show()
+var secondaryBox = new SecondaryBox()
 
 // Listen window size changes
 window.addEventListener(
@@ -70,31 +71,32 @@ var inspectMode = false
 
 var car = new carGroup()
 
-let SCREEN_WIDTH = window.innerWidth;
-let SCREEN_HEIGHT = window.innerHeight;
-let aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
-var camera = new THREE.PerspectiveCamera( 50, 0.5*aspect , 1, 500 );
-camera.position.z = 40;
+let SCREEN_WIDTH = window.innerWidth
+let SCREEN_HEIGHT = window.innerHeight
+let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
+var camera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
+camera.position.z = 40
 
-function cameraUpdate(){
-  camera.position.y = car.position.y -20;
-  camera.position.x = car.position.x + 20;
+function cameraUpdate() {
+  camera.position.y = car.position.y - 20
+  camera.position.x = car.position.x + 20
   camera.lookAt(car.position)
 }
 
-let roads = [];
+let roads = []
 
 camera.add(car)
 scene.add(camera)
 
 if (inspectMode) {
-} else {  
-  roads = new tracks(scene, 2).getRoads();
+} else {
+  roads = new tracks(scene, 2).getRoads()
   scene.add(car)
   var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
   var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
 }
-
+var timer = new THREE.Clock()
+timer.start()
 render()
 
 function keyboardUpdate() {
@@ -103,15 +105,17 @@ function keyboardUpdate() {
   if (keyboard.pressed('up')) acc = 5
   else if (keyboard.pressed('down')) acc = -3
   else acc = 0
+  var x = timer.getElapsedTime()
+  secondaryBox.changeMessage(x.toFixed(2))
 
   if (speed > 0) {
     if (keyboard.pressed('right') || keyboard.pressed('left')) {
-      acc -= 1;
+      acc -= 1
     }
     acc -= 2
   } else if (speed < 0) {
     if (keyboard.pressed('right') || keyboard.pressed('left')) {
-      acc += 1;
+      acc += 1
     }
     acc += 2
   }
@@ -121,12 +125,10 @@ function keyboardUpdate() {
   if (speed > maxSpeed) speed = maxSpeed
   if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
-  
-  
-  coeficienteVelocidade = verificaCarroNaPista(car, roads).length > 0 ? 1500 : 3000;
-    
+  coeficienteVelocidade =
+    verificaCarroNaPista(car, roads).length > 0 ? 1500 : 3000
 
-  car.translateX(-speed / coeficienteVelocidade);
+  car.translateX(-speed / coeficienteVelocidade)
 
   //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
 
@@ -149,25 +151,29 @@ function keyboardUpdate() {
 }
 
 function render() {
-  stats.update(); // Update FPS
-  cameraUpdate();
+  stats.update() // Update FPS
+  cameraUpdate()
   //trackballControls.update() // Enable mouse movements
-  keyboardUpdate();
-  requestAnimationFrame(render);
-  renderer.render(scene, camera); // Render scene
+  keyboardUpdate()
+  requestAnimationFrame(render)
+  renderer.render(scene, camera) // Render scene
 }
 
-
-function verificaCarroNaPista(carro, blocosDaPista){
-  let blocos = [];
-  let x = carro.position.x;
-  let y = carro.position.y;
-  for(let i = 0; i <blocosDaPista.length ;i++){
-    let xb = blocosDaPista[i].position.x;
-    let yb = blocosDaPista[i].position.y;
-    if(x >= xb-10/2 && y >= yb-10/2 && x <= xb+10/2 && y <= yb+10/2){
-      blocos.push(blocosDaPista[i]);
+function verificaCarroNaPista(carro, blocosDaPista) {
+  let blocos = []
+  let x = carro.position.x
+  let y = carro.position.y
+  for (let i = 0; i < blocosDaPista.length; i++) {
+    let xb = blocosDaPista[i].position.x
+    let yb = blocosDaPista[i].position.y
+    if (
+      x >= xb - 10 / 2 &&
+      y >= yb - 10 / 2 &&
+      x <= xb + 10 / 2 &&
+      y <= yb + 10 / 2
+    ) {
+      blocos.push(blocosDaPista[i])
     }
   }
-  return blocos;
+  return blocos
 }
