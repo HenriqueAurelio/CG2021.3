@@ -20,6 +20,8 @@ var speed = 0
 var maxSpeed = 500
 var maxReverseSpeed = -300
 
+const blockSize = 10;
+
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
@@ -34,7 +36,7 @@ var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
 var angle = degreesToRadians(1)
 var keyboard = new KeyboardState()
-var coeficienteVelocidade = 1500
+const coeficienteVelocidade = 1500
 
 // create the ground plane
 var planeGeometry = new THREE.PlaneGeometry(250, 250)
@@ -66,6 +68,8 @@ window.addEventListener(
   },
   false
 )
+
+let foraDaPista = false;
 
 var inspectMode = false
 
@@ -122,11 +126,23 @@ function keyboardUpdate() {
 
   speed += acc
 
+ 
+  if(verificaCarroNaPista(car, roads).length > 0){
+    maxSpeed = 500;
+    maxReverseSpeed = -300;
+    foraDaPista = false;
+  }
+  else{
+    if(!foraDaPista){
+      speed = speed/2;
+      maxSpeed = maxSpeed/2;
+      maxReverseSpeed = maxReverseSpeed/2;
+    }
+    foraDaPista = true;    
+  }
+
   if (speed > maxSpeed) speed = maxSpeed
   if (speed < maxReverseSpeed) speed = maxReverseSpeed
-
-  coeficienteVelocidade =
-    verificaCarroNaPista(car, roads).length > 0 ? 1500 : 3000
 
   car.translateX(-speed / coeficienteVelocidade)
 
@@ -167,10 +183,10 @@ function verificaCarroNaPista(carro, blocosDaPista) {
     let xb = blocosDaPista[i].position.x
     let yb = blocosDaPista[i].position.y
     if (
-      x >= xb - 10 / 2 &&
-      y >= yb - 10 / 2 &&
-      x <= xb + 10 / 2 &&
-      y <= yb + 10 / 2
+      x >= xb - blockSize / 2 &&
+      y >= yb - blockSize / 2 &&
+      x <= xb + blockSize / 2 &&
+      y <= yb + blockSize / 2
     ) {
       blocos.push(blocosDaPista[i])
     }
