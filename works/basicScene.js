@@ -34,6 +34,7 @@ var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
 var angle = degreesToRadians(1)
 var keyboard = new KeyboardState()
+var coeficienteVelocidade = 1500;
 
 // create the ground plane
 var planeGeometry = new THREE.PlaneGeometry(250, 250)
@@ -81,12 +82,14 @@ function cameraUpdate(){
   camera.lookAt(car.position)
 }
 
+let roads = [];
+
 camera.add(car)
 scene.add(camera)
 
 if (inspectMode) {
-} else {
-  new tracks(scene, 2)
+} else {  
+  roads = new tracks(scene, 2).getRoads();
   scene.add(car)
   var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
   var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
@@ -97,7 +100,7 @@ render()
 function keyboardUpdate() {
   keyboard.update()
   if (keyboard.pressed('space')) inspectMode = !inspectMode
-  if (keyboard.pressed('up')) acc = 6
+  if (keyboard.pressed('up')) acc = 5
   else if (keyboard.pressed('down')) acc = -3
   else acc = 0
 
@@ -112,19 +115,20 @@ function keyboardUpdate() {
     }
     acc += 2
   }
-  
-  // if(speed < 0){
-  //   acc+=2;
-  //   if(acc>0) acc
-  // }
 
   speed += acc
 
   if (speed > maxSpeed) speed = maxSpeed
   if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
-  //console.log('ACC: ' + acc + 'Speed: ' + speed)
-  car.translateX(-speed / 1500)
+  
+  
+  coeficienteVelocidade = verificaCarroNaPista(car, roads).length > 0 ? 1500 : 3000;
+    
+
+  car.translateX(-speed / coeficienteVelocidade);
+
+  //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
 
   if (keyboard.pressed('right')) {
     if (roda1.rotation.y >= -0.37) {
@@ -151,4 +155,19 @@ function render() {
   keyboardUpdate();
   requestAnimationFrame(render);
   renderer.render(scene, camera); // Render scene
+}
+
+
+function verificaCarroNaPista(carro, blocosDaPista){
+  let blocos = [];
+  let x = carro.position.x;
+  let y = carro.position.y;
+  for(let i = 0; i <blocosDaPista.length ;i++){
+    let xb = blocosDaPista[i].position.x;
+    let yb = blocosDaPista[i].position.y;
+    if(x >= xb-10/2 && y >= yb-10/2 && x <= xb+10/2 && y <= yb+10/2){
+      blocos.push(blocosDaPista[i]);
+    }
+  }
+  return blocos;
 }
