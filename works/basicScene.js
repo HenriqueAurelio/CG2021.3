@@ -19,15 +19,15 @@ var acc = 0
 var speed = 0
 var maxSpeed = 500
 var maxReverseSpeed = -300
-
-
-
-const blockSize = 10;
+var Laps = 4
+var actualLap = 0
+var stringLap = ''
+const blockSize = 10
 
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
-//var camera = initCamera(new THREE.Vector3(0, -30, 15)) // Init camera in this position
+// var camera = initCamera(new THREE.Vector3(0, -30, 15)) // Init camera in this position
 
 initDefaultBasicLight(scene, true)
 // Enable mouse rotation, pan, zoom etc.
@@ -71,7 +71,7 @@ window.addEventListener(
   false
 )
 
-let foraDaPista = false;
+let foraDaPista = false
 
 var inspectMode = false
 
@@ -96,8 +96,8 @@ scene.add(camera)
 
 if (inspectMode) {
 } else {
-  var trackNum = prompt("Qual pista?");
-  roads = new tracks(scene, trackNum).getRoads()  
+  var trackNum = prompt('Qual pista?')
+  roads = new tracks(scene, trackNum).getRoads()
   scene.add(car)
   var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
   var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
@@ -109,11 +109,26 @@ render()
 function keyboardUpdate() {
   keyboard.update()
   if (keyboard.pressed('space')) inspectMode = !inspectMode
-  if (keyboard.pressed('up')) acc = 5
+  if (keyboard.pressed('X')) acc = 5
   else if (keyboard.pressed('down')) acc = -3
   else acc = 0
+
+  switch (actualLap) {
+    case 0:
+      stringLap = 'Primeira Volta'
+      break
+    case 1:
+      stringLap = 'Segunda Volta'
+      break
+    case 2:
+      stringLap = 'Terceira Volta'
+      break
+    case 3:
+      stringLap = 'Quarta Volta'
+      break
+  }
   var x = timer.getElapsedTime()
-  secondaryBox.changeMessage(x.toFixed(2))
+  secondaryBox.changeMessage(stringLap + ' ' + x.toFixed(2))
 
   if (speed > 0) {
     if (keyboard.pressed('right') || keyboard.pressed('left')) {
@@ -129,19 +144,17 @@ function keyboardUpdate() {
 
   speed += acc
 
- 
-  if(verificaCarroNaPista(car, roads).length > 0){
-    maxSpeed = 500;
-    maxReverseSpeed = -300;
-    foraDaPista = false;
-  }
-  else{
-    if(!foraDaPista){
-      speed = speed/2;
-      maxSpeed = maxSpeed/2;
-      maxReverseSpeed = maxReverseSpeed/2;
+  if (verificaCarroNaPista(car, roads).length > 0) {
+    maxSpeed = 500
+    maxReverseSpeed = -300
+    foraDaPista = false
+  } else {
+    if (!foraDaPista) {
+      speed = speed / 2
+      maxSpeed = maxSpeed / 2
+      maxReverseSpeed = maxReverseSpeed / 2
     }
-    foraDaPista = true;    
+    foraDaPista = true
   }
 
   if (speed > maxSpeed) speed = maxSpeed
