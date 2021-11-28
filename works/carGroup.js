@@ -62,7 +62,9 @@ export default class carGroup {
     tire2.name = 'tire2'
 
     var carGroup = new THREE.Group()
+    carGroup.position.set(1, 10, 1.5)
     carGroup.add(tire1, tire2, tire3, tire4, front, frontAxis, back, backAxis)
+    carGroup.rotateZ(11)
     return carGroup
   }
 }
