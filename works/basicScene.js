@@ -20,6 +20,8 @@ var speed = 0
 var maxSpeed = 500
 var maxReverseSpeed = -300
 
+
+
 const blockSize = 10;
 
 var stats = new Stats() // To show FPS information
@@ -94,7 +96,8 @@ scene.add(camera)
 
 if (inspectMode) {
 } else {
-  roads = new tracks(scene, 2).getRoads()
+  var trackNum = prompt("Qual pista?");
+  roads = new tracks(scene, trackNum).getRoads()  
   scene.add(car)
   var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
   var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
