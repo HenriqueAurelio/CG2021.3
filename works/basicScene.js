@@ -22,6 +22,7 @@ var maxReverseSpeed = -300
 var Laps = 4
 var actualLap = 0
 var stringLap = ''
+var checkvalue = 0
 const blockSize = 10
 
 var stats = new Stats() // To show FPS information
@@ -59,6 +60,7 @@ controls.add('Use mouse to interact:')
 controls.add('* Left button to rotate')
 controls.add('* Right button to translate (pan)')
 controls.add('* Scroll to zoom in/out.')
+controls.add('Tempos das Voltas:')
 controls.show()
 var secondaryBox = new SecondaryBox()
 
@@ -98,6 +100,7 @@ if (inspectMode) {
 } else {
   var trackNum = prompt('Qual pista?')
   roads = new tracks(scene, trackNum).getRoads()
+  var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
   scene.add(car)
   var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
   var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
@@ -180,6 +183,7 @@ function keyboardUpdate() {
     if (speed > 0) car.rotateZ(angle)
     else if (speed < 0) car.rotateZ(-angle)
   }
+  updateLap(car, initialPosition[0])
 }
 
 function render() {
@@ -208,4 +212,36 @@ function verificaCarroNaPista(carro, blocosDaPista) {
     }
   }
   return blocos
+}
+
+function updateLap(car, initialBlock) {
+  var checkpoint = roads[15]
+  var checkx = checkpoint.position.x
+  var checky = checkpoint.position.y
+
+  let cx = car.position.x
+  let cy = car.position.y
+  let bx = initialBlock.position.x
+  let by = initialBlock.position.y
+  if (
+    cx >= bx - blockSize / 2 &&
+    cy >= by - blockSize / 2 &&
+    cx <= bx + blockSize / 2 &&
+    cy <= by + blockSize / 2 &&
+    actualLap < checkvalue
+  ) {
+    var timelap = timer.getElapsedTime().toFixed(2)
+    controls.add(stringLap + ':' + ' ' + timelap)
+    actualLap += 1
+    checkvalue = 0
+    timer.start()
+  }
+  if (
+    cx >= checkx - blockSize / 2 &&
+    cy >= checky - blockSize / 2 &&
+    cx <= checkx + blockSize / 2 &&
+    cy <= checky + blockSize / 2
+  ) {
+    checkvalue += 1
+  }
 }
