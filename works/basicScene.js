@@ -35,7 +35,8 @@ initDefaultBasicLight(scene, true)
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
-var angle = degreesToRadians(0.7)
+var angle = degreesToRadians(1)
+var tireAngle = degreesToRadians(0.7)
 var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
 
@@ -55,10 +56,8 @@ scene.add(planeGeometry)
 var controls = new InfoBox()
 controls.add('Controls:')
 controls.addParagraph()
-controls.add('* X to acelerate')
+controls.add('* X to accelerate')
 controls.add('* Left/Right button to rotate')
-controls.add('* Down button to brake')
-controls.add('* Down button to brake')
 controls.add('* Down button to brake')
 controls.addParagraph()
 controls.add('Press Space button to Inspect Mode')
@@ -87,8 +86,10 @@ let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
-var inspectCamera = initCamera(new THREE.Vector3(0, -20, 30))
-inspectCamera.lookAt(0,0,0)
+var inspectCamera =  initCamera(new THREE.Vector3(0, -10, 5))//new THREE.OrthographicCamera()
+//inspectCamera.position.set(0, -20, 30);
+inspectCamera.up.set(0,0,2);
+inspectCamera.lookAt(0,0,0);
 var trackballControls = new TrackballControls(inspectCamera, renderer.domElement)
 
 var camera = gameCamera
@@ -176,20 +177,19 @@ function keyboardUpdate() {
 
       car.translateX(-speed / coeficienteVelocidade)
 
-      //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
 
       if (keyboard.pressed('right')) {
         if (roda1.rotation.y >= -0.15) {
-          roda1.rotateY(-angle)
-          roda2.rotateY(-angle)
+          roda1.rotateY(-tireAngle)
+          roda2.rotateY(-tireAngle)
         }
         if (speed > 0) car.rotateZ(-angle)
         else if (speed < 0) car.rotateZ(angle)
       }
       if (keyboard.pressed('left')) {
         if (roda1.rotation.y <= 0.15) {
-          roda1.rotateY(angle)
-          roda2.rotateY(angle)
+          roda1.rotateY(tireAngle)
+          roda2.rotateY(tireAngle)
         }
         if (speed > 0) car.rotateZ(angle)
         else if (speed < 0) car.rotateZ(-angle)
@@ -218,8 +218,8 @@ function gameMode() {
   var obj
   
   if (inspectMode) {
+    car.position.set(0, 0, 0);
     camera = inspectCamera
-    console.log(camera)
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
