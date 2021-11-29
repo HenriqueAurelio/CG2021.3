@@ -127,16 +127,16 @@ function keyboardUpdate() {
 
       switch (actualLap) {
         case 0:
-          stringLap = 'Primeira Volta'
+          stringLap = 'First Lap'
           break
         case 1:
-          stringLap = 'Segunda Volta'
+          stringLap = 'Second Lap'
           break
         case 2:
-          stringLap = 'Terceira Volta'
+          stringLap = 'Third Lap'
           break
         case 3:
-          stringLap = 'Quarta Volta'
+          stringLap = 'Fourth Lap'
           break
       }
       var x = timer.getElapsedTime()
