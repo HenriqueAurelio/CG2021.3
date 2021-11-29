@@ -38,7 +38,7 @@ initDefaultBasicLight(scene, true)
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
-var angle = degreesToRadians(1)
+var angle = degreesToRadians(0.7)
 var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
 
@@ -177,7 +177,7 @@ function keyboardUpdate() {
       //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
 
       if (keyboard.pressed('right')) {
-        if (roda1.rotation.y >= -0.37) {
+        if (roda1.rotation.y >= -0.15) {
           roda1.rotateY(-angle)
           roda2.rotateY(-angle)
         }
@@ -185,7 +185,7 @@ function keyboardUpdate() {
         else if (speed < 0) car.rotateZ(angle)
       }
       if (keyboard.pressed('left')) {
-        if (roda1.rotation.y <= 0.37) {
+        if (roda1.rotation.y <= 0.15) {
           roda1.rotateY(angle)
           roda2.rotateY(angle)
         }
