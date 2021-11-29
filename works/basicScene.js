@@ -213,15 +213,22 @@ function render() {
 
 function gameMode() {
   var obj
+  var entryInspect = false
   if (inspectMode) {
-    console.log(scene.children)
+    entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
       if (scene.children[i].name != `Carro`) scene.remove(obj)
     }
   } else {
     scene.add(planeGeometry)
-    scene.add(car)
+    if (entryInspect) {
+      scene.add(car)
+      console.log(car.position.set(100, 10, 1.5))
+      entryInspect = false
+    } else {
+      scene.add(car)
+    }
     scene.add(camera)
     scene.add(axesHelper)
     new tracks(scene, trackNum)
