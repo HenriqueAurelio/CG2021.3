@@ -98,92 +98,105 @@ scene.add(camera)
 
 if (inspectMode) {
 } else {
-  var trackNum = prompt('Qual pista?')
+  var trackNum = prompt('Qual pista? (Digite 1 ou 2)')
   roads = new tracks(scene, trackNum).getRoads()
   var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
   scene.add(car)
   var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
   var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
 }
+
+var won = false;
 var timer = new THREE.Clock()
 timer.start()
 render()
 
 function keyboardUpdate() {
-  keyboard.update()
-  if (keyboard.pressed('space')) inspectMode = !inspectMode
-  if (keyboard.pressed('X')) acc = 5
-  else if (keyboard.pressed('down')) acc = -3
-  else acc = 0
+    
+    keyboard.update()
 
-  switch (actualLap) {
-    case 0:
-      stringLap = 'Primeira Volta'
-      break
-    case 1:
-      stringLap = 'Segunda Volta'
-      break
-    case 2:
-      stringLap = 'Terceira Volta'
-      break
-    case 3:
-      stringLap = 'Quarta Volta'
-      break
-  }
-  var x = timer.getElapsedTime()
-  secondaryBox.changeMessage(stringLap + ' ' + x.toFixed(2))
+    if(actualLap < 4){
 
-  if (speed > 0) {
-    if (keyboard.pressed('right') || keyboard.pressed('left')) {
-      acc -= 1
+        if (keyboard.pressed('space')) inspectMode = !inspectMode
+        if (keyboard.pressed('X')) acc = 5
+        else if (keyboard.pressed('down')) acc = -3
+        else acc = 0
+
+        switch (actualLap) {
+        case 0:
+            stringLap = 'Primeira Volta'
+            break
+        case 1:
+            stringLap = 'Segunda Volta'
+            break
+        case 2:
+            stringLap = 'Terceira Volta'
+            break
+        case 3:
+            stringLap = 'Quarta Volta'
+            break
+        }
+        var x = timer.getElapsedTime()
+        secondaryBox.changeMessage(stringLap + ' ' + x.toFixed(2))
+
+        if (speed > 0) {
+        if (keyboard.pressed('right') || keyboard.pressed('left')) {
+            acc -= 1
+        }
+        acc -= 2
+        } else if (speed < 0) {
+        if (keyboard.pressed('right') || keyboard.pressed('left')) {
+            acc += 1
+        }
+        acc += 2
+        }
+
+        speed += acc
+
+        if (verificaCarroNaPista(car, roads).length > 0) {
+        maxSpeed = 500
+        maxReverseSpeed = -300
+        foraDaPista = false
+        } else {
+        if (!foraDaPista) {
+            speed = speed / 2
+            maxSpeed = maxSpeed / 2
+            maxReverseSpeed = maxReverseSpeed / 2
+        }
+        foraDaPista = true
+        }
+
+        if (speed > maxSpeed) speed = maxSpeed
+        if (speed < maxReverseSpeed) speed = maxReverseSpeed
+
+        car.translateX(-speed / coeficienteVelocidade)
+
+        //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
+
+        if (keyboard.pressed('right')) {
+        if (roda1.rotation.y >= -0.37) {
+            roda1.rotateY(-angle)
+            roda2.rotateY(-angle)
+        }
+        if (speed > 0) car.rotateZ(-angle)
+        else if (speed < 0) car.rotateZ(angle)
+        }
+        if (keyboard.pressed('left')) {
+        if (roda1.rotation.y <= 0.37) {
+            roda1.rotateY(angle)
+            roda2.rotateY(angle)
+        }
+        if (speed > 0) car.rotateZ(angle)
+        else if (speed < 0) car.rotateZ(-angle)
+        }
+        updateLap(car, initialPosition[0])
     }
-    acc -= 2
-  } else if (speed < 0) {
-    if (keyboard.pressed('right') || keyboard.pressed('left')) {
-      acc += 1
+    else{
+        if(won == false){
+            alert("Você ganhou!")
+            won = true
+        }
     }
-    acc += 2
-  }
-
-  speed += acc
-
-  if (verificaCarroNaPista(car, roads).length > 0) {
-    maxSpeed = 500
-    maxReverseSpeed = -300
-    foraDaPista = false
-  } else {
-    if (!foraDaPista) {
-      speed = speed / 2
-      maxSpeed = maxSpeed / 2
-      maxReverseSpeed = maxReverseSpeed / 2
-    }
-    foraDaPista = true
-  }
-
-  if (speed > maxSpeed) speed = maxSpeed
-  if (speed < maxReverseSpeed) speed = maxReverseSpeed
-
-  car.translateX(-speed / coeficienteVelocidade)
-
-  //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
-
-  if (keyboard.pressed('right')) {
-    if (roda1.rotation.y >= -0.37) {
-      roda1.rotateY(-angle)
-      roda2.rotateY(-angle)
-    }
-    if (speed > 0) car.rotateZ(-angle)
-    else if (speed < 0) car.rotateZ(angle)
-  }
-  if (keyboard.pressed('left')) {
-    if (roda1.rotation.y <= 0.37) {
-      roda1.rotateY(angle)
-      roda2.rotateY(angle)
-    }
-    if (speed > 0) car.rotateZ(angle)
-    else if (speed < 0) car.rotateZ(-angle)
-  }
-  updateLap(car, initialPosition[0])
 }
 
 function render() {
