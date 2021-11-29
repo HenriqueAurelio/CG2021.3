@@ -65,6 +65,7 @@ export default class carGroup {
     carGroup.position.set(1, 10, 1.5)
     carGroup.add(tire1, tire2, tire3, tire4, front, frontAxis, back, backAxis)
     carGroup.rotateZ(11)
+    carGroup.name = 'Carro'
     return carGroup
   }
 }

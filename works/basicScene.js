@@ -42,7 +42,7 @@ var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
 
 // create the ground plane
-var planeGeometry = createGroundPlaneWired(400,400,80,80) //250
+var planeGeometry = createGroundPlaneWired(400, 400, 80, 80) //250
 //planeGeometry.translate(0.0, 0.0, -0.3) // To avoid conflict with the axeshelper
 //var planeMaterial = new THREE.MeshBasicMaterial({
 //  color: 0xff0ab,
@@ -50,7 +50,7 @@ var planeGeometry = createGroundPlaneWired(400,400,80,80) //250
 //})
 //var plane = new THREE.Mesh(planeGeometry, planeMaterial)
 // add the plane to the scene
-planeGeometry.rotateX(Math.PI/2);
+planeGeometry.rotateX(Math.PI / 2)
 scene.add(planeGeometry)
 
 // Use this to show information onscreen
@@ -102,107 +102,103 @@ let roads = []
 camera.add(car)
 scene.add(camera)
 
-if (inspectMode) {
-} else {
-  var trackNum = prompt('Qual pista? (Digite 1 ou 2)')
-  roads = new tracks(scene, trackNum).getRoads()
-  var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-  scene.add(car)
-  var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
-  var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
-}
+var trackNum = prompt('Qual pista? (Digite 1 ou 2)')
+roads = new tracks(scene, trackNum).getRoads()
+var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+scene.add(car)
+var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
+var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
 
-var won = false;
+var won = false
 var timer = new THREE.Clock()
 timer.start()
 render()
 
 function keyboardUpdate() {
-    
-    keyboard.update()
+  keyboard.update()
 
-    if(actualLap < 4){
+  if (keyboard.down('space')) inspectMode = !inspectMode
+  if (!inspectMode) {
+    if (actualLap < 4) {
+      if (keyboard.pressed('X')) acc = 5
+      else if (keyboard.pressed('down')) acc = -3
+      else acc = 0
 
-        if (keyboard.pressed('space')) inspectMode = !inspectMode
-        if (keyboard.pressed('X')) acc = 5
-        else if (keyboard.pressed('down')) acc = -3
-        else acc = 0
-
-        switch (actualLap) {
+      switch (actualLap) {
         case 0:
-            stringLap = 'Primeira Volta'
-            break
+          stringLap = 'Primeira Volta'
+          break
         case 1:
-            stringLap = 'Segunda Volta'
-            break
+          stringLap = 'Segunda Volta'
+          break
         case 2:
-            stringLap = 'Terceira Volta'
-            break
+          stringLap = 'Terceira Volta'
+          break
         case 3:
-            stringLap = 'Quarta Volta'
-            break
-        }
-        var x = timer.getElapsedTime()
-        secondaryBox.changeMessage(stringLap + ' ' + x.toFixed(2))
+          stringLap = 'Quarta Volta'
+          break
+      }
+      var x = timer.getElapsedTime()
+      secondaryBox.changeMessage(stringLap + ' ' + x.toFixed(2))
 
-        if (speed > 0) {
+      if (speed > 0) {
         if (keyboard.pressed('right') || keyboard.pressed('left')) {
-            acc -= 1
+          acc -= 1
         }
         acc -= 2
-        } else if (speed < 0) {
+      } else if (speed < 0) {
         if (keyboard.pressed('right') || keyboard.pressed('left')) {
-            acc += 1
+          acc += 1
         }
         acc += 2
-        }
+      }
 
-        speed += acc
+      speed += acc
 
-        if (verificaCarroNaPista(car, roads).length > 0) {
+      if (verificaCarroNaPista(car, roads).length > 0) {
         maxSpeed = 500
         maxReverseSpeed = -300
         foraDaPista = false
-        } else {
+      } else {
         if (!foraDaPista) {
-            speed = speed / 2
-            maxSpeed = maxSpeed / 2
-            maxReverseSpeed = maxReverseSpeed / 2
+          speed = speed / 2
+          maxSpeed = maxSpeed / 2
+          maxReverseSpeed = maxReverseSpeed / 2
         }
         foraDaPista = true
-        }
+      }
 
-        if (speed > maxSpeed) speed = maxSpeed
-        if (speed < maxReverseSpeed) speed = maxReverseSpeed
+      if (speed > maxSpeed) speed = maxSpeed
+      if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
-        car.translateX(-speed / coeficienteVelocidade)
+      car.translateX(-speed / coeficienteVelocidade)
 
-        //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
+      //console.log('ACC: ' + acc + 'Speed: ' + (coeficienteVelocidade))
 
-        if (keyboard.pressed('right')) {
+      if (keyboard.pressed('right')) {
         if (roda1.rotation.y >= -0.37) {
-            roda1.rotateY(-angle)
-            roda2.rotateY(-angle)
+          roda1.rotateY(-angle)
+          roda2.rotateY(-angle)
         }
         if (speed > 0) car.rotateZ(-angle)
         else if (speed < 0) car.rotateZ(angle)
-        }
-        if (keyboard.pressed('left')) {
+      }
+      if (keyboard.pressed('left')) {
         if (roda1.rotation.y <= 0.37) {
-            roda1.rotateY(angle)
-            roda2.rotateY(angle)
+          roda1.rotateY(angle)
+          roda2.rotateY(angle)
         }
         if (speed > 0) car.rotateZ(angle)
         else if (speed < 0) car.rotateZ(-angle)
-        }
-        updateLap(car, initialPosition[0])
+      }
+      updateLap(car, initialPosition[0])
+    } else {
+      if (won == false) {
+        alert('Você ganhou!')
+        won = true
+      }
     }
-    else{
-        if(won == false){
-            alert("Você ganhou!")
-            won = true
-        }
-    }
+  }
 }
 
 function render() {
@@ -210,10 +206,27 @@ function render() {
   cameraUpdate()
   //trackballControls.update() // Enable mouse movements
   keyboardUpdate()
+  gameMode()
   requestAnimationFrame(render)
   renderer.render(scene, camera) // Render scene
 }
 
+function gameMode() {
+  var obj
+  if (inspectMode) {
+    console.log(scene.children)
+    for (var i = scene.children.length - 1; i >= 2; i--) {
+      obj = scene.children[i]
+      if (scene.children[i].name != `Carro`) scene.remove(obj)
+    }
+  } else {
+    scene.add(planeGeometry)
+    scene.add(car)
+    scene.add(camera)
+    scene.add(axesHelper)
+    new tracks(scene, trackNum)
+  }
+}
 function verificaCarroNaPista(carro, blocosDaPista) {
   let blocos = []
   let x = carro.position.x
