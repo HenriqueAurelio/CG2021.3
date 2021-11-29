@@ -24,6 +24,7 @@ var actualLap = 0
 var stringLap = ''
 var checkvalue = 0
 const blockSize = 10
+var entryInspect = false
 
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
@@ -113,7 +114,7 @@ var won = false
 var timer = new THREE.Clock()
 timer.start()
 render()
-
+console.log(roda2.rotation)
 function keyboardUpdate() {
   keyboard.update()
 
@@ -213,25 +214,26 @@ function render() {
 
 function gameMode() {
   var obj
-  var entryInspect = false
+
   if (inspectMode) {
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
-      if (scene.children[i].name != `Carro`) scene.remove(obj)
+      if (scene.children[i].name != `Carro`) obj.visible = false
     }
   } else {
-    scene.add(planeGeometry)
     if (entryInspect) {
-      scene.add(car)
-      console.log(car.position.set(100, 10, 1.5))
+      for (var i = scene.children.length - 1; i >= 2; i--) {
+        obj = scene.children[i]
+        if (scene.children[i].name != `Carro`) obj.visible = true
+      }
+      car.position.set(1, 10, 1.5)
+      car.rotation.set(0, 0, -1.5663706143591731)
+      roda1.rotation.set(Math.PI / 2, 0, 0)
+      roda2.rotation.set(Math.PI / 2, 0, -0)
+      timer.start()
       entryInspect = false
-    } else {
-      scene.add(car)
     }
-    scene.add(camera)
-    scene.add(axesHelper)
-    new tracks(scene, trackNum)
   }
 }
 function verificaCarroNaPista(carro, blocosDaPista) {
