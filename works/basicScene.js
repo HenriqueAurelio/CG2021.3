@@ -10,6 +10,7 @@ import {
   SecondaryBox,
   initDefaultBasicLight,
   degreesToRadians,
+  initCamera,
 } from '../libs/util/util.js'
 
 import carGroup from './carGroup.js'
@@ -19,7 +20,6 @@ var acc = 0
 var speed = 0
 var maxSpeed = 500
 var maxReverseSpeed = -300
-var Laps = 4
 var actualLap = 0
 var stringLap = ''
 var checkvalue = 0
@@ -29,11 +29,8 @@ var entryInspect = false
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
-// var camera = initCamera(new THREE.Vector3(0, -30, 15)) // Init camera in this position
 
 initDefaultBasicLight(scene, true)
-// Enable mouse rotation, pan, zoom etc.
-//var trackballControls = new TrackballControls(camera, renderer.domElement)
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper(12)
@@ -81,15 +78,20 @@ window.addEventListener(
 )
 
 let foraDaPista = false
-
 var inspectMode = false
-
 var car = new carGroup()
 
+// Camera 
 let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
-var camera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
+
+var gameCamera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
+var inspectCamera = initCamera(new THREE.Vector3(0, -20, 30))
+inspectCamera.lookAt(0,0,0)
+var trackballControls = new TrackballControls(inspectCamera, renderer.domElement)
+
+var camera = gameCamera
 camera.position.z = 40
 
 function cameraUpdate() {
@@ -114,7 +116,7 @@ var won = false
 var timer = new THREE.Clock()
 timer.start()
 render()
-console.log(roda2.rotation)
+
 function keyboardUpdate() {
   keyboard.update()
 
@@ -205,7 +207,7 @@ function keyboardUpdate() {
 function render() {
   stats.update() // Update FPS
   cameraUpdate()
-  //trackballControls.update() // Enable mouse movements
+  if(inspectMode) trackballControls.update() // Enable mouse movements
   keyboardUpdate()
   gameMode()
   requestAnimationFrame(render)
@@ -214,8 +216,10 @@ function render() {
 
 function gameMode() {
   var obj
-
+  
   if (inspectMode) {
+    camera = inspectCamera
+    console.log(camera)
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
@@ -223,16 +227,18 @@ function gameMode() {
     }
   } else {
     if (entryInspect) {
-      for (var i = scene.children.length - 1; i >= 2; i--) {
-        obj = scene.children[i]
-        if (scene.children[i].name != `Carro`) obj.visible = true
-      }
-      car.position.set(1, 10, 1.5)
-      car.rotation.set(0, 0, -1.5663706143591731)
-      roda1.rotation.set(Math.PI / 2, 0, 0)
-      roda2.rotation.set(Math.PI / 2, 0, -0)
-      timer.start()
-      entryInspect = false
+        camera = gameCamera
+        
+        for (var i = scene.children.length - 1; i >= 2; i--) {
+            obj = scene.children[i]
+            if (scene.children[i].name != `Carro`) obj.visible = true
+        }
+        car.position.set(1, 10, 1.5)
+        car.rotation.set(0, 0, -1.5663706143591731)
+        roda1.rotation.set(Math.PI / 2, 0, 0)
+        roda2.rotation.set(Math.PI / 2, 0, -0)
+        timer.start()
+        entryInspect = false
     }
   }
 }
