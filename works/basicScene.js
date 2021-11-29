@@ -4,7 +4,7 @@ import KeyboardState from '../libs/util/KeyboardState.js'
 import { TrackballControls } from '../build/jsm/controls/TrackballControls.js'
 import {
   initRenderer,
-  initCamera,
+  createGroundPlaneWired,
   InfoBox,
   onWindowResize,
   SecondaryBox,
@@ -42,15 +42,16 @@ var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
 
 // create the ground plane
-var planeGeometry = new THREE.PlaneGeometry(250, 250)
-planeGeometry.translate(0.0, 0.0, -0.3) // To avoid conflict with the axeshelper
-var planeMaterial = new THREE.MeshBasicMaterial({
-  color: 0xff0ab,
-  side: THREE.DoubleSide,
-})
-var plane = new THREE.Mesh(planeGeometry, planeMaterial)
+var planeGeometry = createGroundPlaneWired(400,400,80,80) //250
+//planeGeometry.translate(0.0, 0.0, -0.3) // To avoid conflict with the axeshelper
+//var planeMaterial = new THREE.MeshBasicMaterial({
+//  color: 0xff0ab,
+//  side: THREE.DoubleSide,
+//})
+//var plane = new THREE.Mesh(planeGeometry, planeMaterial)
 // add the plane to the scene
-scene.add(plane)
+planeGeometry.rotateX(Math.PI/2);
+scene.add(planeGeometry)
 
 // Use this to show information onscreen
 var controls = new InfoBox()
