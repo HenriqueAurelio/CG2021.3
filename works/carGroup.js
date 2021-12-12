@@ -28,6 +28,12 @@ export default class carGroup {
     return cube
   }
 
+  createHeadlight(x, y, z, color) {
+    const geometry = new THREE.SphereGeometry(x, y, z)
+    const material = new THREE.MeshBasicMaterial({ color: color })
+    const sphere = new THREE.Mesh(geometry, material)
+    return sphere
+  }
   createCar() {
     //Adding car to the scene
     var tire1 = this.createTire()
@@ -42,11 +48,13 @@ export default class carGroup {
     frontAxis.position.set(0, 0, 0.6)
     var backColor = '#808080'
     var back = this.createCube(3, 2, 3.0, backColor)
+    var backHeadLight = this.createHeadlight(0.2, 32, 32, frontColor)
+    var backHeadLight2 = this.createHeadlight(0.2, 32, 32, frontColor)
     back.position.set(2.0, 0, 1.85)
     backAxis.position.set(3, 0, 0.6)
-
     //Grouping tires with axis
-
+    backHeadLight.position.set(3.4, 0.5, 1.3)
+    backHeadLight2.position.set(3.4, -0.7, 1.3)
     //Setting position to the axis and tire
     tire1.position.set(0, 1.25, 0.6)
     tire1.rotateX(Math.PI / 2)
@@ -63,7 +71,18 @@ export default class carGroup {
 
     var carGroup = new THREE.Group()
     carGroup.position.set(1, 10, 1.5)
-    carGroup.add(tire1, tire2, tire3, tire4, front, frontAxis, back, backAxis)
+    carGroup.add(
+      tire1,
+      tire2,
+      tire3,
+      tire4,
+      front,
+      frontAxis,
+      back,
+      backAxis,
+      backHeadLight,
+      backHeadLight2
+    )
     carGroup.rotateZ(11)
     carGroup.name = 'Carro'
     return carGroup
