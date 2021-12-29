@@ -115,7 +115,6 @@ var roda4 = car.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
 
 function cameraUpdate() {
-  console.log('x' + cameraPoint.position.x)
   camera.position.y = car.position.y - 20
   camera.position.x = car.position.x + 20
   camera.lookAt(
