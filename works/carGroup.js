@@ -90,6 +90,8 @@ export default class carGroup {
     cameraPoint.visible = false
     tire1.name = 'tire1'
     tire2.name = 'tire2'
+    tire3.name = 'tire3'
+    tire4.name = 'tire4'
     cameraPoint.name = 'cameraPoint'
     var carGroup = new THREE.Group()
     carGroup.position.set(1, 10, 1.5)

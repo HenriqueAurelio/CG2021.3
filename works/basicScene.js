@@ -87,7 +87,7 @@ let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
-var inspectCamera =  initCamera(new THREE.Vector3(5, -10, 10))//new THREE.OrthographicCamera()
+var inspectCamera = initCamera(new THREE.Vector3(5, -10, 10)) //new THREE.OrthographicCamera()
 //var inspectCamera =  initCamera(new THREE.Vector3(0, 60, 35))
 //inspectCamera.position.set(0, -20, 30);
 inspectCamera.up.set(0, 0, 2)
@@ -110,6 +110,8 @@ var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
 scene.add(car)
 var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
+var roda3 = car.children.filter((part) => part.name == 'tire3')[0]
+var roda4 = car.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
 
 function cameraUpdate() {
@@ -228,10 +230,9 @@ function keyboardUpdate() {
 function render() {
   stats.update() // Update FPS
 
-  if(inspectMode) 
-    trackballControls.update() // Enable mouse movements
-  else
-    cameraUpdate()
+  if (inspectMode) trackballControls.update()
+  // Enable mouse movements
+  else cameraUpdate()
 
   keyboardUpdate()
   gameMode()
