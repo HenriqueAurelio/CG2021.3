@@ -41,6 +41,14 @@ export default class carGroup {
     const torus = new THREE.Mesh(geometry, material)
     return torus
   }
+
+  createCameraPoint(x, y, z, color) {
+    const geometry = new THREE.SphereGeometry(x, y, z)
+    const material = new THREE.MeshBasicMaterial({ color: color })
+    const sphere = new THREE.Mesh(geometry, material)
+    return sphere
+  }
+  createCylinderMercedes() {}
   createCar() {
     //Adding car to the scene
     var tire1 = this.createTire()
@@ -60,13 +68,15 @@ export default class carGroup {
     var backHeadLight2 = this.createHeadlight(0.2, 32, 32, frontColor)
     var frontHeadLight = this.createHeadlight(0.2, 32, 32, frontHeadColor)
     var frontHeadLight2 = this.createHeadlight(0.2, 32, 32, frontHeadColor)
+    var cameraPoint = this.createCameraPoint(0.2, 32, 32, '#FFE800')
     back.position.set(2.0, 0, 1.85)
     backAxis.position.set(3, 0, 0.6)
     //Grouping tires with axis
-    frontHeadLight.position.set(-0.4, 0.5, 1.1)
-    frontHeadLight2.position.set(-0.4, -0.5, 1.1)
+    frontHeadLight.position.set(-0.4, 0.5, 0.8)
+    frontHeadLight2.position.set(-0.4, -0.5, 0.8)
     backHeadLight.position.set(3.4, 0.7, 1.3)
     backHeadLight2.position.set(3.4, -0.7, 1.3)
+    cameraPoint.position.set(-5, 0.0, 1.8)
     //Setting position to the axis and tire
     tire1.position.set(0, 1.25, 0.6)
     tire1.rotateX(Math.PI / 2)
@@ -77,10 +87,10 @@ export default class carGroup {
     tire3.rotateX(Math.PI / 2)
     tire4.position.set(3, -1.25, 0.6)
     tire4.rotateX(Math.PI / 2)
-
+    cameraPoint.visible = false
     tire1.name = 'tire1'
     tire2.name = 'tire2'
-
+    cameraPoint.name = 'cameraPoint'
     var carGroup = new THREE.Group()
     carGroup.position.set(1, 10, 1.5)
     carGroup.add(
@@ -95,7 +105,8 @@ export default class carGroup {
       backHeadLight,
       backHeadLight2,
       frontHeadLight,
-      frontHeadLight2
+      frontHeadLight2,
+      cameraPoint
     )
     carGroup.rotateZ(11)
     carGroup.name = 'Carro'

@@ -80,26 +80,23 @@ let foraDaPista = false
 var inspectMode = false
 var car = new carGroup()
 
-// Camera 
+// Camera
 let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
-var inspectCamera =  initCamera(new THREE.Vector3(0, -10, 5))//new THREE.OrthographicCamera()
+var inspectCamera = initCamera(new THREE.Vector3(0, -10, 5)) //new THREE.OrthographicCamera()
+inspectCamera.lookAt(car.position)
 //inspectCamera.position.set(0, -20, 30);
-inspectCamera.up.set(0,0,2);
-inspectCamera.lookAt(0,0,0);
-var trackballControls = new TrackballControls(inspectCamera, renderer.domElement)
+inspectCamera.up.set(0, 0, 2)
+var trackballControls = new TrackballControls(
+  inspectCamera,
+  renderer.domElement
+)
 
 var camera = gameCamera
 camera.position.z = 40
-
-function cameraUpdate() {
-  camera.position.y = car.position.y - 20
-  camera.position.x = car.position.x + 20
-  camera.lookAt(car.position)
-}
 
 let roads = []
 
@@ -112,6 +109,18 @@ var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
 scene.add(car)
 var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
+var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
+
+function cameraUpdate() {
+  console.log('x' + cameraPoint.position.x)
+  camera.position.y = car.position.y - 20
+  camera.position.x = car.position.x + 20
+  camera.lookAt(
+    car.position.x + cameraPoint.position.x,
+    car.position.y + cameraPoint.position.y,
+    car.position.z + cameraPoint.position.z
+  )
+}
 
 var won = false
 var timer = new THREE.Clock()
@@ -177,7 +186,6 @@ function keyboardUpdate() {
 
       car.translateX(-speed / coeficienteVelocidade)
 
-
       if (keyboard.pressed('right')) {
         if (roda1.rotation.y >= -0.15) {
           roda1.rotateY(-tireAngle)
@@ -207,7 +215,7 @@ function keyboardUpdate() {
 function render() {
   stats.update() // Update FPS
   cameraUpdate()
-  if(inspectMode) trackballControls.update() // Enable mouse movements
+  if (inspectMode) trackballControls.update() // Enable mouse movements
   keyboardUpdate()
   gameMode()
   requestAnimationFrame(render)
@@ -216,9 +224,9 @@ function render() {
 
 function gameMode() {
   var obj
-  
+
   if (inspectMode) {
-    car.position.set(0, 0, 0);
+    car.position.set(0, 0, 0)
     camera = inspectCamera
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
@@ -227,18 +235,18 @@ function gameMode() {
     }
   } else {
     if (entryInspect) {
-        camera = gameCamera
-        
-        for (var i = scene.children.length - 1; i >= 2; i--) {
-            obj = scene.children[i]
-            if (scene.children[i].name != `Carro`) obj.visible = true
-        }
-        car.position.set(1, 10, 1.5)
-        car.rotation.set(0, 0, -1.5663706143591731)
-        roda1.rotation.set(Math.PI / 2, 0, 0)
-        roda2.rotation.set(Math.PI / 2, 0, -0)
-        timer.start()
-        entryInspect = false
+      camera = gameCamera
+
+      for (var i = scene.children.length - 1; i >= 2; i--) {
+        obj = scene.children[i]
+        if (scene.children[i].name != `Carro`) obj.visible = true
+      }
+      car.position.set(1, 10, 1.5)
+      car.rotation.set(0, 0, -1.5663706143591731)
+      roda1.rotation.set(Math.PI / 2, 0, 0)
+      roda2.rotation.set(Math.PI / 2, 0, -0)
+      timer.start()
+      entryInspect = false
     }
   }
 }
