@@ -86,7 +86,8 @@ let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
-var inspectCamera =  initCamera(new THREE.Vector3(0, -10, 5))//new THREE.OrthographicCamera()
+var inspectCamera =  initCamera(new THREE.Vector3(5, -10, 10))//new THREE.OrthographicCamera()
+//var inspectCamera =  initCamera(new THREE.Vector3(0, 60, 35))
 //inspectCamera.position.set(0, -20, 30);
 inspectCamera.up.set(0,0,2);
 inspectCamera.lookAt(0,0,0);
@@ -206,8 +207,12 @@ function keyboardUpdate() {
 
 function render() {
   stats.update() // Update FPS
-  cameraUpdate()
-  if(inspectMode) trackballControls.update() // Enable mouse movements
+
+  if(inspectMode) 
+    trackballControls.update() // Enable mouse movements
+  else
+    cameraUpdate()
+
   keyboardUpdate()
   gameMode()
   requestAnimationFrame(render)
