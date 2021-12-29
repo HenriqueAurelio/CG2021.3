@@ -126,7 +126,8 @@ var won = false
 var timer = new THREE.Clock()
 timer.start()
 render()
-
+var minutes = 0
+var entryTimer = false
 function keyboardUpdate() {
   keyboard.update()
 
@@ -152,7 +153,18 @@ function keyboardUpdate() {
           break
       }
       var x = timer.getElapsedTime()
-      secondaryBox.changeMessage(stringLap + ' ' + x.toFixed(2))
+      if (x.toFixed() >= 60 && (x % 60).toFixed() == 0 && entryTimer) {
+        minutes++
+        entryTimer = false
+      }
+      if ((x % 60).toFixed() == 1) {
+        entryTimer = true
+      }
+      secondaryBox.changeMessage(
+        `${stringLap} ${minutes}:${
+          (x.toFixed() % 60).toFixed() < 10 ? '0' : ''
+        }${(x.toFixed() % 60).toFixed()}`
+      )
 
       if (speed > 0) {
         if (keyboard.pressed('right') || keyboard.pressed('left')) {
@@ -199,7 +211,7 @@ function keyboardUpdate() {
           roda1.rotateY(tireAngle)
           roda2.rotateY(tireAngle)
         }
-        if (speed > 0) car.rotateZ(angle)
+        if (speed > 0) car.rotateOnAxis(new THREE.Vector3(0, 0, 1), angle)
         else if (speed < 0) car.rotateZ(-angle)
       }
       updateLap(car, initialPosition[0])
@@ -285,10 +297,13 @@ function updateLap(car, initialBlock) {
     cy <= by + blockSize / 2 &&
     actualLap < checkvalue
   ) {
-    var timelap = timer.getElapsedTime().toFixed(2)
+    var timelap = `${minutes}:${
+      (timer.getElapsedTime().toFixed() % 60).toFixed() < 10 ? '0' : ''
+    }${(timer.getElapsedTime().toFixed() % 60).toFixed()}`
     controls.add(stringLap + ':' + ' ' + timelap)
     actualLap += 1
     checkvalue = 0
+    minutes = 0
     timer.start()
   }
   if (
