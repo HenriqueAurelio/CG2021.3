@@ -13,6 +13,7 @@ import {
   initCamera,
 } from '../libs/util/util.js'
 
+import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 
@@ -66,7 +67,7 @@ controls.addParagraph()
 controls.add('Lap time:')
 controls.show()
 var secondaryBox = new SecondaryBox()
-
+var secondaryBox2 = new Speedometer()
 // Listen window size changes
 window.addEventListener(
   'resize',
@@ -165,7 +166,7 @@ function keyboardUpdate() {
           (x.toFixed() % 60).toFixed() < 10 ? '0' : ''
         }${(x.toFixed() % 60).toFixed()}`
       )
-
+      secondaryBox2.changeMessage((speed / 10).toFixed() + ' frame/s')
       if (speed > 0) {
         if (keyboard.pressed('right') || keyboard.pressed('left')) {
           acc -= 1
