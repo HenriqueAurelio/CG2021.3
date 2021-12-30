@@ -136,7 +136,7 @@ function keyboardUpdate() {
 
   if (keyboard.down('space')) inspectMode = !inspectMode
   if (!inspectMode) {
-    if (actualLap < 2) {
+    if (actualLap < 4) {
       if (keyboard.pressed('X')) acc = 5
       else if (keyboard.pressed('down')) acc = -3
       else acc = 0
