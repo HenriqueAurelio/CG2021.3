@@ -26,6 +26,7 @@ var stringLap = ''
 var checkvalue = 0
 const blockSize = 10
 var entryInspect = false
+var laps = []
 
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
@@ -135,7 +136,7 @@ function keyboardUpdate() {
 
   if (keyboard.down('space')) inspectMode = !inspectMode
   if (!inspectMode) {
-    if (actualLap < 4) {
+    if (actualLap < 2) {
       if (keyboard.pressed('X')) acc = 5
       else if (keyboard.pressed('down')) acc = -3
       else acc = 0
@@ -219,7 +220,9 @@ function keyboardUpdate() {
       updateLap(car, initialPosition[0])
     } else {
       if (won == false) {
+        console.log(laps)
         alert('Você ganhou!')
+        bestLap()
         won = true
       }
     }
@@ -306,6 +309,7 @@ function updateLap(car, initialBlock) {
       (timer.getElapsedTime().toFixed() % 60).toFixed() < 10 ? '0' : ''
     }${(timer.getElapsedTime().toFixed() % 60).toFixed()}`
     controls.add(stringLap + ':' + ' ' + timelap)
+    laps.push(timelap)
     actualLap += 1
     checkvalue = 0
     minutes = 0
@@ -319,4 +323,18 @@ function updateLap(car, initialBlock) {
   ) {
     checkvalue += 1
   }
+}
+
+function bestLap() {
+  var bestLapTime = laps[0]
+  for (let i = 0; i < laps.length; i++) {
+    if (bestLapTime.split(':')[0] < laps[i].split(':')[0]) bestLapTime = laps[i]
+    if (bestLapTime.split(':')[0] == laps[i].split(':')[0]) {
+      if (bestLapTime.split(':')[1] > laps[i].split(':')[1]) {
+        bestLapTime = laps[i]
+      }
+    }
+  }
+  console.log(laps)
+  controls.add(`Best Lap:${bestLapTime}`)
 }
