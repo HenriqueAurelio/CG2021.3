@@ -1,3 +1,3 @@
-# CG
+# CG2021.3
 
-Files for the Computer Graphics course in Three.js
+Trabalho de CG usando Three Js para criação do jogo Rock n' Roll Racing
