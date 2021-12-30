@@ -27,7 +27,7 @@ var checkvalue = 0
 const blockSize = 10
 var entryInspect = false
 var laps = []
-
+var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
@@ -133,8 +133,22 @@ var minutes = 0
 var entryTimer = false
 function keyboardUpdate() {
   keyboard.update()
-
-  if (keyboard.down('space')) inspectMode = !inspectMode
+  if (keyboard.down('1')) {
+    removeRoad()
+    roads = new tracks(scene, 1).getRoads()
+    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+    carStartPosition()
+  }
+  if (keyboard.down('2')) {
+    removeRoad()
+    roads = new tracks(scene, 2).getRoads()
+    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+    carStartPosition()
+  }
+  if (keyboard.down('space')) {
+    inspectMode = !inspectMode
+    console.log(roads)
+  }
   if (!inspectMode) {
     if (actualLap < 4) {
       if (keyboard.pressed('X')) acc = 5
@@ -335,6 +349,24 @@ function bestLap() {
       }
     }
   }
-  console.log(laps)
   controls.add(`Best Lap:${bestLapTime}`)
+}
+
+function carStartPosition() {
+  car.position.set(1, 10, 1.5)
+  car.rotation.set(0, 0, -1.5663706143591731)
+  roda1.rotation.set(Math.PI / 2, 0, 0)
+  roda2.rotation.set(Math.PI / 2, 0, -0)
+  speed = 0
+}
+
+function removeRoad() {
+  for (var i = scene.children.length - 1; i >= 2; i--) {
+    removeObj = scene.children[i]
+    if (
+      scene.children[i].name == 'street' ||
+      scene.children[i].name == 'InitialPosition'
+    )
+      scene.remove(removeObj)
+  }
 }
