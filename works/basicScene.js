@@ -26,7 +26,8 @@ var stringLap = ''
 var checkvalue = 0
 const blockSize = 10
 var entryInspect = false
-
+var laps = []
+var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
@@ -155,8 +156,22 @@ var entryTimer = false
 
 function keyboardUpdate() {
   keyboard.update()
-
-  if (keyboard.down('space')) inspectMode = !inspectMode
+  if (keyboard.down('1')) {
+    removeRoad()
+    roads = new tracks(scene, 1).getRoads()
+    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+    carStartPosition()
+  }
+  if (keyboard.down('2')) {
+    removeRoad()
+    roads = new tracks(scene, 2).getRoads()
+    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+    carStartPosition()
+  }
+  if (keyboard.down('space')) {
+    inspectMode = !inspectMode
+    console.log(roads)
+  }
   if (!inspectMode) {
     if (actualLap < 4) {
       if (keyboard.pressed('X')) acc = 5
@@ -242,7 +257,9 @@ function keyboardUpdate() {
       updateLap(car, initialPosition[0])
     } else {
       if (won == false) {
+        console.log(laps)
         alert('Você ganhou!')
+        bestLap()
         won = true
       }
     }
@@ -354,6 +371,7 @@ function updateLap(car, initialBlock) {
       (timer.getElapsedTime().toFixed() % 60).toFixed() < 10 ? '0' : ''
     }${(timer.getElapsedTime().toFixed() % 60).toFixed()}`
     controls.add(stringLap + ':' + ' ' + timelap)
+    laps.push(timelap)
     actualLap += 1
     checkvalue = 0
     minutes = 0
@@ -366,5 +384,37 @@ function updateLap(car, initialBlock) {
     cy <= checky + blockSize / 2
   ) {
     checkvalue += 1
+  }
+}
+
+function bestLap() {
+  var bestLapTime = laps[0]
+  for (let i = 0; i < laps.length; i++) {
+    if (bestLapTime.split(':')[0] < laps[i].split(':')[0]) bestLapTime = laps[i]
+    if (bestLapTime.split(':')[0] == laps[i].split(':')[0]) {
+      if (bestLapTime.split(':')[1] > laps[i].split(':')[1]) {
+        bestLapTime = laps[i]
+      }
+    }
+  }
+  controls.add(`Best Lap:${bestLapTime}`)
+}
+
+function carStartPosition() {
+  car.position.set(1, 10, 1.5)
+  car.rotation.set(0, 0, -1.5663706143591731)
+  roda1.rotation.set(Math.PI / 2, 0, 0)
+  roda2.rotation.set(Math.PI / 2, 0, -0)
+  speed = 0
+}
+
+function removeRoad() {
+  for (var i = scene.children.length - 1; i >= 2; i--) {
+    removeObj = scene.children[i]
+    if (
+      scene.children[i].name == 'street' ||
+      scene.children[i].name == 'InitialPosition'
+    )
+      scene.remove(removeObj)
   }
 }

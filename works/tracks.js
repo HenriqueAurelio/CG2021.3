@@ -50,4 +50,7 @@ export default class tracks {
   getRoads() {
     return roads
   }
+  changeRoads() {
+    this.constructor()
+  }
 }
