@@ -12,7 +12,7 @@ import {
   degreesToRadians,
   initCamera,
 } from '../libs/util/util.js'
-
+import Cybertruck from './cyberTruck.js'
 import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
@@ -42,14 +42,7 @@ var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
 
 // create the ground plane
-var planeGeometry = createGroundPlaneWired(400, 400, 80, 80) //250
-//planeGeometry.translate(0.0, 0.0, -0.3) // To avoid conflict with the axeshelper
-//var planeMaterial = new THREE.MeshBasicMaterial({
-//  color: 0xff0ab,
-//  side: THREE.DoubleSide,
-//})
-//var plane = new THREE.Mesh(planeGeometry, planeMaterial)
-// add the plane to the scene
+var planeGeometry = createGroundPlaneWired(400, 400, 80, 80)
 planeGeometry.rotateX(Math.PI / 2)
 scene.add(planeGeometry)
 
@@ -66,8 +59,10 @@ controls.add('* Scroll to zoom in/out.')
 controls.addParagraph()
 controls.add('Lap time:')
 controls.show()
+
 var secondaryBox = new SecondaryBox()
 var secondaryBox2 = new Speedometer()
+
 // Listen window size changes
 window.addEventListener(
   'resize',
@@ -91,6 +86,10 @@ var inspectCamera = initCamera(new THREE.Vector3(5, -10, 10)) //new THREE.Orthog
 //var inspectCamera =  initCamera(new THREE.Vector3(0, 60, 35))
 //inspectCamera.position.set(0, -20, 30);
 inspectCamera.up.set(0, 0, 2)
+var TESTE = new TrackballControls(
+  gameCamera,
+  renderer.domElement
+)
 var trackballControls = new TrackballControls(
   inspectCamera,
   renderer.domElement
@@ -98,23 +97,26 @@ var trackballControls = new TrackballControls(
 
 var camera = gameCamera
 camera.position.z = 40
-
-let roads = []
-
 camera.add(car)
 scene.add(camera)
 
-var trackNum = prompt('Qual pista? (Digite 1 ou 2)')
-roads = new tracks(scene, trackNum).getRoads()
-var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-scene.add(car)
-var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
-var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
-var roda3 = car.children.filter((part) => part.name == 'tire3')[0]
-var roda4 = car.children.filter((part) => part.name == 'tire4')[0]
-var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
+// Virtual Camera
+var lookAtVec   = new THREE.Vector3( 0.0, 0.0, 0.0 );
+var camPosition = new THREE.Vector3( 3.7, 2.2, 1.0 );
+var upVec       = new THREE.Vector3( 0.0, 1.0, 0.0 );
+var vcWidth = 400; 
+var vcHeidth = 300; 
+var virtualCamera = new THREE.PerspectiveCamera(45, vcWidth/vcHeidth, 1.0, 20.0);
+virtualCamera.position.set(camPosition);
+virtualCamera.up.set(upVec);
+virtualCamera.lookAt(lookAtVec);
 
 function cameraUpdate() {
+  //-- Update virtual camera settings --
+  virtualCamera.position.set(camPosition); 
+  virtualCamera.up.copy(upVec);
+  virtualCamera.lookAt(lookAtVec);
+
   camera.position.y = car.position.y - 20
   camera.position.x = car.position.x + 20
   camera.lookAt(
@@ -122,7 +124,27 @@ function cameraUpdate() {
     car.position.y + cameraPoint.position.y,
     car.position.z + cameraPoint.position.z
   )
+
+  //var cwd = new THREE.Vector3();    
+  //virtualCamera.getWorldPosition(cwd);
 }
+scene.add(virtualCamera);
+
+// Tracks
+var trackNum = prompt('Qual pista? (Digite 1 ou 2)')
+let roads = []
+roads = new tracks(scene, trackNum).getRoads()
+scene.add(car)
+var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
+var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
+var roda3 = car.children.filter((part) => part.name == 'tire3')[0]
+var roda4 = car.children.filter((part) => part.name == 'tire4')[0]
+var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
+
+let cybertruck = new Cybertruck();
+cybertruck.position.z = 20
+scene.add(cybertruck)
 
 var won = false
 var timer = new THREE.Clock()
@@ -130,6 +152,7 @@ timer.start()
 render()
 var minutes = 0
 var entryTimer = false
+
 function keyboardUpdate() {
   keyboard.update()
 
@@ -226,13 +249,38 @@ function keyboardUpdate() {
   }
 }
 
+function controlledRender()
+{
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  // Set main viewport
+  renderer.setViewport(0, 0, width, height); // Reset viewport    
+  renderer.setScissorTest(false); // Disable scissor to paint the entire window
+  renderer.setClearColor("rgb(80, 70, 170)");    
+  renderer.clear();   // Clean the window
+  renderer.render(scene, camera);   
+
+  // Set virtual camera viewport 
+  var offset = 30; 
+  renderer.setViewport(offset, height-vcHeidth-offset, vcWidth, vcHeidth);  // Set virtual camera viewport  
+  renderer.setScissor(offset, height-vcHeidth-offset, vcWidth, vcHeidth); // Set scissor with the same size as the viewport
+  renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
+  renderer.setClearColor("rgb(60, 50, 150)");  // Use a darker clear color in the small viewport 
+  renderer.clear(); // Clean the small viewport
+  virtualCamera.position.set(0,0,20)
+  virtualCamera.lookAt(0,0,0);
+  scene.add(virtualCamera);
+  //renderer.render(scene, virtualCamera);  // Render scene of the virtual camera
+}
+
 function render() {
   stats.update() // Update FPS
-
+  TESTE.update()
   if (inspectMode) trackballControls.update()
   // Enable mouse movements
   else cameraUpdate()
-
+  controlledRender()
   keyboardUpdate()
   gameMode()
   requestAnimationFrame(render)
