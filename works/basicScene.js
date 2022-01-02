@@ -98,7 +98,7 @@ var trackballControls = new TrackballControls(
 
 var camera = gameCamera
 camera.position.z = 40
-camera.add(car)
+//camera.add(car)
 scene.add(camera)
 
 // Virtual Camera
@@ -111,6 +111,7 @@ var virtualCamera = new THREE.PerspectiveCamera(45, vcWidth/vcHeidth, 1.0, 20.0)
 virtualCamera.position.set(camPosition);
 virtualCamera.up.set(upVec);
 virtualCamera.lookAt(lookAtVec);
+//virtualCamera.add(planeGeometry)
 
 function cameraUpdate() {
   //-- Update virtual camera settings --
@@ -129,7 +130,7 @@ function cameraUpdate() {
   //var cwd = new THREE.Vector3();    
   //virtualCamera.getWorldPosition(cwd);
 }
-scene.add(virtualCamera);
+//scene.add(virtualCamera);
 
 // Tracks
 var trackNum = prompt('Qual pista? (Digite 1 ou 2)')
@@ -276,7 +277,7 @@ function controlledRender()
   renderer.setScissorTest(false); // Disable scissor to paint the entire window
   renderer.setClearColor("rgb(80, 70, 170)");    
   renderer.clear();   // Clean the window
-  renderer.render(scene, camera);   
+  renderer.render(scene, camera);
 
   // Set virtual camera viewport 
   var offset = 30; 
@@ -287,8 +288,7 @@ function controlledRender()
   renderer.clear(); // Clean the small viewport
   virtualCamera.position.set(0,0,20)
   virtualCamera.lookAt(0,0,0);
-  scene.add(virtualCamera);
-  //renderer.render(scene, virtualCamera);  // Render scene of the virtual camera
+  renderer.render(scene, virtualCamera);  // Render scene of the virtual camera
 }
 
 function render() {
