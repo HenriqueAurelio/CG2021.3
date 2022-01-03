@@ -399,7 +399,7 @@ function updateLap(car, initialBlock) {
 function bestLapFunction() {
   var bestLapTime = laps[0]
   for (let i = 0; i < laps.length; i++) {
-    if (bestLapTime.split(':')[0] < laps[i].split(':')[0]) bestLapTime = laps[i]
+    if (bestLapTime.split(':')[0] > laps[i].split(':')[0]) bestLapTime = laps[i]
     if (bestLapTime.split(':')[0] == laps[i].split(':')[0]) {
       if (bestLapTime.split(':')[1] > laps[i].split(':')[1]) {
         bestLapTime = laps[i]
