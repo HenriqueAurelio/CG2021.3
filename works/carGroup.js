@@ -87,7 +87,7 @@ export default class carGroup {
     tire3.rotateX(Math.PI / 2)
     tire4.position.set(3, -1.25, 0.6)
     tire4.rotateX(Math.PI / 2)
-    cameraPoint.visible = false
+    cameraPoint.visible = true
     tire1.name = 'tire1'
     tire2.name = 'tire2'
     tire3.name = 'tire3'

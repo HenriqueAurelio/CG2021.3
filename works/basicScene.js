@@ -16,6 +16,7 @@ import Cybertruck from './cyberTruck.js'
 import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
+import bestLap from './bestLap.js'
 
 var acc = 0
 var speed = 0
@@ -63,6 +64,7 @@ controls.show()
 
 var secondaryBox = new SecondaryBox()
 var secondaryBox2 = new Speedometer()
+var bestLapBox = new bestLap()
 
 // Listen window size changes
 window.addEventListener(
@@ -82,52 +84,50 @@ let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
-var gameCamera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 500)
+var gameCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
 var inspectCamera = initCamera(new THREE.Vector3(5, -10, 10)) //new THREE.OrthographicCamera()
 //var inspectCamera =  initCamera(new THREE.Vector3(0, 60, 35))
 //inspectCamera.position.set(0, -20, 30);
 inspectCamera.up.set(0, 0, 2)
-var TESTE = new TrackballControls(
-  gameCamera,
-  renderer.domElement
-)
+var TESTE = new TrackballControls(gameCamera, renderer.domElement)
 var trackballControls = new TrackballControls(
   inspectCamera,
   renderer.domElement
 )
 
-var camera = gameCamera
-camera.position.z = 40
-//camera.add(car)
+var camera = gameCamera //camera.add(car)
+camera.up.set(0, 0, 1)
+
 scene.add(camera)
 
 // Virtual Camera
-var lookAtVec   = new THREE.Vector3( 0.0, 0.0, 0.0 );
-var camPosition = new THREE.Vector3( 3.7, 2.2, 1.0 );
-var upVec       = new THREE.Vector3( 0.0, 1.0, 0.0 );
-var vcWidth = 400; 
-var vcHeidth = 300; 
-var virtualCamera = new THREE.PerspectiveCamera(45, vcWidth/vcHeidth, 1.0, 20.0);
-virtualCamera.position.set(camPosition);
-virtualCamera.up.set(upVec);
-virtualCamera.lookAt(lookAtVec);
+var lookAtVec = new THREE.Vector3(0.0, 0.0, 0.0)
+var camPosition = new THREE.Vector3(3.7, 2.2, 1.0)
+var upVec = new THREE.Vector3(0.0, 1.0, 0.0)
+var vcWidth = 400
+var vcHeidth = 300
+var virtualCamera = new THREE.PerspectiveCamera(
+  45,
+  vcWidth / vcHeidth,
+  1.0,
+  20.0
+)
+virtualCamera.position.set(camPosition)
+virtualCamera.up.set(upVec)
+virtualCamera.lookAt(lookAtVec)
 //virtualCamera.add(planeGeometry)
-
+var worldPosition = new THREE.Vector3()
 function cameraUpdate() {
   //-- Update virtual camera settings --
-  virtualCamera.position.set(camPosition); 
-  virtualCamera.up.copy(upVec);
-  virtualCamera.lookAt(lookAtVec);
-
-  camera.position.y = car.position.y - 20
+  cameraPoint.getWorldPosition(worldPosition)
   camera.position.x = car.position.x + 20
-  camera.lookAt(
-    car.position.x + cameraPoint.position.x,
-    car.position.y + cameraPoint.position.y,
-    car.position.z + cameraPoint.position.z
-  )
+  camera.position.y = car.position.y - 10
+  camera.position.z = car.position.z + 20
 
-  //var cwd = new THREE.Vector3();    
+  camera.lookAt(worldPosition)
+  console.log(cameraPoint.position.x)
+
+  //var cwd = new THREE.Vector3();
   //virtualCamera.getWorldPosition(cwd);
 }
 //scene.add(virtualCamera);
@@ -144,7 +144,7 @@ var roda3 = car.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = car.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
 
-let cybertruck = new Cybertruck();
+let cybertruck = new Cybertruck()
 cybertruck.position.z = 20
 scene.add(cybertruck)
 
@@ -267,28 +267,27 @@ function keyboardUpdate() {
   }
 }
 
-function controlledRender()
-{
-  var width = window.innerWidth;
-  var height = window.innerHeight;
+function controlledRender() {
+  var width = window.innerWidth
+  var height = window.innerHeight
 
   // Set main viewport
-  renderer.setViewport(0, 0, width, height); // Reset viewport    
-  renderer.setScissorTest(false); // Disable scissor to paint the entire window
-  renderer.setClearColor("rgb(80, 70, 170)");    
-  renderer.clear();   // Clean the window
-  renderer.render(scene, camera);
+  renderer.setViewport(0, 0, width, height) // Reset viewport
+  renderer.setScissorTest(false) // Disable scissor to paint the entire window
+  renderer.setClearColor('rgb(80, 70, 170)')
+  renderer.clear() // Clean the window
+  renderer.render(scene, camera)
 
-  // Set virtual camera viewport 
-  var offset = 30; 
-  renderer.setViewport(offset, height-vcHeidth-offset, vcWidth, vcHeidth);  // Set virtual camera viewport  
-  renderer.setScissor(offset, height-vcHeidth-offset, vcWidth, vcHeidth); // Set scissor with the same size as the viewport
-  renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
-  renderer.setClearColor("rgb(60, 50, 150)");  // Use a darker clear color in the small viewport 
-  renderer.clear(); // Clean the small viewport
-  virtualCamera.position.set(0,0,20)
-  virtualCamera.lookAt(0,0,0);
-  renderer.render(scene, virtualCamera);  // Render scene of the virtual camera
+  // Set virtual camera viewport
+  var offset = 30
+  renderer.setViewport(offset, height - vcHeidth - offset, vcWidth, vcHeidth) // Set virtual camera viewport
+  renderer.setScissor(offset, height - vcHeidth - offset, vcWidth, vcHeidth) // Set scissor with the same size as the viewport
+  renderer.setScissorTest(true) // Enable scissor to paint only the scissor are (i.e., the small viewport)
+  renderer.setClearColor('rgb(60, 50, 150)') // Use a darker clear color in the small viewport
+  renderer.clear() // Clean the small viewport
+  virtualCamera.position.set(0, 0, 20)
+  virtualCamera.lookAt(0, 0, 0)
+  renderer.render(scene, virtualCamera) // Render scene of the virtual camera
 }
 
 function render() {
@@ -297,11 +296,11 @@ function render() {
   if (inspectMode) trackballControls.update()
   // Enable mouse movements
   else cameraUpdate()
-  controlledRender()
   keyboardUpdate()
   gameMode()
+  controlledRender()
   requestAnimationFrame(render)
-  renderer.render(scene, camera) // Render scene
+  // renderer.render(scene, camera) // Render scene
 }
 
 function gameMode() {
@@ -385,9 +384,15 @@ function updateLap(car, initialBlock) {
   ) {
     checkvalue += 1
   }
+  bestLapFunction()
+  if (laps.length == 0) {
+    bestLapBox.changeVisibility('hidden')
+  } else {
+    bestLapBox.changeVisibility('')
+  }
 }
 
-function bestLap() {
+function bestLapFunction() {
   var bestLapTime = laps[0]
   for (let i = 0; i < laps.length; i++) {
     if (bestLapTime.split(':')[0] < laps[i].split(':')[0]) bestLapTime = laps[i]
@@ -397,7 +402,7 @@ function bestLap() {
       }
     }
   }
-  controls.add(`Best Lap:${bestLapTime}`)
+  bestLapBox.changeMessage(`Best Lap:${bestLapTime}`)
 }
 
 function carStartPosition() {
