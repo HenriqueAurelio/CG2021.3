@@ -162,12 +162,16 @@ function keyboardUpdate() {
     roads = new tracks(scene, 1).getRoads()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
+    actualLap = 0
+    timer.start()
   }
   if (keyboard.down('2')) {
     removeRoad()
     roads = new tracks(scene, 2).getRoads()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
+    actualLap = 0
+    timer.start()
   }
   if (keyboard.down('space')) {
     inspectMode = !inspectMode
@@ -206,7 +210,7 @@ function keyboardUpdate() {
           (x.toFixed() % 60).toFixed() < 10 ? '0' : ''
         }${(x.toFixed() % 60).toFixed()}`
       )
-      secondaryBox2.changeMessage((speed / 10).toFixed() + ' frame/s')
+      secondaryBox2.changeMessage((speed / 10).toFixed() + ' km/h')
       if (speed > 0) {
         if (keyboard.pressed('right') || keyboard.pressed('left')) {
           acc -= 1
