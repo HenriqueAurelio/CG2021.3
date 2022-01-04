@@ -133,9 +133,8 @@ function cameraUpdate() {
 //scene.add(virtualCamera);
 
 // Tracks
-var trackNum = prompt('Qual pista? (Digite 1 ou 2)')
 let roads = []
-roads = new tracks(scene, trackNum).getRoads()
+roads = new tracks(scene, 1).getRoads()
 scene.add(car)
 var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
 var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
@@ -175,7 +174,6 @@ function keyboardUpdate() {
   }
   if (keyboard.down('space')) {
     inspectMode = !inspectMode
-    console.log(roads)
   }
   if (!inspectMode) {
     if (actualLap < 4) {
@@ -289,8 +287,9 @@ function controlledRender() {
   renderer.setScissorTest(true) // Enable scissor to paint only the scissor are (i.e., the small viewport)
   renderer.setClearColor('rgb(60, 50, 150)') // Use a darker clear color in the small viewport
   renderer.clear() // Clean the small viewport
-  virtualCamera.position.set(0, 0, 20)
-  virtualCamera.lookAt(0, 0, 0)
+  virtualCamera.position.set(10, 0, 10)
+  virtualCamera.lookAt(10, 10, 0)
+  virtualCamera.up.set(0, 0, 1)
   renderer.render(scene, virtualCamera) // Render scene of the virtual camera
 }
 
