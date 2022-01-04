@@ -89,7 +89,6 @@ var inspectCamera = initCamera(new THREE.Vector3(5, -10, 10)) //new THREE.Orthog
 //var inspectCamera =  initCamera(new THREE.Vector3(0, 60, 35))
 //inspectCamera.position.set(0, -20, 30);
 inspectCamera.up.set(0, 0, 2)
-var TESTE = new TrackballControls(gameCamera, renderer.domElement)
 var trackballControls = new TrackballControls(
   inspectCamera,
   renderer.domElement
@@ -101,21 +100,14 @@ camera.up.set(0, 0, 1)
 scene.add(camera)
 
 // Virtual Camera
-var lookAtVec = new THREE.Vector3(0.0, 0.0, 0.0)
-var camPosition = new THREE.Vector3(3.7, 2.2, 1.0)
-var upVec = new THREE.Vector3(0.0, 1.0, 0.0)
-var vcWidth = 400
-var vcHeidth = 300
+
 var virtualCamera = new THREE.PerspectiveCamera(
   45,
-  vcWidth / vcHeidth,
+  400 / 300,
   1.0,
-  20.0
+  200.0
 )
-virtualCamera.position.set(camPosition)
-virtualCamera.up.set(upVec)
-virtualCamera.lookAt(lookAtVec)
-//virtualCamera.add(planeGeometry)
+
 var worldPosition = new THREE.Vector3()
 function cameraUpdate() {
   //-- Update virtual camera settings --
@@ -126,11 +118,7 @@ function cameraUpdate() {
 
   camera.lookAt(worldPosition)
   console.log(cameraPoint.position.x)
-
-  //var cwd = new THREE.Vector3();
-  //virtualCamera.getWorldPosition(cwd);
 }
-//scene.add(virtualCamera);
 
 // Tracks
 let roads = []
@@ -282,20 +270,19 @@ function controlledRender() {
 
   // Set virtual camera viewport
   var offset = 30
-  renderer.setViewport(offset, height - vcHeidth - offset, vcWidth, vcHeidth) // Set virtual camera viewport
-  renderer.setScissor(offset, height - vcHeidth - offset, vcWidth, vcHeidth) // Set scissor with the same size as the viewport
+  renderer.setViewport(offset, height - 300 - offset, 400, 300) // Set virtual camera viewport
+  renderer.setScissor(offset, height - 300 - offset, 400, 300) // Set scissor with the same size as the viewport
   renderer.setScissorTest(true) // Enable scissor to paint only the scissor are (i.e., the small viewport)
   renderer.setClearColor('rgb(60, 50, 150)') // Use a darker clear color in the small viewport
   renderer.clear() // Clean the small viewport
-  virtualCamera.position.set(10, 0, 10)
-  virtualCamera.lookAt(10, 10, 0)
+  virtualCamera.position.set(50, 50, 140)
+  virtualCamera.lookAt(50, 50, 0)
   virtualCamera.up.set(0, 0, 1)
   renderer.render(scene, virtualCamera) // Render scene of the virtual camera
 }
 
 function render() {
   stats.update() // Update FPS
-  TESTE.update()
   if (inspectMode) trackballControls.update()
   // Enable mouse movements
   else cameraUpdate()
