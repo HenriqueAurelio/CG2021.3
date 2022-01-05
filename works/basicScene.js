@@ -111,7 +111,6 @@ function cameraUpdate() {
   camera.position.z = car.position.z + 20
 
   camera.lookAt(cybertruck.position)
-  console.log(cameraPoint.position.x)
 }
 
 // Tracks
@@ -260,7 +259,6 @@ function keyboardUpdate() {
       updateLap(car, initialPosition[0])
     } else {
       if (won == false) {
-        console.log(laps)
         alert('Você ganhou!')
         bestLap()
         won = true
