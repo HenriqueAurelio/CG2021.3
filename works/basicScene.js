@@ -17,6 +17,7 @@ import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 import bestLap from './bestLap.js'
+
 var acc = 0
 var speed = 0
 var maxSpeed = 500
@@ -77,7 +78,10 @@ window.addEventListener(
 let foraDaPista = false
 var inspectMode = false
 var car = new carGroup()
-
+let cybertruck = new Cybertruck()
+cybertruck.position.z = 5
+cybertruck.rotateY(22)
+scene.add(cybertruck)
 // Camera
 let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
@@ -118,15 +122,12 @@ let roads = []
 roads = new tracks(scene, 1).getRoads()
 scene.add(car)
 var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-var roda1 = car.children.filter((part) => part.name == 'tire1')[0]
-var roda2 = car.children.filter((part) => part.name == 'tire2')[0]
-var roda3 = car.children.filter((part) => part.name == 'tire3')[0]
-var roda4 = car.children.filter((part) => part.name == 'tire4')[0]
+var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
+var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
+var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
+var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
+console.log(roda2)
 var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
-
-let cybertruck = new Cybertruck()
-cybertruck.position.z = 5
-scene.add(cybertruck)
 
 var won = false
 var timer = new THREE.Clock()
@@ -238,23 +239,27 @@ function keyboardUpdate() {
       if (speed > maxSpeed) speed = maxSpeed
       if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
-      car.translateX(-speed / coeficienteVelocidade)
+      cybertruck.translateZ(speed / coeficienteVelocidade)
 
       if (keyboard.pressed('right')) {
         if (roda1.rotation.y >= -0.15) {
-          roda1.rotateY(-tireAngle)
-          roda2.rotateY(-tireAngle)
+          console.log(roda1.rotation.y)
+
+          roda1.rotateX(-tireAngle)
+          roda2.rotateX(-tireAngle)
         }
-        if (speed > 0) car.rotateZ(-angle)
-        else if (speed < 0) car.rotateZ(angle)
+        if (speed > 0) cybertruck.rotateY(-angle)
+        else if (speed < 0) cybertruck.rotateY(angle)
       }
       if (keyboard.pressed('left')) {
         if (roda1.rotation.y <= 0.15) {
-          roda1.rotateY(tireAngle)
-          roda2.rotateY(tireAngle)
+          console.log(roda1.rotation.y)
+          roda1.rotateX(tireAngle)
+          roda2.rotateX(tireAngle)
         }
-        if (speed > 0) car.rotateOnAxis(new THREE.Vector3(0, 0, 1), angle)
-        else if (speed < 0) car.rotateZ(-angle)
+        if (speed > 0)
+          cybertruck.rotateOnAxis(new THREE.Vector3(0, 1, 0), angle)
+        else if (speed < 0) cybertruck.rotateY(-angle)
       }
       updateLap(car, initialPosition[0])
     } else {
