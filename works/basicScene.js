@@ -101,12 +101,7 @@ scene.add(camera)
 
 // Virtual Camera
 
-var virtualCamera = new THREE.PerspectiveCamera(
-  45,
-  400 / 300,
-  1.0,
-  200.0
-)
+var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
 
 var worldPosition = new THREE.Vector3()
 function cameraUpdate() {
@@ -150,6 +145,7 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    checkvalue = 0
     timer.start()
   }
   if (keyboard.down('2')) {
@@ -159,6 +155,7 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
+    checkvalue = 0
   }
   if (keyboard.down('3')) {
     removeRoad()
