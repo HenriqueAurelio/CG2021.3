@@ -17,7 +17,6 @@ import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 import bestLap from './bestLap.js'
-
 var acc = 0
 var speed = 0
 var maxSpeed = 500
@@ -111,7 +110,7 @@ function cameraUpdate() {
   camera.position.y = car.position.y - 10
   camera.position.z = car.position.z + 20
 
-  camera.lookAt(worldPosition)
+  camera.lookAt(cybertruck.position)
   console.log(cameraPoint.position.x)
 }
 
@@ -127,7 +126,7 @@ var roda4 = car.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
 
 let cybertruck = new Cybertruck()
-cybertruck.position.z = 20
+cybertruck.position.z = 5
 scene.add(cybertruck)
 
 var won = false
@@ -164,7 +163,8 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
-  }if (keyboard.down('4')) {
+  }
+  if (keyboard.down('4')) {
     removeRoad()
     roads = new tracks(scene, 4).getRoads()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
@@ -355,6 +355,7 @@ function verificaCarroNaPista(carro, blocosDaPista) {
 
 function updateLap(car, initialBlock) {
   var checkpoint = roads[15]
+  checkpoint.set
   var checkx = checkpoint.position.x
   var checky = checkpoint.position.y
 
