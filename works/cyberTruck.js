@@ -1,22 +1,26 @@
 import * as THREE from '../build/three.module.js'
 import { ConvexGeometry } from '../build/jsm/geometries/ConvexGeometry.js'
-export default class Cybertruck extends THREE.Mesh {
+export default class Cybertruck extends THREE.Object3D {
   constructor() {
     super()
-    return this.createCar()
-  }
-
-  createCar() {
-    var car = new THREE.Group()
-
-    // APAGAR
+    this.mesh = new THREE.Object3D();
     this.width = 4; //8
     this.height = 3.75; //7.5
     this.depth = 11.5; //23
+    
+    this.createCar();
+    return this.mesh;
+  }
 
+  createCar() {
     let W = this.width,
         H = this.height,
         D = this.depth;
+        
+    this.createBlock();
+    this.createTires();
+
+    //----------------- APAGAR -----------------
 
     // B. Door Handles
     let doorHandleGeo = new THREE.BoxGeometry(W*0.01,W*0.024,D*0.0375),
@@ -38,45 +42,13 @@ export default class Cybertruck extends THREE.Mesh {
     // back left
     let doorHandleBL = doorHandleBR.clone();
     doorHandleBL.position.x *= -1;
-
-    let wheelGeo = new THREE.CylinderBufferGeometry(H*0.23,H*0.23,W*0.14,32),
-    wheelMat = new THREE.MeshLambertMaterial({
-        color: 0x1c1c1c
-    });
-
-    this.wheels = [
-        new THREE.Mesh(wheelGeo,wheelMat)
-    ];
-
-
-    var block = this.createBlock()
-
-    car.add(block)
-    car.add(doorHandleFR)
-    car.add(doorHandleFL)
-    car.add(doorHandleBR)
-    car.add(doorHandleBL)
-
-    this.wheels[0].position.set(W*0.43,H*-0.27,D*0.36);
-    this.wheels[0].rotation.z = -Math.PI/2;
-    this.wheels[0].castShadow = true;
-    this.wheels[0].receiveShadow = true;
-    car.add(this.wheels[0]);
-
-    this.wheels.push(this.wheels[0].clone());
-    this.wheels[1].position.set(W*-0.43,H*-0.27,D*0.36);
-    this.wheels[1].rotation.z = Math.PI/2;
-    car.add(this.wheels[1]);
-
-    this.wheels.push(this.wheels[0].clone());
-    this.wheels[2].position.set(W*0.43,H*-0.27,D*-0.3);
-    this.wheels[2].rotation.z = -Math.PI/2;
-    car.add(this.wheels[2]);
-
-    this.wheels.push(this.wheels[0].clone());
-    this.wheels[3].position.set(W*-0.43,H*-0.27,D*-0.3);
-    this.wheels[3].rotation.z = Math.PI/2;
-    car.add(this.wheels[3]);
+    
+    this.mesh.add(
+      doorHandleFR,
+      doorHandleFL,
+      doorHandleBR,
+      doorHandleBL
+    )
 
     //----------------------------------------------------
 
@@ -90,26 +62,19 @@ export default class Cybertruck extends THREE.Mesh {
     // left
     leftCylinder.position.set(W*0.33,H*-0.09,D*0.355);
     leftCylinder.rotation.x = -5 *Math.PI/180;
-    car.add(leftCylinder);
+    this.mesh.add(leftCylinder);
 
     // right
     let rightCylinder = leftCylinder.clone();
     rightCylinder.position.x *= -1;
-    car.add(rightCylinder);
+    this.mesh.add(rightCylinder);
 
-    car.rotateX(Math.PI / 2)
+    this.mesh.rotateX(Math.PI / 2)
 
-    //this.createTires().forEach((element) => car.add(element))
-    car.position.set(0, 20, 0)
-    return car
+    this.mesh.position.set(0, 20, 0)
   }
 
   createBlock() {
-    this.width = 4; //8
-    this.height = 3.75; //7.5
-    this.depth = 11.5; //23
-    this.mesh = new THREE.Object3D();
-
     let W = this.width,
         H = this.height,
         D = this.depth,
@@ -167,8 +132,7 @@ export default class Cybertruck extends THREE.Mesh {
     let p = pontos.map(toVectors);
     const geometry = new ConvexGeometry(p)
     const material = new THREE.MeshPhongMaterial({ color: 0xbac3c8 })
-    const mesh = new THREE.Mesh(geometry, material)
-    return mesh
+    this.mesh.add(new THREE.Mesh(geometry, material))
   }
 
   createBodywork() {}
@@ -180,20 +144,49 @@ export default class Cybertruck extends THREE.Mesh {
   }
 
   createTires() {
-    var tires = []
-    for (let index = 0; index < 4; index++) {
-      const geometry = new THREE.TorusGeometry(0.3, 0.1, 8, 100)
-      const material = new THREE.MeshPhongMaterial({ color: '#000000' })
-      let torus = new THREE.Mesh(geometry, material)
-      torus.rotateX(Math.PI / 2)
-      tires.push(torus)
-    }
+    let W = this.width,
+        H = this.height,
+        D = this.depth;
 
-    tires[0].position.set(0, 2, 0)
-    tires[1].position.set(0, -2, 0)
-    tires[2].position.set(4, 2, 0)
-    tires[3].position.set(4, -2, 0)
+    let wheelGeo = new THREE.CylinderBufferGeometry(H*0.23,H*0.23,W*0.14,32),
+    wheelMat = new THREE.MeshLambertMaterial({
+        color: 0x1c1c1c
+    });
 
-    return tires
+    this.wheels = [
+        new THREE.Mesh(wheelGeo,wheelMat)
+    ];
+    
+    this.wheels[0].position.set(W*0.43,H*-0.27,D*0.36);
+    this.wheels[0].rotation.z = -Math.PI/2;
+    this.wheels[0].castShadow = true;
+    this.wheels[0].receiveShadow = true;
+    this.wheels[0].name = 'tire1';
+    this.mesh.add(this.wheels[0]);
+
+    var clone = this.wheels[0].clone()
+    clone.name = 'tire2';
+
+    this.wheels.push(clone);
+    this.wheels[1].position.set(W*-0.43,H*-0.27,D*0.36);
+    this.wheels[1].rotation.z = Math.PI/2;
+    this.mesh.add(this.wheels[1]);
+
+
+    clone = this.wheels[0].clone()
+    clone.name = 'tire3';
+
+    this.wheels.push(clone);
+    this.wheels[2].position.set(W*0.43,H*-0.27,D*-0.3);
+    this.wheels[2].rotation.z = -Math.PI/2;
+    this.mesh.add(this.wheels[2]);
+
+    clone = this.wheels[0].clone()
+    clone.name = 'tire4';
+
+    this.wheels.push(clone);
+    this.wheels[3].position.set(W*-0.43,H*-0.27,D*-0.3);
+    this.wheels[3].rotation.z = Math.PI/2;
+    this.mesh.add(this.wheels[3]);
   }
 }
