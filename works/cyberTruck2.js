@@ -3,12 +3,7 @@ class Cybertruck {
 	constructor() {
 
 
-		// C. Door Outlines
-		let doorOutlineMat = new THREE.LineBasicMaterial({
-				color: 0x000000,
-				transparent: true,
-				opacity: 0.25
-			}),
+		
 			doorOutlineFLVerticesArr = [
 				[0.451,-0.17,0.255],
 				[0.451,0.12, 0.255],
@@ -86,56 +81,10 @@ class Cybertruck {
 		let doorOutlineBR = new THREE.Line(doorOutlineBRGeo,doorOutlineMat);
 		this.mesh.add(doorOutlineBR);
 
-		// D. Fuel Cap
-		let fuelCapVerticesArr = [
-				[0.4502,-0.014,-0.378],
-				[0.4502,-0.014,-0.4],
-				[0.4502,0.06,  -0.4],
-				[0.4502,0.06,  -0.36],
-			],
-			fuelCapVertices = fuelCapVerticesArr.map(toVectors),
-			fuelCapGeo = new THREE.Geometry();
-
-		fuelCapGeo.vertices = fuelCapVertices;
-
-		let fuelCap = new THREE.Line(fuelCapGeo,doorOutlineMat);
-		this.mesh.add(fuelCap);
+		
 
 		// II. Top Parts
-		// A. Window
-		let windowMat = new THREE.MeshStandardMaterial({
-				color: 0x101010,
-				wireframe: this.wireframes
-			}),
-			lightMat = new THREE.MeshBasicMaterial({
-				color: 0xffffff,
-				wireframe: this.wireframes
-			}),
-			topWindowVerticesArr = [
-				[-0.371, 0.415,-0.13],
-				[0.371,  0.415,-0.13],
-				[-0.326, 0.5,  0.08],
-				[0.326,  0.5,  0.08],
-				[-0.4145,0.2,  0.36],
-				[0.4145, 0.2,  0.36]
-			],
-			topWindowVertices = topWindowVerticesArr.map(toVectors),
-			topWindowFacesArr = [
-				[1,0,2],
-				[2,3,1],
-				[3,2,4],
-				[4,5,3]
-			],
-			topWindowFaces = topWindowFacesArr.map(toFaces),
-			topWindowGeo = new THREE.Geometry();
 
-		topWindowGeo.vertices = topWindowVertices;
-		topWindowGeo.faces = topWindowFaces;
-		topWindowGeo.computeVertexNormals();
-		topWindowGeo.computeFaceNormals();
-
-		let topWindow = new THREE.Mesh(topWindowGeo,windowMat);
-		this.mesh.add(topWindow);
 
 		// B. Light
 		let topLightVerticesArr = [
@@ -145,16 +94,9 @@ class Cybertruck {
 				[0.26, 0.48,0.1]
 			],
 			topLightVertices = topLightVerticesArr.map(toVectors),
-			topLightFacesArr = [
-				[1,0,2],
-				[2,3,1]
-			],
-			topLightFaces = topLightFacesArr.map(toFaces),
 			topLightGeo = new THREE.Geometry();
 
 		topLightGeo.vertices = topLightVertices;
-		topLightGeo.faces = topLightFaces;
-		topLightGeo.computeFaceNormals();
 
 		let topLight = new THREE.Mesh(topLightGeo,lightMat);
 		this.mesh.add(topLight);
@@ -162,7 +104,6 @@ class Cybertruck {
 		// C. Sliding Door
 		let slidingDoorMat = new THREE.MeshStandardMaterial({
 				color: 0x767c7f,
-				wireframe: this.wireframes
 			}),
 			slidingDoorVerticesArr = [
 				[-0.35,0.274,-0.472],
@@ -171,38 +112,12 @@ class Cybertruck {
 				[0.35, 0.407,-0.145]
 			],
 			slidingDoorVertices = slidingDoorVerticesArr.map(toVectors),
-			slidingDoorFacesArr = [
-				[1,0,2],
-				[2,3,1]
-			],
-			slidingDoorFaces = slidingDoorFacesArr.map(toFaces),
 			slidingDoorGeo = new THREE.Geometry();
 
 		slidingDoorGeo.vertices = slidingDoorVertices;
-		slidingDoorGeo.faces = slidingDoorFaces;
-		slidingDoorGeo.computeFaceNormals();
 
 		let slidingDoor = new THREE.Mesh(slidingDoorGeo,slidingDoorMat);
 		this.mesh.add(slidingDoor);
-
-		// III. Side Windows
-		let sideWindowsVerticesArr = [
-				[-0.4,  0.27,-0.14],
-				[0.4,   0.27,-0.14],
-				[-0.351,0.39,-0.13],
-				[0.351, 0.39,-0.13],
-				[-0.315,0.47,0.08],
-				[0.315, 0.47,0.08],
-				[-0.43, 0.17,0.36],
-				[0.43,  0.17,0.36]
-			],
-			sideWindowsVertices = sideWindowsVerticesArr.map(toVectors),
-			sideWindowsGeo = new THREE.Geometry();
-
-		sideWindowsGeo.vertices = sideWindowsVertices;
-
-		let sideWindows = new THREE.Mesh(sideWindowsGeo,windowMat);
-		this.mesh.add(sideWindows);
 
 		// IV. Front Lights
 		// A. Upper
@@ -218,20 +133,9 @@ class Cybertruck {
 				[0.45,   0.043,0.4685]
 			],
 			frontLightVertices = frontLightVerticesArr.map(toVectors),
-			frontLightFacesArr = [
-				[1,0,4],
-				[4,5,1],
-				[2,1,5],
-				[5,6,2],
-				[3,2,6],
-				[6,7,3]
-			],
-			frontLightFaces = frontLightFacesArr.map(toFaces),
 			frontLightGeo = new THREE.Geometry();
 
 		frontLightGeo.vertices = frontLightVertices;
-		frontLightGeo.faces = frontLightFaces;
-		frontLightGeo.computeFaceNormals();
 
 		let frontLight = new THREE.Mesh(frontLightGeo,lightMat);
 		this.mesh.add(frontLight);
@@ -248,30 +152,19 @@ class Cybertruck {
 				[0.45, -0.12,0.4605]
 			],
 			lowerLFrontLightVertices = lowerLFrontLightVerticesArr.map(toVectors),
-			lowerLFrontLightFacesArr = [
-				[0,1,3],
-				[3,2,0]
-			],
-			lowerLFrontLightFaces = lowerLFrontLightFacesArr.map(toFaces),
 			lowerLFrontLightGeo = new THREE.Geometry();
 
 		// left
 		lowerLFrontLightGeo.vertices = lowerLFrontLightVertices;
-		lowerLFrontLightGeo.faces = lowerLFrontLightFaces;
-		lowerLFrontLightGeo.computeFaceNormals();
-
 		let lowerLFrontLight = new THREE.Mesh(lowerLFrontLightGeo,lowerLightMat);
 		this.mesh.add(lowerLFrontLight);
 
 		// right
 		let lowerRFrontLightVerticesArr = lowerLFrontLightVerticesArr.map(flipXVertices),
 			lowerRFrontLightVertices = lowerRFrontLightVerticesArr.map(toVectors),
-			lowerRFrontLightFacesArr = lowerLFrontLightFacesArr.map(reverseFaceDraws),
-			lowerRFrontLightFaces = lowerRFrontLightFacesArr.map(toFaces),
 			lowerRFrontLightGeo = new THREE.Geometry();
 
 		lowerRFrontLightGeo.vertices = lowerRFrontLightVertices;
-		lowerRFrontLightGeo.faces = lowerRFrontLightFaces;
 		lowerRFrontLightGeo.computeFaceNormals();
 
 		let lowerRFrontLight = new THREE.Mesh(lowerRFrontLightGeo,lowerLightMat);
@@ -325,82 +218,6 @@ class Cybertruck {
 
 		this.mesh.add(backLight);
 
-		// VI. Left Side Part Above Wheels
-		let sideMat = new THREE.MeshStandardMaterial({
-				color: 0x2b2b2b,
-				wireframe: this.wireframes
-			}),
-			leftSideVerticesArr = [
-				// top (0–19)
-				[0.45, -0.1,  -0.4],
-				[0.5,  -0.1,  -0.3825],
-				[0.45, 0.06,  -0.36],
-				[0.5,  0.03,  -0.35],
-				[0.45, 0.06,  -0.236],
-				[0.5,  0.03,  -0.24],
-				[0.45, -0.15, -0.18],
-				[0.5,  -0.15, -0.192],
-				[0.41, -0.21, -0.173],
-				[0.48, -0.21, -0.19],
-				[0.41, -0.23, 0.2498],
-				[0.48, -0.23, 0.261],
-				[0.45, -0.17, 0.255],
-				[0.5,  -0.17, 0.263],
-				[0.45, 0.06,  0.3015],
-				[0.5,  0.03,  0.3035],
-				[0.45, 0.06,  0.42],
-				[0.5,  0.03,  0.4165],
-				[0.45, -0.13, 0.46],
-				[0.5,  -0.13, 0.45],
-				// bottom (20–41)
-				[0.45, -0.074,-0.379],
-				[0.5,  -0.1,  -0.3775],
-				[0.45, 0.04,  -0.35],
-				[0.5,  0.015, -0.348],
-				[0.45, 0.04,  -0.2505],
-				[0.5,  0.015, -0.2435],
-				[0.45, -0.15, -0.197],
-				[0.5,  -0.15, -0.197],
-				[0.355,-0.29, -0.19],
-				[0.4,  -0.29, -0.19],
-				[0.355,-0.31, 0.2582],
-				[0.4,  -0.31, 0.26],
-				[0.45, -0.17, 0.265],
-				[0.5,  -0.17, 0.267],
-				[0.45, 0.04,  0.3099],
-				[0.5,  0.015, 0.3065],
-				[0.45, 0.04,  0.418],
-				[0.5,  0.015, 0.4135],
-				[0.45, -0.13, 0.455],
-				[0.5,  -0.13, 0.445],
-				[0.48, -0.21, -0.194],
-				[0.48, -0.23, 0.265]
-			],
-			leftSideVertices = leftSideVerticesArr.map(toVectors),
-			leftSideGeo = new THREE.Geometry();
-
-		leftSideGeo.vertices = leftSideVertices;
-		leftSideGeo.faces = leftSideFaces;
-		leftSideGeo.computeFaceNormals();
-
-		let leftSide = new THREE.Mesh(leftSideGeo,sideMat);
-		leftSide.castShadow = true;
-		this.mesh.add(leftSide);
-
-		// VII. Right Side Part Above Wheels
-		let rightSideVerticesArr = leftSideVerticesArr.map(flipXVertices),
-			rightSideVertices = rightSideVerticesArr.map(toVectors),
-			rightSideFacesArr = leftSideFacesArr.map(reverseFaceDraws),
-			rightSideFaces = rightSideFacesArr.map(toFaces),
-			rightSideGeo = new THREE.Geometry();
-
-		rightSideGeo.vertices = rightSideVertices;
-		rightSideGeo.faces = rightSideFaces;
-		rightSideGeo.computeFaceNormals();
-
-		let rightSide = new THREE.Mesh(rightSideGeo,sideMat);
-		rightSide.castShadow = true;
-		this.mesh.add(rightSide);
 
 		// VIII. Back
 		// A. Connecting Bumper
@@ -422,8 +239,6 @@ class Cybertruck {
 			});
 
 		backGeo.vertices = backVertices;
-		backGeo.faces = backFaces;
-		backGeo.computeFaceNormals();
 
 		let back = new THREE.Mesh(backGeo,backMat);
 		this.mesh.add(back);
@@ -442,19 +257,10 @@ class Cybertruck {
 				[0.4231,-0.135,-0.387]
 			],
 			leftRedLinesVertices = leftRedLinesVerticesArr.map(toVectors),
-			leftRedLinesFacesArr = [
-				[0,1,4],
-				[4,3,0],
-				[1,2,5],
-				[5,4,1]
-			],
-			leftRedLinesFaces = leftRedLinesFacesArr.map(toFaces),
 			leftRedLinesGeo = new THREE.Geometry();
 
 		// left
 		leftRedLinesGeo.vertices = leftRedLinesVertices;
-		leftRedLinesGeo.faces = leftRedLinesFaces;
-		leftRedLinesGeo.computeFaceNormals();
 
 		let leftRedLines = new THREE.Mesh(leftRedLinesGeo,redLinesMat);
 		this.mesh.add(leftRedLines);
@@ -469,7 +275,6 @@ class Cybertruck {
 			leftSmallBackLightGeo = new THREE.Geometry();
 
 		leftSmallBackLightGeo.vertices = leftSmallBackLightVertices;
-		leftSmallBackLightGeo.computeFaceNormals();
 
 		let leftSmallBackLight = new THREE.Mesh(leftSmallBackLightGeo,backLightInnerMat);
 		this.mesh.add(leftSmallBackLight);
@@ -480,7 +285,6 @@ class Cybertruck {
 			rightRedLinesGeo = new THREE.Geometry();
 
 		rightRedLinesGeo.vertices = rightRedLinesVertices;
-		rightRedLinesGeo.computeFaceNormals();
 
 		let rightRedLines = new THREE.Mesh(rightRedLinesGeo,redLinesMat);
 		this.mesh.add(rightRedLines);
@@ -490,7 +294,6 @@ class Cybertruck {
 			rightSmallBackLightGeo = new THREE.Geometry();
 
 		rightSmallBackLightGeo.vertices = rightSmallBackLightVertices;
-		rightSmallBackLightGeo.computeFaceNormals();
 
 		let rightSmallBackLight = new THREE.Mesh(rightSmallBackLightGeo,backLightInnerMat);
 		this.mesh.add(rightSmallBackLight);
@@ -531,7 +334,6 @@ class Cybertruck {
 			backBumperGeo = new THREE.Geometry();
 
 		backBumperGeo.vertices = backBumperVertices;
-		backBumperGeo.computeFaceNormals();
 
 		let backBumper = new THREE.Mesh(backBumperGeo,sideMat);
 		backBumper.castShadow = true;
@@ -562,7 +364,6 @@ class Cybertruck {
 			frontBumperGeo = new THREE.Geometry();
 
 		frontBumperGeo.vertices = frontBumperVertices;
-		frontBumperGeo.computeFaceNormals();
 
 		let frontBumper = new THREE.Mesh(frontBumperGeo,sideMat);
 		frontBumper.castShadow = true;
@@ -650,7 +451,7 @@ class Cybertruck {
 			frontAxleSupportGeo = new THREE.Geometry();
 
 		frontAxleSupportGeo.vertices = frontAxleSupportVertices;
-		frontAxleSupportGeo.computeFaceNormals();
+
 
 		let frontAxleSupport = new THREE.Mesh(frontAxleSupportGeo,supportMat);
 		frontAxleSupport.castShadow = true;
@@ -696,7 +497,6 @@ class Cybertruck {
 			backAxleSupportGeo = new THREE.Geometry();
 
 		backAxleSupportGeo.vertices = backAxleSupportVertices;
-		backAxleSupportGeo.computeFaceNormals();
 
 		let backAxleSupport = new THREE.Mesh(backAxleSupportGeo,supportMat);
 		backAxleSupport.castShadow = true;
@@ -717,29 +517,10 @@ class Cybertruck {
 			bottomGeo = new THREE.Geometry();
 
 		bottomGeo.vertices = bottomVertices;
-		bottomGeo.computeFaceNormals();
 
 		let bottom = new THREE.Mesh(bottomGeo,supportMat);
 		bottom.castShadow = true;
 		this.mesh.add(bottom);
-
-		// XII. License Plate
-		let licensePlateGeo = new THREE.PlaneBufferGeometry(W*0.18,W*0.09),
-			licensePlateMat = new THREE.MeshStandardMaterial({
-				color: 0xffffff,
-				wireframe: this.wireframes,
-				map: licensePlateImg,
-				transparent: true
-			});
-		
-		licensePlateMat.map.wrapS = THREE.RepeatWrapping;
-		licensePlateMat.map.wrapT = THREE.RepeatWrapping;
-		licensePlateMat.map.repeat.set(1,1);
-
-		let licensePlate = new THREE.Mesh(licensePlateGeo,licensePlateMat);
-		licensePlate.position.set(0,H*-0.16,D*-0.4701);
-		licensePlate.rotation.y = Math.PI;
-		this.mesh.add(licensePlate);
 
 		// XIII. Wheels
 		// A. Tire
@@ -807,53 +588,7 @@ class Cybertruck {
 			let spokeClone = spoke.clone();
 			spokeClone.rotation.z += ((Math.PI*2)/7) * s;
 			hubCenter.add(spokeClone);
-		}
-
-		// C. Positioning and Cloning
-		this.wheels[0].position.set(W*0.43,H*-0.27,D*0.36);
-		this.wheels[0].rotation.z = -Math.PI/2;
-		this.wheels[0].castShadow = true;
-		this.wheels[0].receiveShadow = true;
-		this.mesh.add(this.wheels[0]);
-
-		this.wheels.push(this.wheels[0].clone());
-		this.wheels[1].position.set(W*-0.43,H*-0.27,D*0.36);
-		this.wheels[1].rotation.z = Math.PI/2;
-		this.mesh.add(this.wheels[1]);
-
-		this.wheels.push(this.wheels[0].clone());
-		this.wheels[2].position.set(W*0.43,H*-0.27,D*-0.3);
-		this.wheels[2].rotation.z = -Math.PI/2;
-		this.mesh.add(this.wheels[2]);
-
-		this.wheels.push(this.wheels[0].clone());
-		this.wheels[3].position.set(W*-0.43,H*-0.27,D*-0.3);
-		this.wheels[3].rotation.z = Math.PI/2;
-		this.mesh.add(this.wheels[3]);
-
-		// XIV. Light Effects
-		this.headlight = new THREE.SpotLight(0x30d2d5,0);
-		this.headlight.position.set(0,0,this.depth * 0.48);
-		this.headlight.target.position.set(0,0,this.depth/2 + 0.1);
-		this.headlight.angle = 75 * Math.PI/180;
-		this.headlight.penumbra = 0.2;
-		this.headlight.distance = -10;
-		this.headlight.castShadow = true;
-		this.headlight.shadow.mapSize = new THREE.Vector2(512,512);
-		this.mesh.add(this.headlight);
-		this.mesh.add(this.headlight.target);
-
-		this.rearlight = new THREE.SpotLight(0xd65a65,0);
-		this.rearlight.position.set(0,0,-this.depth * 0.42);
-		this.rearlight.target.position.set(0,0,-this.depth/2 - 0.1);
-		this.rearlight.angle = 60 * Math.PI/180;
-		this.rearlight.penumbra = 0.2;
-		this.rearlight.distance = 10;
-		this.rearlight.castShadow = true;
-		this.rearlight.shadow.mapSize = new THREE.Vector2(512,512);
-		this.mesh.add(this.rearlight);
-		this.mesh.add(this.rearlight.target);
-		
+		}		
 	}
 
 	move() {
