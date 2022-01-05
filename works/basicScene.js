@@ -160,6 +160,21 @@ function keyboardUpdate() {
     actualLap = 0
     timer.start()
   }
+  if (keyboard.down('3')) {
+    removeRoad()
+    roads = new tracks(scene, 3).getRoads()
+    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+    carStartPosition()
+    actualLap = 0
+    timer.start()
+  }if (keyboard.down('4')) {
+    removeRoad()
+    roads = new tracks(scene, 4).getRoads()
+    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+    carStartPosition()
+    actualLap = 0
+    timer.start()
+  }
   if (keyboard.down('space')) {
     inspectMode = !inspectMode
   }
@@ -321,6 +336,7 @@ function gameMode() {
     }
   }
 }
+
 function verificaCarroNaPista(carro, blocosDaPista) {
   let blocos = []
   let x = carro.position.x
