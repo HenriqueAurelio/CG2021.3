@@ -110,9 +110,9 @@ var worldPosition = new THREE.Vector3()
 function cameraUpdate() {
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
-  camera.position.x = car.position.x + 20
-  camera.position.y = car.position.y - 10
-  camera.position.z = car.position.z + 20
+  camera.position.x = cybertruck.position.x + 20
+  camera.position.y = cybertruck.position.y - 10
+  camera.position.z = cybertruck.position.z + 20
 
   camera.lookAt(cybertruck.position)
 }
@@ -126,7 +126,6 @@ var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
-console.log(roda2)
 var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
 
 var won = false
@@ -223,7 +222,7 @@ function keyboardUpdate() {
 
       speed += acc
 
-      if (verificaCarroNaPista(car, roads).length > 0) {
+      if (verificaCarroNaPista(cybertruck, roads).length > 0) {
         maxSpeed = 500
         maxReverseSpeed = -300
         foraDaPista = false
@@ -242,7 +241,7 @@ function keyboardUpdate() {
       cybertruck.translateZ(speed / coeficienteVelocidade)
 
       if (keyboard.pressed('right')) {
-        if (roda1.rotation.y >= -0.15) {
+        if (roda1.rotation.y >= 0.15) {
           console.log(roda1.rotation.y)
 
           roda1.rotateX(-tireAngle)
@@ -261,7 +260,7 @@ function keyboardUpdate() {
           cybertruck.rotateOnAxis(new THREE.Vector3(0, 1, 0), angle)
         else if (speed < 0) cybertruck.rotateY(-angle)
       }
-      updateLap(car, initialPosition[0])
+      updateLap(cybertruck, initialPosition[0])
     } else {
       if (won == false) {
         alert('Você ganhou!')
