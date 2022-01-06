@@ -4,11 +4,12 @@ export default class Cybertruck extends THREE.Object3D {
   constructor() {
     super()
     this.mesh = new THREE.Object3D();
-    this.width = 4; //8
-    this.height = 3.75; //7.5
-    this.depth = 11.5; //23
+    this.width = 8*0.3; //8
+    this.height = 7.5*0.3; //7.5
+    this.depth = 23*0.3; //23
     
     this.createCar();
+    this.mesh.name = 'Cybertruck';
     return this.mesh;
   }
 
@@ -24,6 +25,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.createTires();
     this.createWindows();
     this.createDoors();
+    this.createCameraPoint();
 
     //----------------- APAGAR -----------------
 
@@ -47,6 +49,16 @@ export default class Cybertruck extends THREE.Object3D {
     this.mesh.rotateX(Math.PI / 2)
 
     this.mesh.position.set(0, 20, 0)
+  }
+
+  createCameraPoint() {
+    const geometry = new THREE.SphereGeometry(0.2, 32, 32)
+    const material = new THREE.MeshBasicMaterial({ color: '#FFE800' })
+    const sphere = new THREE.Mesh(geometry, material)
+    sphere.position.set(0.0, 0.9, 4.5)
+    sphere.visible = false
+    sphere.name = 'cameraPoint';
+    this.mesh.add(sphere);
   }
 
   createBlock() {
@@ -114,7 +126,6 @@ export default class Cybertruck extends THREE.Object3D {
       color: 0x000000,
       transparent: true,
       opacity: 0.25,
-      wireframes: false,
     });
 		let fuelCapVerticesArr = [
       [0.4502,-0.014,-0.378],
