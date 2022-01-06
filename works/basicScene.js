@@ -241,19 +241,19 @@ function keyboardUpdate() {
       cybertruck.translateZ(speed / coeficienteVelocidade)
 
       if (keyboard.pressed('right')) {
-        if (roda1.rotation.y >= 0.15) {
+        if (roda1.rotation.y >= -0.25) {
           console.log(roda1.rotation.y)
 
-          roda1.rotateX(-tireAngle)
+          roda1.rotateX(tireAngle)
           roda2.rotateX(-tireAngle)
         }
         if (speed > 0) cybertruck.rotateY(-angle)
         else if (speed < 0) cybertruck.rotateY(angle)
       }
       if (keyboard.pressed('left')) {
-        if (roda1.rotation.y <= 0.15) {
+        if (roda1.rotation.y <= 0.25) {
           console.log(roda1.rotation.y)
-          roda1.rotateX(tireAngle)
+          roda1.rotateX(-tireAngle)
           roda2.rotateX(tireAngle)
         }
         if (speed > 0)
