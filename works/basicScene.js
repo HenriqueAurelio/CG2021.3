@@ -32,20 +32,6 @@ var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
-let roads = []
-roads = new tracks(scene, 1).getRoads()
-let foraDaPista = false
-var inspectMode = false
-var car = new carGroup()
-let cybertruck = new Cybertruck()
-var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
-var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
-var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
-var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
-var cameraPoint = cybertruck.children.filter(
-  (part) => part.name == 'cameraPoint'
-)[0]
 
 initDefaultBasicLight(scene, true)
 
@@ -89,7 +75,12 @@ window.addEventListener(
   false
 )
 
-carStartPosition()
+let foraDaPista = false
+var inspectMode = false
+var car = new carGroup()
+let cybertruck = new Cybertruck()
+cybertruck.position.z = 5
+cybertruck.rotateY(22)
 scene.add(cybertruck)
 // Camera
 let SCREEN_WIDTH = window.innerWidth
@@ -126,7 +117,18 @@ function cameraUpdate() {
   camera.lookAt(worldPosition)
 }
 
+// Tracks
+let roads = []
+roads = new tracks(scene, 1).getRoads()
 scene.add(car)
+var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
+var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
+var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
+var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
+var cameraPoint = cybertruck.children.filter(
+  (part) => part.name == 'cameraPoint'
+)[0]
 
 var won = false
 var timer = new THREE.Clock()
