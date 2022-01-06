@@ -25,6 +25,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.createWindows()
     this.createDoors()
     this.createCameraPoint()
+    this.createHoleForTires()
 
     //----------------- APAGAR -----------------
 
@@ -370,16 +371,8 @@ export default class Cybertruck extends THREE.Object3D {
     var smileyEye2Path = new THREE.Path()
     smileyEye2Path.absarc(1.5, -2.0, 1.0, 0, Math.PI * 2, true)
 
-    var smileyMouthPath = new THREE.Path()
-    smileyMouthPath.moveTo(-2.0, 0.0)
-    smileyMouthPath.quadraticCurveTo(0.0, 2.0, 2.0, 0.0)
-    smileyMouthPath.bezierCurveTo(3.0, 0.5, 3.0, 1.0, 2.0, 2.0)
-    smileyMouthPath.quadraticCurveTo(0.0, 4.0, -2.0, 2.0)
-    smileyMouthPath.quadraticCurveTo(-3.5, 1.0, -2.0, 0.0)
-
     smileyShape.holes.push(smileyEye1Path)
     smileyShape.holes.push(smileyEye2Path)
-    smileyShape.holes.push(smileyMouthPath)
 
     var extrudeSettings = {
       depth: 5,
@@ -390,7 +383,13 @@ export default class Cybertruck extends THREE.Object3D {
       smileyShape,
       extrudeSettings
     )
-    var object = new THREE.Mesh(extrudeGeometry, objectMaterial)
+    var object = new THREE.Mesh(
+      extrudeGeometry,
+      new THREE.MeshStandardMaterial({
+        color: 0x2b2b2b,
+      })
+    )
+    object.position.set(0, 3, 10)
     this.mesh.add(object)
   }
 }
