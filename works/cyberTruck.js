@@ -9,69 +9,24 @@ export default class Cybertruck extends THREE.Object3D {
     this.depth = 23 * 0.3 //23
 
     this.createCar()
-    this.mesh.name = 'Cybertruck'
-    return this.mesh
+    return this.mesh;
   }
 
   createCar() {
-    let W = this.width,
-      H = this.height,
-      D = this.depth,
-      flipXVertices = (a) => [-a[0], a[1], a[2]],
-      toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
+    this.createBlock();
+    this.createTires();
+    this.createLights();
+    this.createWindows();
+    this.createDoors();
+    this.createCameraPoint();
+    this.createHoleForTires();
+    this.createBodywork();
+    this.createSupportParts();
+    this.createTiresDetails();
 
-    this.createBlock()
-    this.createTires()
-    this.createWindows()
-    this.createDoors()
-    this.createCameraPoint()
-    this.createHoleForTires()
-
-    //----------------- APAGAR -----------------
-
-    // X. Front Cylinders
-    let cylinderGeo = new THREE.CylinderBufferGeometry(
-        W * 0.025,
-        W * 0.025,
-        H * 0.32,
-        32
-      ),
-      cylinderMat = new THREE.MeshStandardMaterial({
-        color: 0x969696,
-      }),
-      leftCylinder = new THREE.Mesh(cylinderGeo, cylinderMat)
-
-    // left
-    leftCylinder.position.set(W * 0.33, H * -0.09, D * 0.355)
-    leftCylinder.rotation.x = (-5 * Math.PI) / 180
-    this.mesh.add(leftCylinder)
-
-    // right
-    let rightCylinder = leftCylinder.clone()
-    rightCylinder.position.x *= -1
-    this.mesh.add(rightCylinder)
-
-    // XI. Axles
-		// A. Axels Themselves
-		let axleGeo = new THREE.CylinderBufferGeometry(W*0.02,W*0.02,W*0.72,32),
-    axleMat = new THREE.MeshStandardMaterial({
-      color: 0x7f7f7f,
-    }),
-    frontAxle = new THREE.Mesh(axleGeo,axleMat);
-
-    // front
-    frontAxle.position.set(0,H*-0.27,D*0.36);
-    frontAxle.rotation.z = -Math.PI/2;
-    this.mesh.add(frontAxle);
-
-    // back
-    let backAxle = frontAxle.clone();
-    backAxle.position.z = D*-0.3;
-    this.mesh.add(backAxle);
-
-    this.mesh.rotateX(Math.PI / 2)
-
-    this.mesh.position.set(0, 20, 0)
+    this.mesh.position.set(0, 20, 0);
+    this.mesh.rotateX(Math.PI / 2);
+    this.mesh.name = 'Cybertruck';
   }
 
   createCameraPoint() {
@@ -157,15 +112,236 @@ export default class Cybertruck extends THREE.Object3D {
       ],
       fuelCapGeo = new ConvexGeometry(fuelCapVerticesArr.map(toVectors))
     let fuelCap = new THREE.Line(fuelCapGeo, fuelMat)
-    this.mesh.add(fuelCap)
+    //this.mesh.add(fuelCap)
   }
 
-  createBodywork() {}
+  createBodywork() {
+    let W = this.width,
+        H = this.height,
+        D = this.depth,
+        flipXVertices = a => [-a[0],a[1],a[2]],
+        toVectors = a => new THREE.Vector3(W * a[0],H * a[1],D * a[2]);
+
+    // Back
+		// A. Connecting Bumper
+		let backVerticesArr = [
+      [-0.423,-0.1,  -0.47],
+      [0.423, -0.1,  -0.47],
+      [-0.423,-0.222,-0.47],
+      [0.423, -0.222,-0.47],
+      [-0.423,-0.1,  -0.38],
+      [0.423, -0.1,  -0.38],
+      [-0.423,-0.285,-0.4],
+      [0.423, -0.285,-0.4]
+    ],
+    backGeo = new ConvexGeometry(backVerticesArr.map(toVectors));
+    let backMat = new THREE.MeshStandardMaterial({
+      color: 0x101010,
+    });
+    let back = new THREE.Mesh(backGeo,backMat);
+    this.mesh.add(back);
+
+    // B. Red Lines
+    let backLightInnerMat = new THREE.MeshBasicMaterial({
+      color: 0xd65a65,
+    })
+    let redLinesMat = new THREE.MeshStandardMaterial({
+        color: 0xd81937,
+      }),
+      leftRedLinesVerticesArr = [
+        [0.356, -0.115,-0.4701],
+        [0.4231,-0.115,-0.4701],
+        [0.4231,-0.115,-0.385],
+        [0.356, -0.135,-0.4701],
+        [0.4231,-0.135,-0.4701],
+        [0.4231,-0.135,-0.387]
+      ],
+      leftRedLinesGeo = new ConvexGeometry(leftRedLinesVerticesArr.map(toVectors))
+
+    // left
+    let leftRedLines = new THREE.Mesh(leftRedLinesGeo,redLinesMat);
+    this.mesh.add(leftRedLines);
+
+    let leftSmallBackLightVerticesArr = [
+        [0.4,   -0.135,-0.4702],
+        [0.4231,-0.135,-0.4702],
+        [0.4,   -0.115,-0.4702],
+        [0.4231,-0.115,-0.4702]
+      ],
+      leftSmallBackLightGeo = new ConvexGeometry(leftSmallBackLightVerticesArr.map(toVectors));
+
+    let leftSmallBackLight = new THREE.Mesh(leftSmallBackLightGeo,backLightInnerMat);
+    this.mesh.add(leftSmallBackLight);
+
+    // right
+    let rightRedLinesVerticesArr = leftRedLinesVerticesArr.map(flipXVertices),
+    rightRedLinesGeo = new ConvexGeometry(rightRedLinesVerticesArr.map(toVectors))
+
+    let rightRedLines = new THREE.Mesh(rightRedLinesGeo,redLinesMat);
+    this.mesh.add(rightRedLines);
+
+    let rightSmallBackLightVerticesArr = leftSmallBackLightVerticesArr.map(flipXVertices),
+    rightSmallBackLightGeo = new ConvexGeometry(rightSmallBackLightVerticesArr.map(toVectors));
+
+    let rightSmallBackLight = new THREE.Mesh(rightSmallBackLightGeo,backLightInnerMat);
+    this.mesh.add(rightSmallBackLight);
+
+    //------------------------- C. Bumper------------------------------
+
+		let backBumperVerticesArr = [
+      [-0.452,-0.15, -0.49],
+      [-0.143,-0.15, -0.49],
+      [-0.415,-0.223,-0.49],
+      [-0.128,-0.223,-0.49],
+      [0.143, -0.15, -0.49],
+      [0.452, -0.15, -0.49],
+      [0.128, -0.223,-0.49],
+      [0.415, -0.223,-0.49],
+      [-0.208,-0.25, -0.49],
+      [0.208, -0.25, -0.49],
+      [-0.423,-0.286,-0.4],
+      [-0.226,-0.311,-0.4],
+      [0.226, -0.311,-0.4],
+      [0.423, -0.286,-0.4],
+      [-0.424,-0.15, -0.47],
+      [-0.143,-0.15, -0.47],
+      [0.143, -0.15, -0.47],
+      [0.424, -0.15, -0.47],
+      [-0.128,-0.223,-0.47],
+      [0.128, -0.223,-0.47],
+      [-0.5,  -0.15, -0.385],
+      [-0.424,-0.15, -0.385],
+      [0.424, -0.15, -0.385],
+      [0.5,   -0.15, -0.385],
+      [-0.424,-0.223,-0.47],
+      [0.424, -0.223,-0.47],
+      [-0.226,-0.286,-0.4],
+      [0.226, -0.286,-0.4]
+    ],
+    backBumperGeo = new ConvexGeometry(backBumperVerticesArr.map(toVectors));
+    let sideMat = new THREE.MeshStandardMaterial({
+      color: 0x2b2b2b,
+    });
+
+    let backBumper = new THREE.Mesh(backBumperGeo,sideMat);
+    backBumper.castShadow = true;
+    this.mesh.add(backBumper);
+
+    //------------------- Front Bumper --------------------
+
+		let frontBumperVerticesArr = [
+      [-0.5,  -0.13, 0.4501],
+      [0.5,   -0.13, 0.4501],
+      [-0.346,-0.13, 0.495],
+      [0.346, -0.13, 0.495],
+      [-0.5,  -0.194,0.4501],
+      [0.5,   -0.194,0.4501],
+      [-0.346,-0.194,0.495],
+      [0.346, -0.194,0.495],
+      [-0.466,-0.242,0.4501],
+      [0.466, -0.242,0.4501],
+      [-0.346,-0.242,0.485],
+      [0.346, -0.242,0.485],
+      [-0.346,-0.31, 0.4501],
+      [0.346, -0.31, 0.4501],
+      [-0.346,-0.194,0.47],
+      [0.346, -0.194,0.47],
+      [-0.346,-0.242,0.47],
+      [0.346, -0.242,0.47]
+    ],
+    frontBumperGeo = new ConvexGeometry(frontBumperVerticesArr.map(toVectors))
+
+    let frontBumper = new THREE.Mesh(frontBumperGeo,sideMat);
+    frontBumper.castShadow = true;
+    this.mesh.add(frontBumper);
+  }
 
   createLights() {
-    lightMat = new THREE.MeshBasicMaterial({
+    let W = this.width,
+        H = this.height,
+        D = this.depth,
+        flipXVertices = a => [-a[0],a[1],a[2]],
+        toVectors = a => new THREE.Vector3(W * a[0],H * a[1],D * a[2]);
+
+
+    let lightMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
     })
+
+    // B. TOP Light
+		let topLightVerticesArr = [
+      [-0.26,0.49,0.09],
+      [0.26, 0.49,0.09],
+      [-0.26,0.48,0.1],
+      [0.26, 0.48,0.1]
+    ],
+    topLightGeo = new ConvexGeometry(topLightVerticesArr.map(toVectors));
+    let topLight = new THREE.Mesh(topLightGeo,lightMat);
+    this.mesh.add(topLight);
+
+    //-------------------- Front Lights ----------------------
+		// A. Upper
+		let frontLightVerticesArr = [
+      [-0.45,  0.075,0.4701],
+      [-0.33,  0.04, 0.4999],
+      [0.33,   0.04, 0.4999],
+      [0.45,   0.075,0.4701],
+
+      [-0.45,  0.043,0.4685],
+      [-0.3315,0.02, 0.4985],
+      [0.3315, 0.02, 0.4985],
+      [0.45,   0.043,0.4685]
+    ],
+    frontLightGeo = new ConvexGeometry(frontLightVerticesArr.map(toVectors))
+
+    let frontLight = new THREE.Mesh(frontLightGeo,lightMat);
+    this.mesh.add(frontLight);
+
+  // B. Lower
+  let lowerLightMat = new THREE.MeshBasicMaterial({
+      color: 0xff9e59,
+    }),
+    lowerLFrontLightVerticesArr = [
+      [0.343,-0.13,0.4881],
+      [0.45, -0.13,0.4601],
+      [0.343,-0.12,0.4885],
+      [0.45, -0.12,0.4605]
+    ],
+    lowerLFrontLightGeo = new ConvexGeometry(lowerLFrontLightVerticesArr.map(toVectors))
+
+    // left
+    let lowerLFrontLight = new THREE.Mesh(lowerLFrontLightGeo,lowerLightMat);
+    this.mesh.add(lowerLFrontLight);
+
+    // right
+    let lowerRFrontLightVerticesArr = lowerLFrontLightVerticesArr.map(flipXVertices),
+    lowerRFrontLightGeo = new ConvexGeometry(lowerRFrontLightVerticesArr.map(toVectors)) 
+
+    let lowerRFrontLight = new THREE.Mesh(lowerRFrontLightGeo,lowerLightMat);
+    this.mesh.add(lowerRFrontLight);
+
+    // Back Light
+		let backLightGeo = new THREE.PlaneGeometry(W*0.9,H*0.06),
+    backLightMat = new THREE.MeshStandardMaterial({
+      color: 0x101010,
+    }),
+    backLight = new THREE.Mesh(backLightGeo,backLightMat);
+
+    backLightGeo.translate(0,H*0.03,0);
+    backLight.position.set(0,H*0.26,D*-0.5);
+    backLight.rotation.set(171 * Math.PI/180,0,0);
+
+    // red part
+		let backLightInnerGeo = new THREE.PlaneGeometry(W*0.9 - H*0.04, H*0.02),
+    backLightInnerMat = new THREE.MeshBasicMaterial({
+      color: 0xd65a65,
+    }),
+    backLightInner = new THREE.Mesh(backLightInnerGeo,backLightInnerMat);
+
+    backLightInnerGeo.translate(0,H*0.03,0);
+    backLightInner.position.set(0,0,0.01);
+    backLight.add(backLightInner);
+    this.mesh.add(backLight);
 
     // XIV. Light Effects
     this.headlight = new THREE.SpotLight(0x30d2d5, 0)
@@ -453,8 +629,6 @@ export default class Cybertruck extends THREE.Object3D {
     this.wheels[3].position.set(W*-0.43,H*-0.27,D*-0.3);
     this.wheels[3].rotation.z = Math.PI/2;
     this.mesh.add(this.wheels[3]);
-
-    this.createTiresDetails()
   }
 
   createTiresDetails(){
@@ -558,7 +732,162 @@ export default class Cybertruck extends THREE.Object3D {
 
     let rightSide = new THREE.Mesh(rightSideGeo, sideMat)
     rightSide.castShadow = true
-    this.mesh.add(rightSide)
+    paralamasDoSucesso.add(rightSide);
+
+    this.mesh.add(paralamasDoSucesso);
+  }
+
+  createSupportParts(){
+    let W = this.width,
+        H = this.height,
+        D = this.depth,
+        flipXVertices = a => [-a[0],a[1],a[2]],
+        toVectors = a => new THREE.Vector3(W * a[0],H * a[1],D * a[2]);
+
+    // X. Front Cylinders
+    let cylinderGeo = new THREE.CylinderBufferGeometry(
+      W * 0.025,
+      W * 0.025,
+      H * 0.32,
+      32
+    ),
+    cylinderMat = new THREE.MeshStandardMaterial({
+      color: 0x969696,
+    }),
+    leftCylinder = new THREE.Mesh(cylinderGeo, cylinderMat)
+
+    // left
+    leftCylinder.position.set(W * 0.33, H * -0.09, D * 0.355)
+    leftCylinder.rotation.x = (-5 * Math.PI) / 180
+    this.mesh.add(leftCylinder)
+
+    // right
+    let rightCylinder = leftCylinder.clone()
+    rightCylinder.position.x *= -1
+    this.mesh.add(rightCylinder)
+
+    // XI. Axles
+    // A. Axels Themselves
+    let axleGeo = new THREE.CylinderBufferGeometry(W*0.02,W*0.02,W*0.72,32),
+    axleMat = new THREE.MeshStandardMaterial({
+      color: 0x7f7f7f,
+    }),
+    frontAxle = new THREE.Mesh(axleGeo,axleMat);
+
+    // front
+    frontAxle.position.set(0,H*-0.27,D*0.36);
+    frontAxle.rotation.z = -Math.PI/2;
+    this.mesh.add(frontAxle);
+
+    // back
+    let backAxle = frontAxle.clone();
+    backAxle.position.z = D*-0.3;
+    this.mesh.add(backAxle);
+
+    //------------- Support Parts -------------------
+    let supportMat = new THREE.MeshStandardMaterial({
+      color: 0x595959,
+    }),
+    frontAxleSupportVerticesArr = [
+      // back (0–7)
+      [-0.3,  -0.31, 0.2582],
+      [0.3,   -0.31, 0.2582],
+      [-0.3,  -0.17, 0.265],
+      [0.3,   -0.17, 0.265],
+      [-0.3,  -0.31, 0.31],
+      [0.3,   -0.31, 0.31],
+      [-0.3,  0.04,  0.31],
+      [0.3,   0.04,  0.31],
+      // front (8–15)
+      [-0.3,  -0.31, 0.42],
+      [0.3,   -0.31, 0.42],
+      [-0.3,  0.04,  0.42],
+      [0.3,   0.04,  0.42],
+      [-0.3,  -0.31, 0.45],
+      [0.3,   -0.31, 0.45],
+      [-0.3,  -0.13, 0.45],
+      [0.3,   -0.13, 0.45],
+      // right side (16–22)
+      [-0.355,-0.31, 0.2582],
+      [-0.45, -0.17, 0.265],
+      [-0.45, 0.04,  0.3099],
+      [-0.45, 0.04,  0.42],
+      [-0.45, -0.13, 0.45],
+      [-0.45, -0.13, 0.455],
+      [-0.346,-0.31, 0.45],
+      // left side (23-29)
+      [0.355, -0.31, 0.2582],
+      [0.45,  -0.17, 0.265],
+      [0.45,  0.04,  0.3099],
+      [0.45,  0.04,  0.42],
+      [0.45,  -0.13, 0.45],
+      [0.45,  -0.13, 0.455],
+      [0.346, -0.31, 0.45]
+    ],
+    frontAxleSupportGeo = new ConvexGeometry(frontAxleSupportVerticesArr.map(toVectors));
+      
+    let frontAxleSupport = new THREE.Mesh(frontAxleSupportGeo,supportMat);
+    frontAxleSupport.castShadow = true;
+    this.mesh.add(frontAxleSupport);
+
+    let backAxleSupportVerticesArr = [
+        // back (0–7)
+        [-0.3,  -0.29, -0.3999],
+        [0.3,   -0.29, -0.3999],
+        [-0.3,  -0.1,  -0.38],
+        [0.3,   -0.1,  -0.38],
+        [-0.3,  -0.31, -0.35],
+        [0.3,   -0.31, -0.35],
+        [-0.3,  0.04,  -0.35],
+        [0.3,   0.04,  -0.35],
+        // front (8–15)
+        [-0.3,  -0.31, -0.24],
+        [0.3,   -0.31, -0.24],
+        [-0.3,  0.04,  -0.24],
+        [0.3,   0.04,  -0.24],
+        [-0.3,  -0.29, -0.19],
+        [0.3,   -0.29, -0.19],
+        [-0.3,  -0.15, -0.19],
+        [0.3,   -0.15, -0.19],
+        // right side (16–22)
+        [-0.423,-0.285,-0.3999],
+        [-0.423,-0.1,  -0.3799],
+        [-0.45, 0.04,  -0.3501],
+        [-0.45, 0.04,  -0.24],
+        [-0.45, -0.15, -0.19],
+        [-0.45, -0.15, -0.197],
+        [-0.355,-0.29, -0.19],
+        // left side (23-29)
+        [0.423, -0.285,-0.3999],
+        [0.423, -0.1,  -0.3799],
+        [0.45,  0.04,  -0.3501],
+        [0.45,  0.04,  -0.24],
+        [0.45,  -0.15, -0.19],
+        [0.45,  -0.15, -0.197],
+        [0.355, -0.29, -0.19]
+      ],
+      backAxleSupportGeo = new ConvexGeometry(backAxleSupportVerticesArr.map(toVectors));
+
+    let backAxleSupport = new THREE.Mesh(backAxleSupportGeo,supportMat);
+    backAxleSupport.castShadow = true;
+    this.mesh.add(backAxleSupport);
+
+    // C. Bottom Plane Between
+    let bottomVerticesArr = [
+        [-0.355,-0.29,-0.19],
+        [-0.3,  -0.29,-0.19],
+        [0.3,   -0.29,-0.19],
+        [0.355, -0.29,-0.19],
+        [-0.355,-0.31,0.2582],
+        [-0.3,  -0.31,0.2582],
+        [0.3,   -0.31,0.2582],
+        [0.355, -0.31,0.2582]
+      ],
+      bottomGeo = new ConvexGeometry(bottomVerticesArr.map(toVectors));
+
+    let bottom = new THREE.Mesh(bottomGeo,supportMat);
+    bottom.castShadow = true;
+    //this.mesh.add(bottom);
   }
 
   createHoleForTires() {
@@ -567,11 +896,6 @@ export default class Cybertruck extends THREE.Object3D {
 
     var smileyEye1Path = new THREE.Path()
     smileyEye1Path.absellipse(-1.5, -2.0, 1.0, 1.0, 0, Math.PI * 2, true)
-
-    let rightSide = new THREE.Mesh(rightSideGeo,sideMat);
-    rightSide.castShadow = true;
-    paralamasDoSucesso.add(rightSide);
-
-    this.mesh.add(paralamasDoSucesso);
   }
+  
 }
