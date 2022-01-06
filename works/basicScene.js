@@ -114,7 +114,7 @@ function cameraUpdate() {
   camera.position.y = cybertruck.position.y - 10
   camera.position.z = cybertruck.position.z + 20
 
-  camera.lookAt(cybertruck.position)
+  camera.lookAt(worldPosition)
 }
 
 // Tracks
@@ -126,7 +126,7 @@ var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
-var cameraPoint = car.children.filter((part) => part.name == 'cameraPoint')[0]
+var cameraPoint = cybertruck.children.filter((part) => part.name == 'cameraPoint')[0]
 
 var won = false
 var timer = new THREE.Clock()
@@ -311,12 +311,12 @@ function gameMode() {
   var obj
 
   if (inspectMode) {
-    car.position.set(0, 0, 0)
+    cybertruck.position.set(0, 0, 0)
     camera = inspectCamera
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
-      if (scene.children[i].name != `Carro`) obj.visible = false
+      if (scene.children[i].name != `Cybertruck`) obj.visible = false
     }
   } else {
     if (entryInspect) {
@@ -324,12 +324,9 @@ function gameMode() {
 
       for (var i = scene.children.length - 1; i >= 2; i--) {
         obj = scene.children[i]
-        if (scene.children[i].name != `Carro`) obj.visible = true
+        if (scene.children[i].name != `Cybertruck`) obj.visible = true
       }
-      car.position.set(1, 10, 1.5)
-      car.rotation.set(0, 0, -1.5663706143591731)
-      roda1.rotation.set(Math.PI / 2, 0, 0)
-      roda2.rotation.set(Math.PI / 2, 0, -0)
+      carStartPosition();
       timer.start()
       entryInspect = false
     }
@@ -412,8 +409,8 @@ function bestLapFunction() {
 }
 
 function carStartPosition() {
-  car.position.set(1, 10, 1.5)
-  car.rotation.set(0, 0, -1.5663706143591731)
+  cybertruck.position.set(1, 10, 1.5)
+  cybertruck.rotation.set(0, 0, 1.5663706143591731)
   roda1.rotation.set(Math.PI / 2, 0, 0)
   roda2.rotation.set(Math.PI / 2, 0, -0)
   speed = 0
