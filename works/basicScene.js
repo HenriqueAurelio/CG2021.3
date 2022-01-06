@@ -242,7 +242,6 @@ function keyboardUpdate() {
 
       if (keyboard.pressed('right')) {
         if (roda1.rotation.y >= 0.15) {
-          console.log(roda1.rotation.y)
 
           roda1.rotateX(-tireAngle)
           roda2.rotateX(-tireAngle)
@@ -252,7 +251,6 @@ function keyboardUpdate() {
       }
       if (keyboard.pressed('left')) {
         if (roda1.rotation.y <= 0.15) {
-          console.log(roda1.rotation.y)
           roda1.rotateX(tireAngle)
           roda2.rotateX(tireAngle)
         }
