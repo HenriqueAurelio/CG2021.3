@@ -2,90 +2,6 @@
 class Cybertruck {
 	constructor() {
 
-
-		
-			doorOutlineFLVerticesArr = [
-				[0.451,-0.17,0.255],
-				[0.451,0.12, 0.255],
-				[0.425,0.192,0.255],
-				[0.424,0.192,0.255]
-			],
-			doorOutlineFLVertices = doorOutlineFLVerticesArr.map(toVectors),
-			doorOutlineFLGeo = new THREE.Geometry();
-
-		// front left
-		doorOutlineFLGeo.vertices = doorOutlineFLVertices;
-
-		let doorOutlineFL = new THREE.Line(doorOutlineFLGeo,doorOutlineMat);
-		this.mesh.add(doorOutlineFL);
-
-		// front right
-		let doorOutlineFRVerticesArr = doorOutlineFLVerticesArr.map(flipXVertices),
-			doorOutlineFRVertices = doorOutlineFRVerticesArr.map(toVectors),
-			doorOutlineFRGeo = new THREE.Geometry();
-
-		doorOutlineFRGeo.vertices = doorOutlineFRVertices;
-
-		let doorOutlineFR = new THREE.Line(doorOutlineFRGeo,doorOutlineMat);
-		this.mesh.add(doorOutlineFR);
-
-		// middle left
-		let doorOutlineMLVerticesArr = [
-				[0.41,  -0.23,0.0594],
-				[0.4505,-0.16,0.0594],
-				[0.4505,0.156,0.0531],
-				[0.424, 0.233,0.05],
-				[0.41,  0.233,0.048]
-			],
-			doorOutlineMLVertices = doorOutlineMLVerticesArr.map(toVectors),
-			doorOutlineMLGeo = new THREE.Geometry();
-
-		doorOutlineMLGeo.vertices = doorOutlineMLVertices;
-
-		let doorOutlineML = new THREE.Line(doorOutlineMLGeo,doorOutlineMat);
-		this.mesh.add(doorOutlineML);
-
-		// middle right
-		let doorOutlineMRVerticesArr = doorOutlineMLVerticesArr.map(flipXVertices),
-			doorOutlineMRVertices = doorOutlineMRVerticesArr.map(toVectors),
-			doorOutlineMRGeo = new THREE.Geometry();
-
-		doorOutlineMRGeo.vertices = doorOutlineMRVertices;
-
-		let doorOutlineMR = new THREE.Line(doorOutlineMRGeo,doorOutlineMat);
-		this.mesh.add(doorOutlineMR);
-
-		// back left
-		let doorOutlineBLVerticesArr = [
-				[0.399, -0.23, -0.1313],
-				[0.45,  -0.152,-0.1359],
-				[0.4505,0.195, -0.1406],
-				[0.424, 0.2705,-0.1396],
-				[0.4,   0.2705,-0.1396]
-			],
-			doorOutlineBLVertices = doorOutlineBLVerticesArr.map(toVectors),
-			doorOutlineBLGeo = new THREE.Geometry();
-
-		doorOutlineBLGeo.vertices = doorOutlineBLVertices;
-
-		let doorOutlineBL = new THREE.Line(doorOutlineBLGeo,doorOutlineMat);
-		this.mesh.add(doorOutlineBL);
-
-		// back right
-		let doorOutlineBRVerticesArr = doorOutlineBLVerticesArr.map(flipXVertices),
-			doorOutlineBRVertices = doorOutlineBRVerticesArr.map(toVectors),
-			doorOutlineBRGeo = new THREE.Geometry();
-
-		doorOutlineBRGeo.vertices = doorOutlineBRVertices;
-
-		let doorOutlineBR = new THREE.Line(doorOutlineBRGeo,doorOutlineMat);
-		this.mesh.add(doorOutlineBR);
-
-		
-
-		// II. Top Parts
-
-
 		// B. Light
 		let topLightVerticesArr = [
 				[-0.26,0.49,0.09],
@@ -100,24 +16,6 @@ class Cybertruck {
 
 		let topLight = new THREE.Mesh(topLightGeo,lightMat);
 		this.mesh.add(topLight);
-
-		// C. Sliding Door
-		let slidingDoorMat = new THREE.MeshStandardMaterial({
-				color: 0x767c7f,
-			}),
-			slidingDoorVerticesArr = [
-				[-0.35,0.274,-0.472],
-				[0.35, 0.274,-0.472],
-				[-0.35,0.407,-0.145],
-				[0.35, 0.407,-0.145]
-			],
-			slidingDoorVertices = slidingDoorVerticesArr.map(toVectors),
-			slidingDoorGeo = new THREE.Geometry();
-
-		slidingDoorGeo.vertices = slidingDoorVertices;
-
-		let slidingDoor = new THREE.Mesh(slidingDoorGeo,slidingDoorMat);
-		this.mesh.add(slidingDoor);
 
 		// IV. Front Lights
 		// A. Upper
@@ -217,7 +115,6 @@ class Cybertruck {
 		backLightInner.add(backLightArea3);
 
 		this.mesh.add(backLight);
-
 
 		// VIII. Back
 		// A. Connecting Bumper
@@ -387,25 +284,6 @@ class Cybertruck {
 		rightCylinder.position.x *= -1;
 		this.mesh.add(rightCylinder);
 
-		// XI. Axles
-		// A. Axels Themselves
-		let axleGeo = new THREE.CylinderBufferGeometry(W*0.02,W*0.02,W*0.72,32),
-			axleMat = new THREE.MeshStandardMaterial({
-				color: 0x7f7f7f,
-				wireframe: this.wireframes
-			}),
-			frontAxle = new THREE.Mesh(axleGeo,axleMat);
-
-		// front
-		frontAxle.position.set(0,H*-0.27,D*0.36);
-		frontAxle.rotation.z = -Math.PI/2;
-		this.mesh.add(frontAxle);
-
-		// back
-		let backAxle = frontAxle.clone();
-		backAxle.position.z = D*-0.3;
-		this.mesh.add(backAxle);
-
 		// B. Support Parts
 		let supportMat = new THREE.MeshStandardMaterial({
 				color: 0x595959,
@@ -521,74 +399,7 @@ class Cybertruck {
 		let bottom = new THREE.Mesh(bottomGeo,supportMat);
 		bottom.castShadow = true;
 		this.mesh.add(bottom);
-
-		// XIII. Wheels
-		// A. Tire
-		let wheelGeo = new THREE.CylinderBufferGeometry(H*0.23,H*0.23,W*0.14,32),
-			wheelMat = new THREE.MeshLambertMaterial({
-				color: 0x1c1c1c,
-				wireframe: this.wireframes
-			});
-
-		this.wheels = [
-			new THREE.Mesh(wheelGeo,wheelMat)
-		];
-
-		// B. Hub
-		let wheelHub = new THREE.Object3D();
-		wheelHub.position.y = W*0.075;
-		this.wheels[0].add(wheelHub);
-
-		let hubBaseGeo = new THREE.CylinderBufferGeometry(H*0.16,H*0.17,W*0.01,7),
-			hubBaseMat = new THREE.MeshStandardMaterial({
-				color: 0x1a1a1a,
-				wireframe: this.wireframes
-			}),
-			hubBase = new THREE.Mesh(hubBaseGeo,hubBaseMat);
-		wheelHub.add(hubBase);
-
-		let hubCenterGeo = new THREE.TorusBufferGeometry(H*0.03,H*0.03,4,7),
-			hubCenter = new THREE.Mesh(hubCenterGeo,hubBaseMat);
-		hubCenter.position.y = W*0.005;
-		hubCenter.rotation.x = -Math.PI/2;
-		hubCenter.rotation.z = 3/28 * Math.PI*2;
-		hubBase.add(hubCenter);
-
-		let hubCenterPlateGeo = new THREE.CircleBufferGeometry(H*0.03,7),
-			hubCenterPlate = new THREE.Mesh(hubCenterPlateGeo,hubBaseMat);
-		hubCenterPlate.position.z = W*0.025;
-		hubCenter.add(hubCenterPlate);
-
-		let spokeVerticesArr = [
-				// back (0–5)
-				[-0.02,-0.063,-0.003],
-				[0.02, -0.063,-0.003],
-				[-0.02,0.03,  -0.003],
-				[0.02, 0.03,  -0.003],
-				[-0.02,0.063,-0.003],
-				[0.02, 0.063,-0.003],
-				// front (6–9)
-				[-0.015,-0.063,0.003],
-				[0.015, -0.063,0.003],
-				[-0.015,0.03,0.003],
-				[0.015, 0.03,0.003]
-			],
-			spokeVertices = spokeVerticesArr.map(toVectors),
-			spokeGeo = new THREE.Geometry();
-
-		spokeGeo.vertices = spokeVertices;
-		spokeGeo.computeFaceNormals();
-		spokeGeo.translate(0,H*0.1135,0);
-
-		let spoke = new THREE.Mesh(spokeGeo,hubBaseMat);
-		spoke.rotation.z = 3/28 * Math.PI*2;
-		hubCenter.add(spoke);
-
-		for (let s = 1; s < 7; ++s) {
-			let spokeClone = spoke.clone();
-			spokeClone.rotation.z += ((Math.PI*2)/7) * s;
-			hubCenter.add(spokeClone);
-		}		
+			
 	}
 
 	move() {
