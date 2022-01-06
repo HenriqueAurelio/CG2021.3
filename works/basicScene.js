@@ -126,7 +126,9 @@ var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
-var cameraPoint = cybertruck.children.filter((part) => part.name == 'cameraPoint')[0]
+var cameraPoint = cybertruck.children.filter(
+  (part) => part.name == 'cameraPoint'
+)[0]
 
 var won = false
 var timer = new THREE.Clock()
@@ -241,17 +243,16 @@ function keyboardUpdate() {
       cybertruck.translateZ(speed / coeficienteVelocidade)
 
       if (keyboard.pressed('right')) {
-        if (roda1.rotation.y >= 0.15) {
-
-          roda1.rotateX(-tireAngle)
+        if (roda1.rotation.y >= -0.25) {
+          roda1.rotateX(tireAngle)
           roda2.rotateX(-tireAngle)
         }
         if (speed > 0) cybertruck.rotateY(-angle)
         else if (speed < 0) cybertruck.rotateY(angle)
       }
       if (keyboard.pressed('left')) {
-        if (roda1.rotation.y <= 0.15) {
-          roda1.rotateX(tireAngle)
+        if (roda1.rotation.y <= 0.25) {
+          roda1.rotateX(-tireAngle)
           roda2.rotateX(tireAngle)
         }
         if (speed > 0)
@@ -324,7 +325,7 @@ function gameMode() {
         obj = scene.children[i]
         if (scene.children[i].name != `Cybertruck`) obj.visible = true
       }
-      carStartPosition();
+      carStartPosition()
       timer.start()
       entryInspect = false
     }
@@ -408,9 +409,10 @@ function bestLapFunction() {
 
 function carStartPosition() {
   cybertruck.position.set(1, 10, 1.5)
-  cybertruck.rotation.set(0, 0, 1.5663706143591731)
-  roda1.rotation.set(Math.PI / 2, 0, 0)
-  roda2.rotation.set(Math.PI / 2, 0, -0)
+  cybertruck.rotation.set(Math.PI / 2, 0, 0)
+  cybertruck.rotateY(22)
+  roda1.rotation.set(0, 0, -Math.PI / 2)
+  roda2.rotation.set(0, 0, Math.PI / 2)
   speed = 0
 }
 
