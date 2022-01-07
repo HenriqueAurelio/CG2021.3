@@ -120,7 +120,7 @@ function cameraUpdate() {
 // Tracks
 let roads = []
 roads = new tracks(scene, 1).getRoads()
-scene.add(car)
+// scene.add(car)
 var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
 var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
@@ -211,11 +211,14 @@ function keyboardUpdate() {
       )
       secondaryBox2.changeMessage((speed / 10).toFixed() + ' km/h')
       if (speed > 0) {
+        console.log(cybertruck)
+        cybertruck.move('forward')
         if (keyboard.pressed('right') || keyboard.pressed('left')) {
           acc -= 1
         }
         acc -= 2
       } else if (speed < 0) {
+        cybertruck.move('backwards')
         if (keyboard.pressed('right') || keyboard.pressed('left')) {
           acc += 1
         }
