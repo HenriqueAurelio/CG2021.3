@@ -958,6 +958,23 @@ export default class Cybertruck extends THREE.Object3D {
     material.side = THREE.DoubleSide // Show front and back polygons
     const leftTireDetailsMesh = new THREE.Mesh(geometry, material)
     this.mesh.add(leftTireDetailsMesh)
+
+    //Flipping
+    console.log(leftPointsDetails)
+
+    let reverseFaceDraws = (a) => a.reverse()
+    let rightSideVerticesArr = this.flipFunction(
+      JSON.parse(JSON.stringify(leftPointsDetails))
+    )
+    //Problema de referencia
+    console.log(rightSideVerticesArr)
+    let rightSideFacesArr = leftSideFacesArr.map(reverseFaceDraws)
+    buffer = this.forFunction(rightSideFacesArr, rightSideVerticesArr)
+    geometry = new THREE.BufferGeometry()
+    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry.computeVertexNormals() // to avoid a flat surface
+    let rightSide = new THREE.Mesh(geometry, material)
+    this.mesh.add(rightSide)
   }
 
   createSupportParts() {
@@ -1138,6 +1155,17 @@ export default class Cybertruck extends THREE.Object3D {
           b++
         }
       }
+    }
+    return buffer
+  }
+  flipFunction(vertices) {
+    const buffer = []
+    for (let k = 0; k < vertices.length; k++) {
+      let aux = JSON.parse(JSON.stringify(vertices[k]))
+      aux[0] = vertices[0]
+      aux[1] = vertices[1]
+      aux[2] = vertices[2]
+      buffer.push(aux)
     }
     return buffer
   }
