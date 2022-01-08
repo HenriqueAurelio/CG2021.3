@@ -17,6 +17,8 @@ import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 import bestLap from './bestLap.js'
+//import * as Ammo from '/ammo/ammo.wasm.js'
+//import { } from '@enable3d/ammo-physics'
 
 var acc = 0
 var speed = 0
@@ -88,7 +90,7 @@ let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
-var inspectCamera = initCamera(new THREE.Vector3(5, -10, 10)) //new THREE.OrthographicCamera()
+var inspectCamera = initCamera(new THREE.Vector3(5, -10, 10))
 //var inspectCamera =  initCamera(new THREE.Vector3(0, 60, 35))
 //inspectCamera.position.set(0, -20, 30);
 inspectCamera.up.set(0, 0, 2)
@@ -292,6 +294,98 @@ function controlledRender() {
   virtualCamera.lookAt(50, 50, 0)
   virtualCamera.up.set(0, 0, 1)
   renderer.render(scene, virtualCamera) // Render scene of the virtual camera
+}
+
+
+// ----------------------------------- physics ------------------------------------
+
+function createBox() {
+  let pos = { x: -10, y: 6, z: 0 }
+  let scale = { x: 6, y: 6, z: 6 }
+  let quat = { x: 0, y: 0, z: 0, w: 1 };
+  let mass = 1;
+
+  let box = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: 0xDC143C }));
+  box.position.set(pos.x, pos.y, pos.z);
+  box.scale.set(scale.x, scale.y, scale.z);
+  box.castShadow = true;
+  box.receiveShadow = true;
+  scene.add(box);
+
+  // AMMO.js
+  let transform = new Ammo.btTransform();
+  transform.setIdentity();
+  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+  let motionState = new Ammo.btDefaultMotionState(transform);
+
+  let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
+  colShape.setMargin(0.05);
+
+  let localInertia = new Ammo.btVector3(0, 0, 0);
+  colShape.calculateLocalInertia(mass, localInertia);
+
+  let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
+  let body = new Ammo.btRigidBody(rbInfo);
+  body.setActivationState(4);
+
+  physicsWorld.addRigidBody(body);
+  rigidBodies.push(box)
+
+  box.userData.physicsBody = body;
+  box.userData.draggable = true;
+}
+
+var tmpTrans// Ammo.btTransform;
+var physicsWorld// Ammo.btDiscreteDynamicsWorld;
+var rigidBodies = [];
+var resultantImpulse// Ammo.btVector3;
+
+Ammo().then(function (AmmoLib) {
+
+  tmpTrans = new Ammo.btTransform();
+  resultantImpulse = new Ammo.btVector3(0, 0, 0);
+
+  setupPhysicsWorld();
+
+  createFloor();
+  createBox();
+  createSphere();
+  createCylinder();
+
+  animate();
+})
+
+function setupPhysicsWorld() {
+
+  let collisionConfiguration = new Ammo.btDefaultCollisionConfiguration(),
+    dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration),
+    overlappingPairCache = new Ammo.btDbvtBroadphase(),
+    solver = new Ammo.btSequentialImpulseConstraintSolver();
+
+  physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+  physicsWorld.setGravity(new Ammo.btVector3(0, -10, 0));
+
+}
+
+function updatePhysics(deltaTime) {
+
+  // Step world
+  physicsWorld.stepSimulation(deltaTime, 10);
+
+    // Update rigid bodies
+    for (let i = 0; i < rigidBodies.length; i++) {
+      let objThree = rigidBodies[i];
+      let objAmmo = objThree.userData.physicsBody;
+      let ms = objAmmo.getMotionState();
+      if (ms) {
+        ms.getWorldTransform(tmpTrans);
+        let p = tmpTrans.getOrigin();
+        let q = tmpTrans.getRotation();
+        objThree.position.set(p.x(), p.y(), p.z());
+        objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
+      }
+    }
 }
 
 function render() {
