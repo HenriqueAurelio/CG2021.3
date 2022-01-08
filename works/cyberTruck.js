@@ -974,6 +974,7 @@ export default class Cybertruck extends THREE.Object3D {
     geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
     geometry.computeVertexNormals() // to avoid a flat surface
     let rightSide = new THREE.Mesh(geometry, material)
+    console.log(rightSide)
     this.mesh.add(rightSide)
   }
 
@@ -1159,14 +1160,13 @@ export default class Cybertruck extends THREE.Object3D {
     return buffer
   }
   flipFunction(vertices) {
-    const buffer = []
     for (let k = 0; k < vertices.length; k++) {
-      let aux = JSON.parse(JSON.stringify(vertices[k]))
-      aux[0] = vertices[0]
-      aux[1] = vertices[1]
-      aux[2] = vertices[2]
-      buffer.push(aux)
+      let actualVet = vertices[k]
+      actualVet[0] = -1 * actualVet[0]
+      actualVet[1] = actualVet[1]
+      actualVet[2] = actualVet[2]
+      vertices[k] = actualVet
     }
-    return buffer
+    return vertices
   }
 }
