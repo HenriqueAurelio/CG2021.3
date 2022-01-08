@@ -99,7 +99,6 @@ var trackballControls = new TrackballControls(
 
 var camera = gameCamera //camera.add(car)
 camera.up.set(0, 0, 1)
-
 scene.add(camera)
 
 // Virtual Camera
@@ -315,6 +314,7 @@ function gameMode() {
 
   if (inspectMode) {
     cybertruck.position.set(0, 0, 0)
+    inspectCamera.position.set(5, -10, 10)
     camera = inspectCamera
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
