@@ -19,9 +19,9 @@ export default class Cybertruck extends THREE.Object3D {
     this.createWindows()
     this.createDoors()
     this.createCameraPoint()
-    // this.createBodywork()
-    this.createSupportParts()
-    this.createTiresDetails()
+    this.createBodywork()
+    //this.createSupportParts()
+    //this.createTiresDetails()
 
     this.mesh.position.set(4, 8, 1.5)
     this.mesh.rotateX(Math.PI / 2)
@@ -393,6 +393,17 @@ export default class Cybertruck extends THREE.Object3D {
       color: 0xffffff,
     })
 
+    /* B. TOP Light
+		let topLightVerticesArr = [
+      [-0.26,0.49,0.09],
+      [0.26, 0.49,0.09],
+      [-0.26,0.48,0.1],
+      [0.26, 0.48,0.1]
+    ],
+    topLightGeo = new ConvexGeometry(topLightVerticesArr.map(toVectors));
+    let topLight = new THREE.Mesh(topLightGeo,lightMat);
+    this.mesh.add(topLight);*/
+
     //-------------------- Front Lights ----------------------
     // A. Upper
     let frontLightVerticesArr = [
@@ -495,9 +506,11 @@ export default class Cybertruck extends THREE.Object3D {
       D = this.depth,
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
-    let windowMat = new THREE.MeshStandardMaterial({
+    let windowMat = new THREE.MeshPhongMaterial({
       color: 0x101010,
     })
+    windowMat.transparent = true;
+    windowMat.opacity = 0.96;
 
     var windowsPoints = [
       [-0.371, 0.415, -0.13],
@@ -731,8 +744,8 @@ export default class Cybertruck extends THREE.Object3D {
         7
       ),
       hubBaseMat = new THREE.MeshStandardMaterial({
-        //color: 0x1a1a1a,
-        color: 0xb0b0b0,
+        color: 0x2b2b2b,
+        //color: 0xb0b0b0,
       }),
       hubBase = new THREE.Mesh(hubBaseGeo, hubBaseMat)
     wheelHub.add(hubBase)
@@ -801,6 +814,51 @@ export default class Cybertruck extends THREE.Object3D {
     this.wheels[3].position.set(W * -0.43, H * -0.27, D * -0.3)
     this.wheels[3].rotation.z = Math.PI / 2
     this.mesh.add(this.wheels[3])
+
+     // X. Front Cylinders
+     let cylinderGeo = new THREE.CylinderBufferGeometry(
+      W * 0.025,
+      W * 0.025,
+      H * 0.32,
+      32
+    ),
+    cylinderMat = new THREE.MeshStandardMaterial({
+      color: 0x969696,
+    }),
+    leftCylinder = new THREE.Mesh(cylinderGeo, cylinderMat)
+
+  // left
+  leftCylinder.position.set(W * 0.33, H * -0.09, D * 0.355)
+  leftCylinder.rotation.x = (-5 * Math.PI) / 180
+  this.mesh.add(leftCylinder)
+
+  // right
+  let rightCylinder = leftCylinder.clone()
+  rightCylinder.position.x *= -1
+  this.mesh.add(rightCylinder)
+
+  // XI. Axles
+  // A. Axels Themselves
+  let axleGeo = new THREE.CylinderBufferGeometry(
+      W * 0.02,
+      W * 0.02,
+      W * 0.72,
+      32
+    ),
+    axleMat = new THREE.MeshStandardMaterial({
+      color: 0x7f7f7f,
+    }),
+    frontAxle = new THREE.Mesh(axleGeo, axleMat)
+
+  // front
+  frontAxle.position.set(0, H * -0.27, D * 0.36)
+  frontAxle.rotation.z = -Math.PI / 2
+  this.mesh.add(frontAxle)
+
+  // back
+  let backAxle = frontAxle.clone()
+  backAxle.position.z = D * -0.3
+  this.mesh.add(backAxle)
   }
 
   createTiresDetails() {
@@ -982,51 +1040,6 @@ export default class Cybertruck extends THREE.Object3D {
       D = this.depth,
       flipXVertices = (a) => [-a[0], a[1], a[2]],
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
-
-    // X. Front Cylinders
-    let cylinderGeo = new THREE.CylinderBufferGeometry(
-        W * 0.025,
-        W * 0.025,
-        H * 0.32,
-        32
-      ),
-      cylinderMat = new THREE.MeshStandardMaterial({
-        color: 0x969696,
-      }),
-      leftCylinder = new THREE.Mesh(cylinderGeo, cylinderMat)
-
-    // left
-    leftCylinder.position.set(W * 0.33, H * -0.09, D * 0.355)
-    leftCylinder.rotation.x = (-5 * Math.PI) / 180
-    this.mesh.add(leftCylinder)
-
-    // right
-    let rightCylinder = leftCylinder.clone()
-    rightCylinder.position.x *= -1
-    this.mesh.add(rightCylinder)
-
-    // XI. Axles
-    // A. Axels Themselves
-    let axleGeo = new THREE.CylinderBufferGeometry(
-        W * 0.02,
-        W * 0.02,
-        W * 0.72,
-        32
-      ),
-      axleMat = new THREE.MeshStandardMaterial({
-        color: 0x7f7f7f,
-      }),
-      frontAxle = new THREE.Mesh(axleGeo, axleMat)
-
-    // front
-    frontAxle.position.set(0, H * -0.27, D * 0.36)
-    frontAxle.rotation.z = -Math.PI / 2
-    this.mesh.add(frontAxle)
-
-    // back
-    let backAxle = frontAxle.clone()
-    backAxle.position.z = D * -0.3
-    this.mesh.add(backAxle)
 
     //------------- Support Parts -------------------
     let supportMat = new THREE.MeshStandardMaterial({

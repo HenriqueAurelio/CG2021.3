@@ -17,8 +17,7 @@ import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 import bestLap from './bestLap.js'
-//import * as Ammo from '/ammo/ammo.wasm.js'
-//import { } from '@enable3d/ammo-physics'
+import * as Ammo from '../libs/other/physijs/ammo.js';
 
 var acc = 0
 var speed = 0
@@ -302,6 +301,43 @@ function controlledRender() {
 
 // ----------------------------------- physics ------------------------------------
 
+function createFloor() {
+  let pos = { x: 0, y: -1, z: 0 };
+  let scale = { x: 100, y: 2, z: 100 };
+  let quat = { x: 0, y: 0, z: 0, w: 1 };
+  let mass = 0;
+
+  let blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: 0xf9c834 }));
+  blockPlane.position.set(pos.x, pos.y, pos.z);
+  blockPlane.scale.set(scale.x, scale.y, scale.z);
+  blockPlane.castShadow = true;
+  blockPlane.receiveShadow = true;
+  scene.add(blockPlane);
+
+  // AMMO
+   let transform = new Ammo.btTransform();
+   transform.setIdentity();
+   transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+   transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+   let motionState = new Ammo.btDefaultMotionState(transform);
+ 
+   let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
+   colShape.setMargin(0.05);
+ 
+   let localInertia = new Ammo.btVector3(0, 0, 0);
+   colShape.calculateLocalInertia(mass, localInertia);
+ 
+   let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
+   let body = new Ammo.btRigidBody(rbInfo);
+ 
+   body.setFriction(1);
+   body.setRollingFriction(1);
+   body.setActivationState(4);
+   body.setRestitution(1)
+ 
+   physicsWorld.addRigidBody(body);
+}
+
 function createBox() {
   let pos = { x: -10, y: 6, z: 0 }
   let scale = { x: 6, y: 6, z: 6 }
@@ -353,8 +389,6 @@ Ammo().then(function (AmmoLib) {
 
   createFloor();
   createBox();
-  createSphere();
-  createCylinder();
 
   animate();
 })
@@ -367,7 +401,7 @@ function setupPhysicsWorld() {
     solver = new Ammo.btSequentialImpulseConstraintSolver();
 
   physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-  physicsWorld.setGravity(new Ammo.btVector3(0, -10, 0));
+  physicsWorld.setGravity(new Ammo.btVector3(0, 0,-10));
 
 }
 
@@ -530,7 +564,7 @@ function movementOfWheels(dir) {
   let fps = 60,
     scaleBy = 45,
     tireRadius = height * 0.23,
-    feetPerMin = (speed * 20) / 60,
+    feetPerMin = (speed * 50) / 60,
     rpm = feetPerMin / (2 * Math.PI * (tireRadius / 12)),
     incRotate = Math.PI * 2 * (rpm / 6e4) * (1e3 / fps)
 
