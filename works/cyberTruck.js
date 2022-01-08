@@ -21,7 +21,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.createCameraPoint()
     // this.createBodywork()
     // this.createSupportParts()
-    // this.createTiresDetails()
+    this.createTiresDetails()
 
     this.mesh.position.set(4, 8, 1.5)
     this.mesh.rotateX(Math.PI / 2)
@@ -810,14 +810,11 @@ export default class Cybertruck extends THREE.Object3D {
       flipXVertices = (a) => [-a[0], a[1], a[2]],
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
-    // AQUI SUA ANTA
-    //----------- Left Side Part Above Wheels ---------------
-    let paralamasDoSucesso = new THREE.Object3D()
-
     let sideMat = new THREE.MeshStandardMaterial({
         color: 0x2b2b2b,
       }),
-      leftSideVerticesArr = [
+      leftPointsDetails = [
+        // top (0–19)
         [0.45, -0.1, -0.4],
         [0.5, -0.1, -0.3825],
         [0.45, 0.06, -0.36],
@@ -828,13 +825,6 @@ export default class Cybertruck extends THREE.Object3D {
         [0.5, -0.15, -0.192],
         [0.41, -0.21, -0.173],
         [0.48, -0.21, -0.19],
-      ],
-      leftSideGeo = new ConvexGeometry(leftSideVerticesArr.map(toVectors))
-    let leftSide = new THREE.Mesh(leftSideGeo, sideMat)
-    leftSide.castShadow = true
-    paralamasDoSucesso.add(leftSide)
-
-    let frontLeftSide = [
         [0.41, -0.23, 0.2498],
         [0.48, -0.23, 0.261],
         [0.45, -0.17, 0.255],
@@ -845,68 +835,129 @@ export default class Cybertruck extends THREE.Object3D {
         [0.5, 0.03, 0.4165],
         [0.45, -0.13, 0.46],
         [0.5, -0.13, 0.45],
-      ],
-      frontLeftSideGeo = new ConvexGeometry(frontLeftSide.map(toVectors))
-    let frontLeftSideSide = new THREE.Mesh(frontLeftSideGeo, sideMat)
-    frontLeftSideSide.castShadow = true
-    paralamasDoSucesso.add(frontLeftSideSide)
+        // bottom (20–41)
+        [0.45, -0.074, -0.379],
+        [0.5, -0.1, -0.3775],
+        [0.45, 0.04, -0.35],
+        [0.5, 0.015, -0.348],
+        [0.45, 0.04, -0.2505],
+        [0.5, 0.015, -0.2435],
+        [0.45, -0.15, -0.197],
+        [0.5, -0.15, -0.197],
+        [0.355, -0.29, -0.19],
+        [0.4, -0.29, -0.19],
+        [0.355, -0.31, 0.2582],
+        [0.4, -0.31, 0.26],
+        [0.45, -0.17, 0.265],
+        [0.5, -0.17, 0.267],
+        [0.45, 0.04, 0.3099],
+        [0.5, 0.015, 0.3065],
+        [0.45, 0.04, 0.418],
+        [0.5, 0.015, 0.4135],
+        [0.45, -0.13, 0.455],
+        [0.5, -0.13, 0.445],
+        [0.48, -0.21, -0.194],
+        [0.48, -0.23, 0.265],
+      ]
+    for (let i = 0; i < leftPointsDetails.length; i++) {
+      let actualVet = leftPointsDetails[i]
+      actualVet[0] = W * actualVet[0]
+      actualVet[1] = H * actualVet[1]
+      actualVet[2] = D * actualVet[2]
+      leftPointsDetails[i] = actualVet
+    }
 
-    // frontRightSide
-    let frontRightSideArr = frontLeftSide.map(flipXVertices),
-      frontRightSideGeo = new ConvexGeometry(frontRightSideArr.map(toVectors))
-
-    let frontRightSide = new THREE.Mesh(frontRightSideGeo, sideMat)
-    frontRightSide.castShadow = true
-    paralamasDoSucesso.add(frontRightSide)
-
-    //--------------------- bottomLeftSide ------------------------
-
-    let bottomLeftSideArr = [
-      [0.45, -0.074, -0.379],
-      [0.5, -0.1, -0.3775],
-      [0.45, 0.04, -0.35],
-      [0.5, 0.015, -0.348],
-      [0.45, 0.04, -0.2505],
-      [0.5, 0.015, -0.2435],
-      [0.45, -0.15, -0.197],
-      [0.5, -0.15, -0.197],
-      [0.355, -0.29, -0.19],
-      [0.4, -0.29, -0.19],
-      [0.355, -0.31, 0.2582],
-      [0.4, -0.31, 0.26],
-      [0.45, -0.17, 0.265],
-      [0.5, -0.17, 0.267],
-      [0.45, 0.04, 0.3099],
-      [0.5, 0.015, 0.3065],
-      [0.45, 0.04, 0.418],
-      [0.5, 0.015, 0.4135],
-      [0.45, -0.13, 0.455],
-      [0.5, -0.13, 0.445],
-      [0.48, -0.21, -0.194],
-      [0.48, -0.23, 0.265],
+    let leftSideFacesArr = [
+      [leftPointsDetails[0], leftPointsDetails[2], leftPointsDetails[3]],
+      [leftPointsDetails[3], leftPointsDetails[1], leftPointsDetails[0]],
+      [leftPointsDetails[2], leftPointsDetails[4], leftPointsDetails[5]],
+      [leftPointsDetails[5], leftPointsDetails[3], leftPointsDetails[2]],
+      [leftPointsDetails[4], leftPointsDetails[6], leftPointsDetails[7]],
+      [leftPointsDetails[7], leftPointsDetails[5], leftPointsDetails[4]],
+      [leftPointsDetails[6], leftPointsDetails[8], leftPointsDetails[9]],
+      [leftPointsDetails[9], leftPointsDetails[7], leftPointsDetails[6]],
+      [leftPointsDetails[8], leftPointsDetails[10], leftPointsDetails[11]],
+      [leftPointsDetails[11], leftPointsDetails[9], leftPointsDetails[8]],
+      [leftPointsDetails[10], leftPointsDetails[12], leftPointsDetails[13]],
+      [leftPointsDetails[13], leftPointsDetails[11], leftPointsDetails[10]],
+      [leftPointsDetails[12], leftPointsDetails[14], leftPointsDetails[15]],
+      [leftPointsDetails[15], leftPointsDetails[13], leftPointsDetails[12]],
+      [leftPointsDetails[14], leftPointsDetails[16], leftPointsDetails[17]],
+      [leftPointsDetails[17], leftPointsDetails[15], leftPointsDetails[14]],
+      [leftPointsDetails[16], leftPointsDetails[18], leftPointsDetails[19]],
+      [leftPointsDetails[19], leftPointsDetails[17], leftPointsDetails[16]],
+      [leftPointsDetails[23], leftPointsDetails[22], leftPointsDetails[20]],
+      [leftPointsDetails[20], leftPointsDetails[21], leftPointsDetails[23]],
+      [leftPointsDetails[25], leftPointsDetails[24], leftPointsDetails[22]],
+      [leftPointsDetails[22], leftPointsDetails[23], leftPointsDetails[25]],
+      [leftPointsDetails[27], leftPointsDetails[26], leftPointsDetails[24]],
+      [leftPointsDetails[24], leftPointsDetails[25], leftPointsDetails[27]],
+      [leftPointsDetails[31], leftPointsDetails[30], leftPointsDetails[28]],
+      [leftPointsDetails[28], leftPointsDetails[29], leftPointsDetails[31]],
+      [leftPointsDetails[35], leftPointsDetails[34], leftPointsDetails[32]],
+      [leftPointsDetails[32], leftPointsDetails[33], leftPointsDetails[35]],
+      [leftPointsDetails[37], leftPointsDetails[36], leftPointsDetails[34]],
+      [leftPointsDetails[34], leftPointsDetails[35], leftPointsDetails[37]],
+      [leftPointsDetails[39], leftPointsDetails[38], leftPointsDetails[36]],
+      [leftPointsDetails[36], leftPointsDetails[37], leftPointsDetails[39]],
+      [leftPointsDetails[0], leftPointsDetails[1], leftPointsDetails[21]],
+      [leftPointsDetails[21], leftPointsDetails[20], leftPointsDetails[0]],
+      [leftPointsDetails[20], leftPointsDetails[22], leftPointsDetails[2]],
+      [leftPointsDetails[2], leftPointsDetails[0], leftPointsDetails[20]],
+      [leftPointsDetails[22], leftPointsDetails[24], leftPointsDetails[4]],
+      [leftPointsDetails[4], leftPointsDetails[2], leftPointsDetails[22]],
+      [leftPointsDetails[24], leftPointsDetails[26], leftPointsDetails[6]],
+      [leftPointsDetails[6], leftPointsDetails[4], leftPointsDetails[24]],
+      [leftPointsDetails[26], leftPointsDetails[28], leftPointsDetails[8]],
+      [leftPointsDetails[8], leftPointsDetails[6], leftPointsDetails[26]],
+      [leftPointsDetails[28], leftPointsDetails[30], leftPointsDetails[10]],
+      [leftPointsDetails[10], leftPointsDetails[8], leftPointsDetails[28]],
+      [leftPointsDetails[30], leftPointsDetails[32], leftPointsDetails[12]],
+      [leftPointsDetails[12], leftPointsDetails[10], leftPointsDetails[30]],
+      [leftPointsDetails[32], leftPointsDetails[34], leftPointsDetails[14]],
+      [leftPointsDetails[14], leftPointsDetails[12], leftPointsDetails[32]],
+      [leftPointsDetails[34], leftPointsDetails[36], leftPointsDetails[16]],
+      [leftPointsDetails[16], leftPointsDetails[14], leftPointsDetails[34]],
+      [leftPointsDetails[36], leftPointsDetails[38], leftPointsDetails[18]],
+      [leftPointsDetails[18], leftPointsDetails[16], leftPointsDetails[36]],
+      [leftPointsDetails[3], leftPointsDetails[23], leftPointsDetails[21]],
+      [leftPointsDetails[21], leftPointsDetails[1], leftPointsDetails[3]],
+      [leftPointsDetails[5], leftPointsDetails[25], leftPointsDetails[23]],
+      [leftPointsDetails[23], leftPointsDetails[3], leftPointsDetails[5]],
+      [leftPointsDetails[7], leftPointsDetails[27], leftPointsDetails[25]],
+      [leftPointsDetails[25], leftPointsDetails[5], leftPointsDetails[7]],
+      [leftPointsDetails[27], leftPointsDetails[7], leftPointsDetails[9]],
+      [leftPointsDetails[9], leftPointsDetails[40], leftPointsDetails[27]],
+      [leftPointsDetails[40], leftPointsDetails[9], leftPointsDetails[29]],
+      [leftPointsDetails[26], leftPointsDetails[27], leftPointsDetails[40]],
+      [leftPointsDetails[40], leftPointsDetails[29], leftPointsDetails[26]],
+      [leftPointsDetails[26], leftPointsDetails[29], leftPointsDetails[28]],
+      [leftPointsDetails[11], leftPointsDetails[31], leftPointsDetails[29]],
+      [leftPointsDetails[29], leftPointsDetails[9], leftPointsDetails[11]],
+      [leftPointsDetails[11], leftPointsDetails[41], leftPointsDetails[31]],
+      [leftPointsDetails[13], leftPointsDetails[33], leftPointsDetails[41]],
+      [leftPointsDetails[41], leftPointsDetails[11], leftPointsDetails[13]],
+      [leftPointsDetails[33], leftPointsDetails[32], leftPointsDetails[30]],
+      [leftPointsDetails[30], leftPointsDetails[41], leftPointsDetails[33]],
+      [leftPointsDetails[41], leftPointsDetails[10], leftPointsDetails[30]],
+      [leftPointsDetails[30], leftPointsDetails[31], leftPointsDetails[41]],
+      [leftPointsDetails[15], leftPointsDetails[35], leftPointsDetails[33]],
+      [leftPointsDetails[33], leftPointsDetails[13], leftPointsDetails[15]],
+      [leftPointsDetails[17], leftPointsDetails[37], leftPointsDetails[35]],
+      [leftPointsDetails[35], leftPointsDetails[15], leftPointsDetails[17]],
+      [leftPointsDetails[19], leftPointsDetails[39], leftPointsDetails[37]],
+      [leftPointsDetails[37], leftPointsDetails[17], leftPointsDetails[19]],
+      [leftPointsDetails[38], leftPointsDetails[39], leftPointsDetails[19]],
+      [leftPointsDetails[19], leftPointsDetails[18], leftPointsDetails[38]],
     ]
-    let bottomLeftSideGeo = new ConvexGeometry(bottomLeftSideArr.map(toVectors))
-    let bottomLeftSideSide = new THREE.Mesh(bottomLeftSideGeo, sideMat)
-    bottomLeftSideSide.castShadow = true
-    // paralamasDoSucesso.add(bottomLeftSideSide)
-
-    // bottomRightSide
-    let bottomRightSideArr = bottomLeftSideArr.map(flipXVertices),
-      bottomRightSideGeo = new ConvexGeometry(bottomRightSideArr.map(toVectors))
-
-    let bottomRightSide = new THREE.Mesh(bottomRightSideGeo, sideMat)
-    bottomRightSide.castShadow = true
-    //paralamasDoSucesso.add(bottomRightSide);
-
-    //---------------- Right Side Part Above Wheels ------------------
-    let rightSideVerticesArr = leftSideVerticesArr.map(flipXVertices),
-      rightSideGeo = new ConvexGeometry(rightSideVerticesArr.map(toVectors))
-
-    let rightSide = new THREE.Mesh(rightSideGeo, sideMat)
-    rightSide.castShadow = true
-    paralamasDoSucesso.add(rightSide)
-
-    this.mesh.add(paralamasDoSucesso)
+    let geometry = new THREE.BufferGeometry()
+    let buffer = this.forFunction(leftSideFacesArr, leftPointsDetails)
+    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry.computeVertexNormals() // to avoid a flat surface
+    const material = sideMat
+    material.side = THREE.DoubleSide // Show front and back polygons
+    const leftTireDetailsMesh = new THREE.Mesh(geometry, material)
+    this.mesh.add(leftTireDetailsMesh)
   }
 
   createSupportParts() {
