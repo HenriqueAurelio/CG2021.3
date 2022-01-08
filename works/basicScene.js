@@ -314,7 +314,7 @@ function gameMode() {
 
   if (inspectMode) {
     cybertruck.position.set(0, 0, 0)
-    inspectCamera.position.set(5, -10, 10)
+    if (entryInspect == false) inspectCamera.position.set(5, -10, 10)
     camera = inspectCamera
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
