@@ -17,7 +17,7 @@ import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 import bestLap from './bestLap.js'
-import * as Ammo from '../libs/other/physijs/ammo.js';
+import * as Ammo from '../libs/other/ammo.wasm.js';
 
 var acc = 0
 var speed = 0
