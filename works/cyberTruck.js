@@ -9,8 +9,6 @@ export default class Cybertruck extends THREE.Object3D {
     this.depth = 23 * 0.3 //23
 
     this.createCar()
-    this.move = this.move.bind(this)
-
     return this.mesh
   }
 
@@ -21,10 +19,9 @@ export default class Cybertruck extends THREE.Object3D {
     this.createWindows()
     this.createDoors()
     this.createCameraPoint()
-    this.createHoleForTires()
-    this.createBodywork()
-    this.createSupportParts()
-    this.createTiresDetails()
+    // this.createBodywork()
+    // this.createSupportParts()
+    // this.createTiresDetails()
 
     this.mesh.position.set(4, 8, 1.5)
     this.mesh.rotateX(Math.PI / 2)
@@ -96,24 +93,136 @@ export default class Cybertruck extends THREE.Object3D {
       [-0.425, 0.17, 0.36],
       [0.425, 0.17, 0.36],
     ]
-    const geometry = new ConvexGeometry(pontos.map(toVectors))
-    const material = new THREE.MeshPhongMaterial({ color: 0xbac3c8 })
-    this.mesh.add(new THREE.Mesh(geometry, material))
 
-    // D. Fuel Cap
-    let fuelMat = new THREE.LineBasicMaterial({
-      color: 0x000000,
-      transparent: true,
-      opacity: 0.25,
-    })
-    let fuelCapVerticesArr = [
-        [0.4502, -0.014, -0.378],
-        [0.4502, -0.014, -0.4],
-        [0.4502, 0.06, -0.4],
-        [0.4502, 0.06, -0.36],
-      ],
-      fuelCapGeo = new ConvexGeometry(fuelCapVerticesArr.map(toVectors))
-    let fuelCap = new THREE.Line(fuelCapGeo, fuelMat)
+    // D. Fuel C
+    for (let i = 0; i < pontos.length; i++) {
+      let actualVet = pontos[i]
+      actualVet[0] = W * actualVet[0]
+      actualVet[1] = H * actualVet[1]
+      actualVet[2] = D * actualVet[2]
+      pontos[i] = actualVet
+    }
+    let bodyFacesArr = [
+      [pontos[0], pontos[1], pontos[3]],
+      [pontos[3], pontos[2], pontos[0]],
+      [pontos[0], pontos[4], pontos[5]],
+      [pontos[5], pontos[1], pontos[0]],
+      [pontos[5], pontos[37], pontos[35]],
+      [pontos[1], pontos[5], pontos[35]],
+      [pontos[1], pontos[35], pontos[33]],
+      [pontos[33], pontos[21], pontos[1]],
+      [pontos[39], pontos[21], pontos[33]],
+      [pontos[5], pontos[21], pontos[37]],
+      [pontos[21], pontos[39], pontos[37]],
+      [pontos[4], pontos[34], pontos[36]],
+      [pontos[0], pontos[34], pontos[4]],
+      [pontos[0], pontos[32], pontos[34]],
+      [pontos[32], pontos[0], pontos[20]],
+      [pontos[38], pontos[32], pontos[20]],
+      [pontos[4], pontos[36], pontos[20]],
+      [pontos[20], pontos[36], pontos[38]],
+      [pontos[20], pontos[18], pontos[24]],
+      [pontos[20], pontos[0], pontos[18]],
+      [pontos[18], pontos[0], pontos[16]],
+      [pontos[16], pontos[0], pontos[10]],
+      [pontos[10], pontos[0], pontos[8]],
+      [pontos[8], pontos[0], pontos[2]],
+      [pontos[2], pontos[6], pontos[8]],
+      [pontos[16], pontos[10], pontos[14]],
+      [pontos[12], pontos[14], pontos[10]],
+      [pontos[14], pontos[12], pontos[28]],
+      [pontos[28], pontos[30], pontos[14]],
+      [pontos[21], pontos[25], pontos[19]],
+      [pontos[21], pontos[19], pontos[1]],
+      [pontos[19], pontos[17], pontos[1]],
+      [pontos[17], pontos[11], pontos[1]],
+      [pontos[11], pontos[9], pontos[1]],
+      [pontos[1], pontos[9], pontos[7]],
+      [pontos[7], pontos[3], pontos[1]],
+      [pontos[11], pontos[17], pontos[15]],
+      [pontos[15], pontos[13], pontos[11]],
+      [pontos[15], pontos[31], pontos[29]],
+      [pontos[29], pontos[13], pontos[15]],
+      [pontos[5], pontos[4], pontos[20]],
+      [pontos[20], pontos[21], pontos[5]],
+      [pontos[21], pontos[20], pontos[22]],
+      [pontos[22], pontos[23], pontos[21]],
+      [pontos[22], pontos[20], pontos[24]],
+      [pontos[24], pontos[26], pontos[22]],
+      [pontos[23], pontos[22], pontos[26]],
+      [pontos[26], pontos[27], pontos[23]],
+      [pontos[23], pontos[27], pontos[25]],
+      [pontos[25], pontos[21], pontos[23]],
+      [pontos[2], pontos[3], pontos[7]],
+      [pontos[7], pontos[6], pontos[2]],
+      [pontos[6], pontos[7], pontos[9]],
+      [pontos[9], pontos[8], pontos[6]],
+      [pontos[8], pontos[9], pontos[11]],
+      [pontos[11], pontos[10], pontos[8]],
+      [pontos[10], pontos[11], pontos[13]],
+      [pontos[13], pontos[12], pontos[10]],
+      [pontos[12], pontos[13], pontos[29]],
+      [pontos[29], pontos[28], pontos[12]],
+      [pontos[28], pontos[29], pontos[31]],
+      [pontos[31], pontos[30], pontos[28]],
+      [pontos[30], pontos[31], pontos[15]],
+      [pontos[15], pontos[14], pontos[30]],
+      [pontos[14], pontos[15], pontos[17]],
+      [pontos[17], pontos[16], pontos[14]],
+      [pontos[16], pontos[17], pontos[19]],
+      [pontos[19], pontos[18], pontos[16]],
+      [pontos[18], pontos[19], pontos[25]],
+      [pontos[25], pontos[24], pontos[18]],
+      [pontos[24], pontos[25], pontos[26]],
+      [pontos[25], pontos[27], pontos[26]],
+      [pontos[34], pontos[32], pontos[33]],
+      [pontos[33], pontos[35], pontos[34]],
+      [pontos[34], pontos[35], pontos[37]],
+      [pontos[37], pontos[36], pontos[34]],
+      [pontos[36], pontos[37], pontos[39]],
+      [pontos[39], pontos[38], pontos[36]],
+      [pontos[33], pontos[32], pontos[38]],
+      [pontos[38], pontos[39], pontos[33]],
+    ]
+    var geometry = new THREE.BufferGeometry()
+    const numberOfFaces = bodyFacesArr.length
+    const vertexPerFace = bodyFacesArr[0].length // 3
+    const vertexComponents = pontos[0].length // 3
+    const size = numberOfFaces * vertexPerFace * vertexComponents
+    const buffer = new Float32Array(size)
+
+    let b = 0
+    for (let i = 0; i < numberOfFaces; i++) {
+      // check all vertices per face
+      for (let j = 0; j < vertexPerFace; j++) {
+        // check all components per vertex
+        for (let k = 0; k < vertexComponents; k++) {
+          buffer[b] = bodyFacesArr[i][j][k]
+          b++
+        }
+      }
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry.computeVertexNormals() // to avoid a flat surface
+    const material = new THREE.MeshPhongMaterial({ color: 0xbac3c8 })
+    material.side = THREE.DoubleSide // Show front and back polygons
+    const teacherMesh = new THREE.Mesh(geometry, material)
+
+    this.mesh.add(teacherMesh)
+    // let fuelMat = new THREE.LineBasicMaterial({
+    //   color: 0x000000,
+    //   transparent: true,
+    //   opacity: 0.25,
+    // })
+    // let fuelCapVerticesArr = [
+    //     [0.4502, -0.014, -0.378],
+    //     [0.4502, -0.014, -0.4],
+    //     [0.4502, 0.06, -0.4],
+    //     [0.4502, 0.06, -0.36],
+    //   ],
+    //   fuelCapGeo = new ConvexGeometry(fuelCapVerticesArr.map(toVectors))
+    // let fuelCap = new THREE.Line(fuelCapGeo, fuelMat)
     //this.mesh.add(fuelCap)
   }
 
@@ -390,7 +499,7 @@ export default class Cybertruck extends THREE.Object3D {
       color: 0x101010,
     })
 
-    var topWindowVerticesArr = [
+    var windowsPoints = [
       [-0.371, 0.415, -0.13],
       [0.371, 0.415, -0.13],
       [-0.326, 0.5, 0.08],
@@ -399,8 +508,28 @@ export default class Cybertruck extends THREE.Object3D {
       [0.4145, 0.2, 0.36],
     ]
 
-    const topWindowGeo = new ConvexGeometry(topWindowVerticesArr.map(toVectors))
-    this.mesh.add(new THREE.Mesh(topWindowGeo, windowMat))
+    for (let i = 0; i < windowsPoints.length; i++) {
+      let actualVet = windowsPoints[i]
+      actualVet[0] = W * actualVet[0]
+      actualVet[1] = H * actualVet[1]
+      actualVet[2] = D * actualVet[2]
+      windowsPoints[i] = actualVet
+    }
+    let windowsFaces = [
+      [windowsPoints[1], windowsPoints[0], windowsPoints[2]],
+      [windowsPoints[2], windowsPoints[3], windowsPoints[1]],
+      [windowsPoints[3], windowsPoints[2], windowsPoints[4]],
+      [windowsPoints[4], windowsPoints[5], windowsPoints[3]],
+    ]
+
+    let buffer = this.forFunction(windowsFaces, windowsPoints)
+    let geometry = new THREE.BufferGeometry()
+    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry.computeVertexNormals() // to avoid a flat surface
+    const material = windowMat
+    material.side = THREE.DoubleSide // Show front and back polygons
+    const windowMesh = new THREE.Mesh(geometry, material)
+    this.mesh.add(windowMesh)
 
     // Side Windows
     let sideWindowsVerticesArr = [
@@ -533,16 +662,34 @@ export default class Cybertruck extends THREE.Object3D {
     let slidingDoorMat = new THREE.MeshStandardMaterial({
         color: 0x767c7f,
       }),
-      slidingDoorVerticesArr = [
+      slidingDoorPoints = [
         [-0.35, 0.274, -0.472],
         [0.35, 0.274, -0.472],
         [-0.35, 0.407, -0.145],
         [0.35, 0.407, -0.145],
-      ],
-      slidingDoorGeo = new ConvexGeometry(slidingDoorVerticesArr.map(toVectors))
+      ]
 
-    let slidingDoor = new THREE.Mesh(slidingDoorGeo, slidingDoorMat)
-    this.mesh.add(slidingDoor)
+    for (let i = 0; i < slidingDoorPoints.length; i++) {
+      let actualVet = slidingDoorPoints[i]
+      actualVet[0] = W * actualVet[0]
+      actualVet[1] = H * actualVet[1]
+      actualVet[2] = D * actualVet[2]
+      slidingDoorPoints[i] = actualVet
+    }
+
+    let geometry = new THREE.BufferGeometry()
+    let slidingDoorFacesArr = [
+      [slidingDoorPoints[1], slidingDoorPoints[0], slidingDoorPoints[2]],
+      [slidingDoorPoints[2], slidingDoorPoints[3], slidingDoorPoints[[1]]],
+    ]
+
+    let buffer = this.forFunction(slidingDoorFacesArr, slidingDoorPoints)
+    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry.computeVertexNormals() // to avoid a flat surface
+    const material = slidingDoorMat
+    material.side = THREE.DoubleSide // Show front and back polygons
+    const slidingDoorMesh = new THREE.Mesh(geometry, material)
+    this.mesh.add(slidingDoorMesh)
   }
 
   createTires() {
@@ -741,7 +888,7 @@ export default class Cybertruck extends THREE.Object3D {
     let bottomLeftSideGeo = new ConvexGeometry(bottomLeftSideArr.map(toVectors))
     let bottomLeftSideSide = new THREE.Mesh(bottomLeftSideGeo, sideMat)
     bottomLeftSideSide.castShadow = true
-    //paralamasDoSucesso.add(bottomLeftSideSide);
+    // paralamasDoSucesso.add(bottomLeftSideSide)
 
     // bottomRightSide
     let bottomRightSideArr = bottomLeftSideArr.map(flipXVertices),
@@ -924,34 +1071,23 @@ export default class Cybertruck extends THREE.Object3D {
     //this.mesh.add(bottom);
   }
 
-  createHoleForTires() {
-    var smileyShape = new THREE.Shape()
-    smileyShape.absarc(0.0, 0.0, 4.0, 0, Math.PI * 2, false)
-
-    var smileyEye1Path = new THREE.Path()
-    smileyEye1Path.absellipse(-1.5, -2.0, 1.0, 1.0, 0, Math.PI * 2, true)
-  }
-
-  move(dir) {
-    let fps = 60,
-      scaleBy = 10,
-      inchesInMile = 5280 * 12,
-      incZ1MPH = inchesInMile / 3600 / fps,
-      incZ = incZ1MPH * this.speed,
-      tireRadius = this.height * 0.23,
-      feetPerMin = (this.speed * 5280) / 60,
-      rpm = feetPerMin / (2 * Math.PI * (tireRadius / 12)),
-      incRotate = Math.PI * 2 * (rpm / 6e4) * (1e3 / fps)
-
-    this.wheels.forEach((e) => {
-      if (dir == 'forward') {
-        e.rotation.x += incRotate / scaleBy
-      } else {
-        e.rotation.x -= incRotate / scaleBy
+  forFunction(faces, vertices) {
+    const numberOfFaces = faces.length
+    const vertexPerFace = faces[0].length // 3
+    const vertexComponents = vertices[0].length
+    const size = numberOfFaces * vertexPerFace * vertexComponents
+    let b = 0
+    const buffer = new Float32Array(size)
+    for (let i = 0; i < numberOfFaces; i++) {
+      // check all vertices per face
+      for (let j = 0; j < vertexPerFace; j++) {
+        // check all components per vertex
+        for (let k = 0; k < vertexComponents; k++) {
+          buffer[b] = faces[i][j][k]
+          b++
+        }
       }
-
-      if (e.rotation.x >= Math.PI * 2) e.rotation.x = 0
-    })
-    this.mesh.position.z += incZ / scaleBy
+    }
+    return buffer
   }
 }

@@ -39,7 +39,7 @@ initDefaultBasicLight(scene, true)
 var axesHelper = new THREE.AxesHelper(12)
 scene.add(axesHelper)
 var angle = degreesToRadians(1)
-var tireAngle = degreesToRadians(0.7)
+var tireAngle = degreesToRadians(0.5)
 var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
 
@@ -129,6 +129,7 @@ var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
+var wheels = [roda1, roda2, roda3, roda4]
 
 var won = false
 var timer = new THREE.Clock()
@@ -176,101 +177,101 @@ function keyboardUpdate() {
   if (keyboard.down('space')) {
     inspectMode = !inspectMode
   }
-  if (!inspectMode) {
-    if (actualLap < 4) {
-      if (keyboard.pressed('X')) acc = 5
-      else if (keyboard.pressed('down')) acc = -3
-      else acc = 0
+  // if (!inspectMode) {
+  if (actualLap < 4) {
+    if (keyboard.pressed('X')) acc = 5
+    else if (keyboard.pressed('down')) acc = -3
+    else acc = 0
 
-      switch (actualLap) {
-        case 0:
-          stringLap = 'First Lap'
-          break
-        case 1:
-          stringLap = 'Second Lap'
-          break
-        case 2:
-          stringLap = 'Third Lap'
-          break
-        case 3:
-          stringLap = 'Fourth Lap'
-          break
+    switch (actualLap) {
+      case 0:
+        stringLap = 'First Lap'
+        break
+      case 1:
+        stringLap = 'Second Lap'
+        break
+      case 2:
+        stringLap = 'Third Lap'
+        break
+      case 3:
+        stringLap = 'Fourth Lap'
+        break
+    }
+    var x = timer.getElapsedTime()
+    if (x.toFixed() >= 60 && (x % 60).toFixed() == 0 && entryTimer) {
+      minutes++
+      entryTimer = false
+    }
+    if ((x % 60).toFixed() == 1) {
+      entryTimer = true
+    }
+    secondaryBox.changeMessage(
+      `${stringLap} ${minutes}:${
+        (x.toFixed() % 60).toFixed() < 10 ? '0' : ''
+      }${(x.toFixed() % 60).toFixed()}`
+    )
+    secondaryBox2.changeMessage((speed / 10).toFixed() + ' km/h')
+    if (speed > 0) {
+      movementOfWheels('forward')
+      if (keyboard.pressed('right') || keyboard.pressed('left')) {
+        acc -= 1
       }
-      var x = timer.getElapsedTime()
-      if (x.toFixed() >= 60 && (x % 60).toFixed() == 0 && entryTimer) {
-        minutes++
-        entryTimer = false
+      acc -= 2
+    } else if (speed < 0) {
+      movementOfWheels('backwards')
+      if (keyboard.pressed('right') || keyboard.pressed('left')) {
+        acc += 1
       }
-      if ((x % 60).toFixed() == 1) {
-        entryTimer = true
-      }
-      secondaryBox.changeMessage(
-        `${stringLap} ${minutes}:${
-          (x.toFixed() % 60).toFixed() < 10 ? '0' : ''
-        }${(x.toFixed() % 60).toFixed()}`
-      )
-      secondaryBox2.changeMessage((speed / 10).toFixed() + ' km/h')
-      if (speed > 0) {
-        console.log(cybertruck)
-        cybertruck.move('forward')
-        if (keyboard.pressed('right') || keyboard.pressed('left')) {
-          acc -= 1
-        }
-        acc -= 2
-      } else if (speed < 0) {
-        cybertruck.move('backwards')
-        if (keyboard.pressed('right') || keyboard.pressed('left')) {
-          acc += 1
-        }
-        acc += 2
-      }
+      acc += 2
+    }
 
-      speed += acc
+    speed += acc
 
-      if (verificaCarroNaPista(cybertruck, roads).length > 0) {
-        maxSpeed = 500
-        maxReverseSpeed = -300
-        foraDaPista = false
-      } else {
-        if (!foraDaPista) {
-          speed = speed / 2
-          maxSpeed = maxSpeed / 2
-          maxReverseSpeed = maxReverseSpeed / 2
-        }
-        foraDaPista = true
-      }
-
-      if (speed > maxSpeed) speed = maxSpeed
-      if (speed < maxReverseSpeed) speed = maxReverseSpeed
-
-      cybertruck.translateZ(speed / coeficienteVelocidade)
-
-      if (keyboard.pressed('right')) {
-        if (roda1.rotation.y >= -0.25) {
-          roda1.rotateX(tireAngle)
-          roda2.rotateX(-tireAngle)
-        }
-        if (speed > 0) cybertruck.rotateY(-angle)
-        else if (speed < 0) cybertruck.rotateY(angle)
-      }
-      if (keyboard.pressed('left')) {
-        if (roda1.rotation.y <= 0.25) {
-          roda1.rotateX(-tireAngle)
-          roda2.rotateX(tireAngle)
-        }
-        if (speed > 0)
-          cybertruck.rotateOnAxis(new THREE.Vector3(0, 1, 0), angle)
-        else if (speed < 0) cybertruck.rotateY(-angle)
-      }
-      updateLap(cybertruck, initialPosition[0])
+    if (verificaCarroNaPista(cybertruck, roads).length > 0) {
+      maxSpeed = 500
+      maxReverseSpeed = -300
+      foraDaPista = false
     } else {
-      if (won == false) {
-        alert('Você ganhou!')
-        bestLap()
-        won = true
+      if (!foraDaPista) {
+        speed = speed / 2
+        maxSpeed = maxSpeed / 2
+        maxReverseSpeed = maxReverseSpeed / 2
       }
+      foraDaPista = true
+    }
+
+    if (speed > maxSpeed) speed = maxSpeed
+    if (speed < maxReverseSpeed) speed = maxReverseSpeed
+
+    cybertruck.translateZ(speed / coeficienteVelocidade)
+
+    if (keyboard.pressed('right')) {
+      if (roda1.rotation.y >= -0.25) {
+        console.log(roda1.rotation)
+        roda1.rotateX(tireAngle)
+        roda2.rotateX(-tireAngle)
+      }
+      if (speed > 0) cybertruck.rotateY(-angle)
+      else if (speed < 0) cybertruck.rotateY(angle)
+    }
+    if (keyboard.pressed('left')) {
+      if (roda1.rotation.y <= 0.25) {
+        console.log(roda1.rotation)
+        roda1.rotateX(-tireAngle)
+        roda2.rotateX(tireAngle)
+      }
+      if (speed > 0) cybertruck.rotateOnAxis(new THREE.Vector3(0, 1, 0), angle)
+      else if (speed < 0) cybertruck.rotateY(-angle)
+    }
+    updateLap(cybertruck, initialPosition[0])
+  } else {
+    if (won == false) {
+      alert('Você ganhou!')
+      bestLap()
+      won = true
     }
   }
+  // }
 }
 
 function controlledRender() {
@@ -428,4 +429,24 @@ function removeRoad() {
     )
       scene.remove(removeObj)
   }
+}
+
+function movementOfWheels(dir) {
+  var height = 7.5 * 0.3 //7.5
+  let fps = 60,
+    scaleBy = 45,
+    tireRadius = height * 0.23,
+    feetPerMin = (speed * 20) / 60,
+    rpm = feetPerMin / (2 * Math.PI * (tireRadius / 12)),
+    incRotate = Math.PI * 2 * (rpm / 6e4) * (1e3 / fps)
+
+  wheels.forEach((e) => {
+    if (dir == 'forward') {
+      e.rotation.x += incRotate / scaleBy
+    } else {
+      e.rotation.x -= incRotate / scaleBy
+    }
+
+    if (e.rotation.x >= Math.PI * 2) e.rotation.x = 0
+  })
 }
