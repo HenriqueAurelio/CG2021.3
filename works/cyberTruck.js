@@ -960,21 +960,19 @@ export default class Cybertruck extends THREE.Object3D {
     this.mesh.add(leftTireDetailsMesh)
 
     //Flipping
-    console.log(leftPointsDetails)
 
     let reverseFaceDraws = (a) => a.reverse()
     let rightSideVerticesArr = this.flipFunction(
       JSON.parse(JSON.stringify(leftPointsDetails))
     )
     //Problema de referencia
-    console.log(rightSideVerticesArr)
-    let rightSideFacesArr = leftSideFacesArr.map(reverseFaceDraws)
+
+    let rightSideFacesArr = this.reverseFunction(leftSideFacesArr)
     buffer = this.forFunction(rightSideFacesArr, rightSideVerticesArr)
-    geometry = new THREE.BufferGeometry()
-    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
-    geometry.computeVertexNormals() // to avoid a flat surface
-    let rightSide = new THREE.Mesh(geometry, material)
-    console.log(rightSide)
+    let geometry2 = new THREE.BufferGeometry()
+    geometry2.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry2.computeVertexNormals()
+    let rightSide = new THREE.Mesh(geometry2, material) // to avoid a flat surface
     this.mesh.add(rightSide)
   }
 
@@ -1168,5 +1166,13 @@ export default class Cybertruck extends THREE.Object3D {
       vertices[k] = actualVet
     }
     return vertices
+  }
+
+  reverseFunction(arrayToReverse) {
+    let teste2 = arrayToReverse
+    let teste = []
+    let j = 0
+    for (let i = teste2.length - 1; i >= 0; i--, j++) teste[j] = teste2[i]
+    return teste
   }
 }
