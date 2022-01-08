@@ -20,7 +20,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.createDoors()
     this.createCameraPoint()
     // this.createBodywork()
-    // this.createSupportParts()
+    this.createSupportParts()
     this.createTiresDetails()
 
     this.mesh.position.set(4, 8, 1.5)
@@ -1032,7 +1032,7 @@ export default class Cybertruck extends THREE.Object3D {
     let supportMat = new THREE.MeshStandardMaterial({
         color: 0x595959,
       }),
-      frontAxleSupportVerticesArr = [
+      frontSupportPoints = [
         // back (0–7)
         [-0.3, -0.31, 0.2582],
         [0.3, -0.31, 0.2582],
@@ -1069,12 +1069,80 @@ export default class Cybertruck extends THREE.Object3D {
         [0.346, -0.31, 0.45],
       ],
       frontAxleSupportGeo = new ConvexGeometry(
-        frontAxleSupportVerticesArr.map(toVectors)
+        frontSupportPoints.map(toVectors)
       )
+    let frontSupportFaces = [
+      [frontSupportPoints[2], frontSupportPoints[3], frontSupportPoints[1]],
+      [frontSupportPoints[1], frontSupportPoints[0], frontSupportPoints[2]],
+      [frontSupportPoints[6], frontSupportPoints[7], frontSupportPoints[3]],
+      [frontSupportPoints[3], frontSupportPoints[2], frontSupportPoints[6]],
+      [frontSupportPoints[7], frontSupportPoints[6], frontSupportPoints[10]],
+      [frontSupportPoints[10], frontSupportPoints[11], frontSupportPoints[7]],
+      [frontSupportPoints[11], frontSupportPoints[10], frontSupportPoints[14]],
+      [frontSupportPoints[14], frontSupportPoints[15], frontSupportPoints[11]],
+      [frontSupportPoints[15], frontSupportPoints[14], frontSupportPoints[12]],
+      [frontSupportPoints[12], frontSupportPoints[13], frontSupportPoints[15]],
+      [frontSupportPoints[6], frontSupportPoints[2], frontSupportPoints[0]],
+      [frontSupportPoints[0], frontSupportPoints[4], frontSupportPoints[6]],
+      [frontSupportPoints[10], frontSupportPoints[6], frontSupportPoints[4]],
+      [frontSupportPoints[4], frontSupportPoints[8], frontSupportPoints[10]],
+      [frontSupportPoints[14], frontSupportPoints[10], frontSupportPoints[8]],
+      [frontSupportPoints[8], frontSupportPoints[12], frontSupportPoints[14]],
+      [frontSupportPoints[3], frontSupportPoints[7], frontSupportPoints[5]],
+      [frontSupportPoints[5], frontSupportPoints[1], frontSupportPoints[3]],
+      [frontSupportPoints[7], frontSupportPoints[11], frontSupportPoints[9]],
+      [frontSupportPoints[9], frontSupportPoints[5], frontSupportPoints[7]],
+      [frontSupportPoints[11], frontSupportPoints[15], frontSupportPoints[13]],
+      [frontSupportPoints[13], frontSupportPoints[9], frontSupportPoints[11]],
+      [frontSupportPoints[0], frontSupportPoints[1], frontSupportPoints[5]],
+      [frontSupportPoints[5], frontSupportPoints[4], frontSupportPoints[0]],
+      [frontSupportPoints[4], frontSupportPoints[5], frontSupportPoints[9]],
+      [frontSupportPoints[9], frontSupportPoints[8], frontSupportPoints[4]],
+      [frontSupportPoints[8], frontSupportPoints[9], frontSupportPoints[13]],
+      [frontSupportPoints[13], frontSupportPoints[12], frontSupportPoints[8]],
+      [frontSupportPoints[0], frontSupportPoints[2], frontSupportPoints[17]],
+      [frontSupportPoints[17], frontSupportPoints[16], frontSupportPoints[0]],
+      [frontSupportPoints[6], frontSupportPoints[18], frontSupportPoints[2]],
+      [frontSupportPoints[2], frontSupportPoints[18], frontSupportPoints[17]],
+      [frontSupportPoints[18], frontSupportPoints[6], frontSupportPoints[10]],
+      [frontSupportPoints[10], frontSupportPoints[19], frontSupportPoints[18]],
+      [frontSupportPoints[19], frontSupportPoints[10], frontSupportPoints[14]],
+      [frontSupportPoints[14], frontSupportPoints[20], frontSupportPoints[19]],
+      [frontSupportPoints[19], frontSupportPoints[20], frontSupportPoints[21]],
+      [frontSupportPoints[20], frontSupportPoints[14], frontSupportPoints[12]],
+      [frontSupportPoints[12], frontSupportPoints[22], frontSupportPoints[20]],
+      [frontSupportPoints[3], frontSupportPoints[1], frontSupportPoints[23]],
+      [frontSupportPoints[23], frontSupportPoints[24], frontSupportPoints[3]],
+      [frontSupportPoints[7], frontSupportPoints[3], frontSupportPoints[24]],
+      [frontSupportPoints[24], frontSupportPoints[25], frontSupportPoints[7]],
+      [frontSupportPoints[7], frontSupportPoints[25], frontSupportPoints[26]],
+      [frontSupportPoints[26], frontSupportPoints[11], frontSupportPoints[7]],
+      [frontSupportPoints[11], frontSupportPoints[26], frontSupportPoints[27]],
+      [frontSupportPoints[27], frontSupportPoints[15], frontSupportPoints[11]],
+      [frontSupportPoints[28], frontSupportPoints[27], frontSupportPoints[26]],
+      [frontSupportPoints[15], frontSupportPoints[27], frontSupportPoints[29]],
+      [frontSupportPoints[29], frontSupportPoints[13], frontSupportPoints[15]],
+    ]
 
-    let frontAxleSupport = new THREE.Mesh(frontAxleSupportGeo, supportMat)
-    frontAxleSupport.castShadow = true
-    this.mesh.add(frontAxleSupport)
+    for (let i = 0; i < frontSupportPoints.length; i++) {
+      let actualVet = frontSupportPoints[i]
+      actualVet[0] = W * actualVet[0]
+      actualVet[1] = H * actualVet[1]
+      actualVet[2] = D * actualVet[2]
+      frontSupportPoints[i] = actualVet
+    }
+    let geometry = new THREE.BufferGeometry()
+    let buffer = this.forFunction(frontSupportFaces, frontSupportPoints)
+    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry.computeVertexNormals() // to avoid a flat surface
+    const material = supportMat
+    material.side = THREE.DoubleSide // Show front and back polygons
+    const frontAxleSupportMesh = new THREE.Mesh(geometry, material)
+    this.mesh.add(frontAxleSupportMesh)
+
+    // let frontAxleSupport = new THREE.Mesh(frontAxleSupportGeo, supportMat)
+    // frontAxleSupport.castShadow = true
+    // this.mesh.add(frontAxleSupport)
 
     let backAxleSupportVerticesArr = [
         // back (0–7)
