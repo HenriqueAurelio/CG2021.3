@@ -80,7 +80,7 @@ let foraDaPista = false
 var inspectMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
-cybertruck.position.set(0, 9.5, 1)
+cybertruck.position.set(1, 10, 1.5)
 cybertruck.rotateY(22)
 scene.add(cybertruck)
 // Camera
