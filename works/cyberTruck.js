@@ -4,9 +4,9 @@ export default class Cybertruck extends THREE.Object3D {
   constructor() {
     super()
     this.mesh = new THREE.Object3D()
-    this.width = 8 * 0.20 //8
-    this.height = 7.5 * 0.20 //7.5
-    this.depth = 20 * 0.20 //23
+    this.width = 8 * 0.2 //8
+    this.height = 7.5 * 0.2 //7.5
+    this.depth = 20 * 0.2 //23
 
     this.createCar()
     return this.mesh
@@ -20,17 +20,17 @@ export default class Cybertruck extends THREE.Object3D {
     this.createDoors()
     this.createCameraPoint()
     this.createBodywork()
-    //this.createSupportParts()
+    this.createSupportParts()
     this.createTiresDetails()
 
-    this.mesh.position.set(4, 8, 5)// 1.5
+    this.mesh.position.set(4, 8, 5) // 1.5
     this.mesh.rotateX(Math.PI / 2)
     this.mesh.name = 'Cybertruck'
   }
 
   createCameraPoint() {
     const geometry = new THREE.SphereGeometry(0.2, 32, 32)
-    const material = new THREE.MeshBasicMaterial({ color: '#FFE800' })
+    const material = new THREE.MeshPhongMaterial({ color: '#FFE800' })
     const sphere = new THREE.Mesh(geometry, material)
     sphere.position.set(0.0, 0.9, 4.5)
     sphere.visible = false
@@ -210,20 +210,6 @@ export default class Cybertruck extends THREE.Object3D {
     const teacherMesh = new THREE.Mesh(geometry, material)
 
     this.mesh.add(teacherMesh)
-    // let fuelMat = new THREE.LineBasicMaterial({
-    //   color: 0x000000,
-    //   transparent: true,
-    //   opacity: 0.25,
-    // })
-    // let fuelCapVerticesArr = [
-    //     [0.4502, -0.014, -0.378],
-    //     [0.4502, -0.014, -0.4],
-    //     [0.4502, 0.06, -0.4],
-    //     [0.4502, 0.06, -0.36],
-    //   ],
-    //   fuelCapGeo = new ConvexGeometry(fuelCapVerticesArr.map(toVectors))
-    // let fuelCap = new THREE.Line(fuelCapGeo, fuelMat)
-    //this.mesh.add(fuelCap)
   }
 
   createBodywork() {
@@ -246,17 +232,17 @@ export default class Cybertruck extends THREE.Object3D {
         [0.423, -0.285, -0.4],
       ],
       backGeo = new ConvexGeometry(backVerticesArr.map(toVectors))
-    let backMat = new THREE.MeshStandardMaterial({
+    let backMat = new THREE.MeshPhongMaterial({
       color: 0x101010,
     })
     let back = new THREE.Mesh(backGeo, backMat)
     this.mesh.add(back)
 
     // B. Red Lines
-    let backLightInnerMat = new THREE.MeshBasicMaterial({
+    let backLightInnerMat = new THREE.MeshLambertMaterial({
       color: 0xd65a65,
     })
-    let redLinesMat = new THREE.MeshStandardMaterial({
+    let redLinesMat = new THREE.MeshLambertMaterial({
         color: 0xd81937,
       }),
       leftRedLinesVerticesArr = [
@@ -345,7 +331,7 @@ export default class Cybertruck extends THREE.Object3D {
         [0.226, -0.286, -0.4],
       ],
       backBumperGeo = new ConvexGeometry(backBumperVerticesArr.map(toVectors))
-    let sideMat = new THREE.MeshStandardMaterial({
+    let sideMat = new THREE.MeshPhongMaterial({
       color: 0x2b2b2b,
     })
 
@@ -389,7 +375,7 @@ export default class Cybertruck extends THREE.Object3D {
       flipXVertices = (a) => [-a[0], a[1], a[2]],
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
-    let lightMat = new THREE.MeshBasicMaterial({
+    let lightMat = new THREE.MeshLambertMaterial({
       color: 0xffffff,
     })
 
@@ -423,7 +409,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.mesh.add(frontLight)
 
     // B. Lower
-    let lowerLightMat = new THREE.MeshBasicMaterial({
+    let lowerLightMat = new THREE.MeshLambertMaterial({
         color: 0xff9e59,
       }),
       lowerLFrontLightVerticesArr = [
@@ -452,7 +438,7 @@ export default class Cybertruck extends THREE.Object3D {
 
     // Back Light
     let backLightGeo = new THREE.PlaneGeometry(W * 0.9, H * 0.06),
-      backLightMat = new THREE.MeshStandardMaterial({
+      backLightMat = new THREE.MeshLambertMaterial({
         color: 0x101010,
       }),
       backLight = new THREE.Mesh(backLightGeo, backLightMat)
@@ -466,7 +452,7 @@ export default class Cybertruck extends THREE.Object3D {
         W * 0.9 - H * 0.04,
         H * 0.02
       ),
-      backLightInnerMat = new THREE.MeshBasicMaterial({
+      backLightInnerMat = new THREE.MeshLambertMaterial({
         color: 0xd65a65,
       }),
       backLightInner = new THREE.Mesh(backLightInnerGeo, backLightInnerMat)
@@ -509,8 +495,8 @@ export default class Cybertruck extends THREE.Object3D {
     let windowMat = new THREE.MeshPhongMaterial({
       color: 0x101010,
     })
-    windowMat.transparent = true;
-    windowMat.opacity = 0.96;
+    windowMat.transparent = true
+    windowMat.opacity = 0.96
 
     var windowsPoints = [
       [-0.371, 0.415, -0.13],
@@ -672,7 +658,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.mesh.add(doorOutlineBR)
 
     // C. Sliding Door
-    let slidingDoorMat = new THREE.MeshStandardMaterial({
+    let slidingDoorMat = new THREE.MeshPhongMaterial({
         color: 0x767c7f,
       }),
       slidingDoorPoints = [
@@ -736,7 +722,7 @@ export default class Cybertruck extends THREE.Object3D {
     let wheelHub = new THREE.Object3D()
     wheelHub.position.y = W * 0.075
     this.wheels[0].add(wheelHub)
-    wheelHub.name = "calota";
+    wheelHub.name = 'calota'
 
     let hubBaseGeo = new THREE.CylinderBufferGeometry(
         H * 0.16,
@@ -744,7 +730,7 @@ export default class Cybertruck extends THREE.Object3D {
         W * 0.01,
         7
       ),
-      hubBaseMat = new THREE.MeshStandardMaterial({
+      hubBaseMat = new THREE.MeshLambertMaterial({
         color: 0x2b2b2b,
         //color: 0xb0b0b0,
       }),
@@ -816,50 +802,50 @@ export default class Cybertruck extends THREE.Object3D {
     this.wheels[3].rotation.z = Math.PI / 2
     this.mesh.add(this.wheels[3])
 
-     // X. Front Cylinders
-     let cylinderGeo = new THREE.CylinderBufferGeometry(
-      W * 0.025,
-      W * 0.025,
-      H * 0.32,
-      32
-    ),
-    cylinderMat = new THREE.MeshStandardMaterial({
-      color: 0x969696,
-    }),
-    leftCylinder = new THREE.Mesh(cylinderGeo, cylinderMat)
+    // X. Front Cylinders
+    let cylinderGeo = new THREE.CylinderBufferGeometry(
+        W * 0.025,
+        W * 0.025,
+        H * 0.32,
+        32
+      ),
+      cylinderMat = new THREE.MeshPhongMaterial({
+        color: 0x969696,
+      }),
+      leftCylinder = new THREE.Mesh(cylinderGeo, cylinderMat)
 
-  // left
-  leftCylinder.position.set(W * 0.33, H * -0.09, D * 0.355)
-  leftCylinder.rotation.x = (-5 * Math.PI) / 180
-  this.mesh.add(leftCylinder)
+    // left
+    leftCylinder.position.set(W * 0.33, H * -0.09, D * 0.355)
+    leftCylinder.rotation.x = (-5 * Math.PI) / 180
+    this.mesh.add(leftCylinder)
 
-  // right
-  let rightCylinder = leftCylinder.clone()
-  rightCylinder.position.x *= -1
-  this.mesh.add(rightCylinder)
+    // right
+    let rightCylinder = leftCylinder.clone()
+    rightCylinder.position.x *= -1
+    this.mesh.add(rightCylinder)
 
-  // XI. Axles
-  // A. Axels Themselves
-  let axleGeo = new THREE.CylinderBufferGeometry(
-      W * 0.02,
-      W * 0.02,
-      W * 0.72,
-      32
-    ),
-    axleMat = new THREE.MeshStandardMaterial({
-      color: 0x7f7f7f,
-    }),
-    frontAxle = new THREE.Mesh(axleGeo, axleMat)
+    // XI. Axles
+    // A. Axels Themselves
+    let axleGeo = new THREE.CylinderBufferGeometry(
+        W * 0.02,
+        W * 0.02,
+        W * 0.72,
+        32
+      ),
+      axleMat = new THREE.MeshPhongMaterial({
+        color: 0x7f7f7f,
+      }),
+      frontAxle = new THREE.Mesh(axleGeo, axleMat)
 
-  // front
-  frontAxle.position.set(0, H * -0.27, D * 0.36)
-  frontAxle.rotation.z = -Math.PI / 2
-  this.mesh.add(frontAxle)
+    // front
+    frontAxle.position.set(0, H * -0.27, D * 0.36)
+    frontAxle.rotation.z = -Math.PI / 2
+    this.mesh.add(frontAxle)
 
-  // back
-  let backAxle = frontAxle.clone()
-  backAxle.position.z = D * -0.3
-  this.mesh.add(backAxle)
+    // back
+    let backAxle = frontAxle.clone()
+    backAxle.position.z = D * -0.3
+    this.mesh.add(backAxle)
   }
 
   createTiresDetails() {
@@ -869,7 +855,7 @@ export default class Cybertruck extends THREE.Object3D {
       flipXVertices = (a) => [-a[0], a[1], a[2]],
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
-    let sideMat = new THREE.MeshStandardMaterial({
+    let sideMat = new THREE.MeshPhongMaterial({
         color: 0x2b2b2b,
       }),
       leftPointsDetails = [
@@ -1020,7 +1006,6 @@ export default class Cybertruck extends THREE.Object3D {
 
     //Flipping
 
-    let reverseFaceDraws = (a) => a.reverse()
     let rightSideVerticesArr = this.flipFunction(
       JSON.parse(JSON.stringify(leftPointsDetails))
     )
@@ -1043,7 +1028,7 @@ export default class Cybertruck extends THREE.Object3D {
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
     //------------- Support Parts -------------------
-    let supportMat = new THREE.MeshStandardMaterial({
+    let supportMat = new THREE.MeshLambertMaterial({
         color: 0x595959,
       }),
       frontSupportPoints = [
@@ -1151,56 +1136,110 @@ export default class Cybertruck extends THREE.Object3D {
     geometry.computeVertexNormals() // to avoid a flat surface
     const material = supportMat
     material.side = THREE.DoubleSide // Show front and back polygons
-    const frontAxleSupportMesh = new THREE.Mesh(geometry, material)
-    this.mesh.add(frontAxleSupportMesh)
+    const frontSupportMesh = new THREE.Mesh(geometry, material)
+    this.mesh.add(frontSupportMesh)
 
-    // let frontAxleSupport = new THREE.Mesh(frontAxleSupportGeo, supportMat)
-    // frontAxleSupport.castShadow = true
-    // this.mesh.add(frontAxleSupport)
+    let backSupportPoints = [
+      // back (0–7)
+      [-0.3, -0.29, -0.3999],
+      [0.3, -0.29, -0.3999],
+      [-0.3, -0.1, -0.38],
+      [0.3, -0.1, -0.38],
+      [-0.3, -0.31, -0.35],
+      [0.3, -0.31, -0.35],
+      [-0.3, 0.04, -0.35],
+      [0.3, 0.04, -0.35],
+      // front (8–15)
+      [-0.3, -0.31, -0.24],
+      [0.3, -0.31, -0.24],
+      [-0.3, 0.04, -0.24],
+      [0.3, 0.04, -0.24],
+      [-0.3, -0.29, -0.19],
+      [0.3, -0.29, -0.19],
+      [-0.3, -0.15, -0.19],
+      [0.3, -0.15, -0.19],
+      // right side (16–22)
+      [-0.423, -0.285, -0.3999],
+      [-0.423, -0.1, -0.3799],
+      [-0.45, 0.04, -0.3501],
+      [-0.45, 0.04, -0.24],
+      [-0.45, -0.15, -0.19],
+      [-0.45, -0.15, -0.197],
+      [-0.355, -0.29, -0.19],
+      // left side (23-29)
+      [0.423, -0.285, -0.3999],
+      [0.423, -0.1, -0.3799],
+      [0.45, 0.04, -0.3501],
+      [0.45, 0.04, -0.24],
+      [0.45, -0.15, -0.19],
+      [0.45, -0.15, -0.197],
+      [0.355, -0.29, -0.19],
+    ]
 
-    let backAxleSupportVerticesArr = [
-        // back (0–7)
-        [-0.3, -0.29, -0.3999],
-        [0.3, -0.29, -0.3999],
-        [-0.3, -0.1, -0.38],
-        [0.3, -0.1, -0.38],
-        [-0.3, -0.31, -0.35],
-        [0.3, -0.31, -0.35],
-        [-0.3, 0.04, -0.35],
-        [0.3, 0.04, -0.35],
-        // front (8–15)
-        [-0.3, -0.31, -0.24],
-        [0.3, -0.31, -0.24],
-        [-0.3, 0.04, -0.24],
-        [0.3, 0.04, -0.24],
-        [-0.3, -0.29, -0.19],
-        [0.3, -0.29, -0.19],
-        [-0.3, -0.15, -0.19],
-        [0.3, -0.15, -0.19],
-        // right side (16–22)
-        [-0.423, -0.285, -0.3999],
-        [-0.423, -0.1, -0.3799],
-        [-0.45, 0.04, -0.3501],
-        [-0.45, 0.04, -0.24],
-        [-0.45, -0.15, -0.19],
-        [-0.45, -0.15, -0.197],
-        [-0.355, -0.29, -0.19],
-        // left side (23-29)
-        [0.423, -0.285, -0.3999],
-        [0.423, -0.1, -0.3799],
-        [0.45, 0.04, -0.3501],
-        [0.45, 0.04, -0.24],
-        [0.45, -0.15, -0.19],
-        [0.45, -0.15, -0.197],
-        [0.355, -0.29, -0.19],
-      ],
-      backAxleSupportGeo = new ConvexGeometry(
-        backAxleSupportVerticesArr.map(toVectors)
-      )
+    let backSupportFaces = [
+      [backSupportPoints[2], backSupportPoints[3], backSupportPoints[1]],
+      [backSupportPoints[1], backSupportPoints[0], backSupportPoints[2]],
+      [backSupportPoints[6], backSupportPoints[7], backSupportPoints[3]],
+      [backSupportPoints[3], backSupportPoints[2], backSupportPoints[6]],
+      [backSupportPoints[7], backSupportPoints[6], backSupportPoints[10]],
+      [backSupportPoints[10], backSupportPoints[11], backSupportPoints[7]],
+      [backSupportPoints[11], backSupportPoints[10], backSupportPoints[14]],
+      [backSupportPoints[14], backSupportPoints[15], backSupportPoints[11]],
+      [backSupportPoints[15], backSupportPoints[14], backSupportPoints[12]],
+      [backSupportPoints[12], backSupportPoints[13], backSupportPoints[15]],
+      [backSupportPoints[6], backSupportPoints[2], backSupportPoints[0]],
+      [backSupportPoints[0], backSupportPoints[4], backSupportPoints[6]],
+      [backSupportPoints[10], backSupportPoints[6], backSupportPoints[4]],
+      [backSupportPoints[4], backSupportPoints[8], backSupportPoints[10]],
+      [backSupportPoints[14], backSupportPoints[10], backSupportPoints[8]],
+      [backSupportPoints[8], backSupportPoints[12], backSupportPoints[14]],
+      [backSupportPoints[3], backSupportPoints[7], backSupportPoints[5]],
+      [backSupportPoints[5], backSupportPoints[1], backSupportPoints[3]],
+      [backSupportPoints[7], backSupportPoints[11], backSupportPoints[9]],
+      [backSupportPoints[9], backSupportPoints[5], backSupportPoints[7]],
+      [backSupportPoints[11], backSupportPoints[15], backSupportPoints[13]],
+      [backSupportPoints[13], backSupportPoints[9], backSupportPoints[11]],
+      [backSupportPoints[0], backSupportPoints[1], backSupportPoints[5]],
+      [backSupportPoints[5], backSupportPoints[4], backSupportPoints[0]],
+      [backSupportPoints[4], backSupportPoints[5], backSupportPoints[9]],
+      [backSupportPoints[9], backSupportPoints[8], backSupportPoints[4]],
+      [backSupportPoints[8], backSupportPoints[9], backSupportPoints[13]],
+      [backSupportPoints[13], backSupportPoints[12], backSupportPoints[8]],
+      [backSupportPoints[0], backSupportPoints[2], backSupportPoints[17]],
+      [backSupportPoints[17], backSupportPoints[16], backSupportPoints[0]],
+      [backSupportPoints[6], backSupportPoints[18], backSupportPoints[2]],
+      [backSupportPoints[2], backSupportPoints[18], backSupportPoints[17]],
+      [backSupportPoints[18], backSupportPoints[6], backSupportPoints[10]],
+      [backSupportPoints[10], backSupportPoints[19], backSupportPoints[18]],
+      [backSupportPoints[19], backSupportPoints[10], backSupportPoints[14]],
+      [backSupportPoints[14], backSupportPoints[20], backSupportPoints[19]],
+      [backSupportPoints[20], backSupportPoints[14], backSupportPoints[12]],
+      [backSupportPoints[12], backSupportPoints[22], backSupportPoints[20]],
+      [backSupportPoints[3], backSupportPoints[1], backSupportPoints[23]],
+      [backSupportPoints[23], backSupportPoints[24], backSupportPoints[3]],
+      [backSupportPoints[7], backSupportPoints[3], backSupportPoints[24]],
+      [backSupportPoints[24], backSupportPoints[25], backSupportPoints[7]],
+      [backSupportPoints[7], backSupportPoints[25], backSupportPoints[26]],
+      [backSupportPoints[26], backSupportPoints[11], backSupportPoints[7]],
+      [backSupportPoints[11], backSupportPoints[26], backSupportPoints[27]],
+      [backSupportPoints[27], backSupportPoints[15], backSupportPoints[11]],
+      [backSupportPoints[15], backSupportPoints[27], backSupportPoints[29]],
+      [backSupportPoints[29], backSupportPoints[13], backSupportPoints[15]],
+    ]
 
-    let backAxleSupport = new THREE.Mesh(backAxleSupportGeo, supportMat)
-    backAxleSupport.castShadow = true
-    this.mesh.add(backAxleSupport)
+    for (let i = 0; i < backSupportPoints.length; i++) {
+      let actualVet = backSupportPoints[i]
+      actualVet[0] = W * actualVet[0]
+      actualVet[1] = H * actualVet[1]
+      actualVet[2] = D * actualVet[2]
+      backSupportPoints[i] = actualVet
+    }
+    geometry = new THREE.BufferGeometry()
+    buffer = this.forFunction(backSupportFaces, backSupportPoints)
+    geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
+    geometry.computeVertexNormals() // to avoid a flat surface
+    const backSupportMesh = new THREE.Mesh(geometry, material)
+    this.mesh.add(backSupportMesh)
 
     // C. Bottom Plane Between
     let bottomVerticesArr = [
@@ -1258,7 +1297,6 @@ export default class Cybertruck extends THREE.Object3D {
     return teste
   }
 }
-
 
 /*
 // ----------------------------------- physics ------------------------------------

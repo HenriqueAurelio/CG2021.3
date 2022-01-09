@@ -7,16 +7,16 @@ import {
   createGroundPlaneWired,
   InfoBox,
   onWindowResize,
-  SecondaryBox,
   initDefaultBasicLight,
   degreesToRadians,
-  initCamera,
 } from '../libs/util/util.js'
 import Cybertruck from './cyberTruck.js'
 import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
-import bestLap from './bestLap.js'
+import BestLap from './bestLap.js'
+import ActualLapBox from './actualLap.js'
+import TotalTime from './totalTime.js'
 
 var acc = 0
 var speed = 0
@@ -62,9 +62,10 @@ controls.addParagraph()
 controls.add('Lap time:')
 controls.show()
 
-var secondaryBox = new SecondaryBox()
-var secondaryBox2 = new Speedometer()
-var bestLapBox = new bestLap()
+var actualLapBox = new ActualLapBox()
+var speedometer = new Speedometer()
+var bestLapBox = new BestLap()
+var totalTimeBox = new TotalTime()
 
 // Listen window size changes
 window.addEventListener(
@@ -79,7 +80,7 @@ let foraDaPista = false
 var inspectMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
-cybertruck.position.z = 5
+cybertruck.position.set(1, 10, 1.5)
 cybertruck.rotateY(22)
 scene.add(cybertruck)
 // Camera
@@ -89,7 +90,7 @@ let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 500)
 var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
-inspectCamera.position.set(5, -10, 10);
+inspectCamera.position.set(5, -10, 10)
 inspectCamera.up.set(0, 0, 2)
 var trackballControls = new TrackballControls(
   inspectCamera,
@@ -97,22 +98,21 @@ var trackballControls = new TrackballControls(
 )
 
 //SpotLight InspectCamera
-const spotLight = new THREE.SpotLight( 0xffffff );
-spotLight.position.set( 100, 1000, 100 );
+const spotLight = new THREE.SpotLight(0xffffff)
+spotLight.position.set(100, 1000, 100)
 
-spotLight.castShadow = true;
+spotLight.castShadow = true
 
-spotLight.shadow.mapSize.width = 1024;
-spotLight.shadow.mapSize.height = 1024;
+spotLight.shadow.mapSize.width = 1024
+spotLight.shadow.mapSize.height = 1024
 
-spotLight.shadow.camera.near = 1;
-spotLight.shadow.camera.far = 500;
-spotLight.shadow.camera.fov = 50;
+spotLight.shadow.camera.near = 1
+spotLight.shadow.camera.far = 500
+spotLight.shadow.camera.fov = 50
 
-spotLight.name = 'inspectModeLight';
-spotLight.visible = false;
-scene.add( spotLight );
-
+spotLight.name = 'inspectModeLight'
+spotLight.visible = false
+scene.add(spotLight)
 
 var camera = gameCamera //camera.add(car)
 camera.up.set(0, 0, 1)
@@ -147,13 +147,16 @@ var cameraPoint = cybertruck.children.filter(
 )[0]
 var wheels = [roda1, roda2, roda3, roda4]
 
-
 var won = false
+var totalTimer = new THREE.Clock()
 var timer = new THREE.Clock()
 timer.start()
+totalTimer.start()
 //render()
 var minutes = 0
+var totalMinutes = 0
 var entryTimer = false
+var entryTimer2 = false
 
 function keyboardUpdate() {
   keyboard.update()
@@ -165,6 +168,7 @@ function keyboardUpdate() {
     actualLap = 0
     checkvalue = 0
     timer.start()
+    totalTimer.start()
   }
   if (keyboard.down('2')) {
     removeRoad()
@@ -173,6 +177,7 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
+    totalTimer.start()
     checkvalue = 0
   }
   if (keyboard.down('3')) {
@@ -182,6 +187,7 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
+    totalTimer.start()
   }
   if (keyboard.down('4')) {
     removeRoad()
@@ -190,6 +196,7 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
+    totalTimer.start()
   }
   if (keyboard.down('space')) {
     inspectMode = !inspectMode
@@ -214,29 +221,49 @@ function keyboardUpdate() {
         stringLap = 'Fourth Lap'
         break
     }
-    var x = timer.getElapsedTime()
-    if (x.toFixed() >= 60 && (x % 60).toFixed() == 0 && entryTimer) {
+    var totalTimeLap = totalTimer.getElapsedTime()
+    if (
+      totalTimeLap.toFixed() >= 60 &&
+      (totalTimeLap % 60).toFixed() == 0 &&
+      entryTimer2
+    ) {
+      totalMinutes++
+      entryTimer2 = false
+    }
+    if ((totalTimeLap % 60).toFixed() == 1) {
+      entryTimer2 = true
+    }
+    totalTimeBox.changeMessage(
+      `Tempo total: ${totalMinutes}:${
+        (totalTimeLap.toFixed() % 60).toFixed() < 10 ? '0' : ''
+      }${(totalTimeLap.toFixed() % 60).toFixed()}`
+    )
+    var timeLap = timer.getElapsedTime()
+    if (
+      timeLap.toFixed() >= 60 &&
+      (timeLap % 60).toFixed() == 0 &&
+      entryTimer
+    ) {
       minutes++
       entryTimer = false
     }
-    if ((x % 60).toFixed() == 1) {
+    if ((timeLap % 60).toFixed() == 1) {
       entryTimer = true
     }
-    secondaryBox.changeMessage(
+    actualLapBox.changeMessage(
       `${stringLap} ${minutes}:${
-        (x.toFixed() % 60).toFixed() < 10 ? '0' : ''
-      }${(x.toFixed() % 60).toFixed()}`
+        (timeLap.toFixed() % 60).toFixed() < 10 ? '0' : ''
+      }${(timeLap.toFixed() % 60).toFixed()}`
     )
-    secondaryBox2.changeMessage((speed / 10).toFixed() + ' km/h')
+    speedometer.changeMessage((speed / 10).toFixed() + ' km/h')
     if (speed > 0) {
-      movementOfWheels('forward')
+      movementOfWheels()
       if (keyboard.pressed('right') || keyboard.pressed('left')) {
         acc -= 1
       }
       acc -= 2
     } else if (speed < 0) {
-      
-      movementOfWheels('backwards')
+      movementOfWheels()
       if (keyboard.pressed('right') || keyboard.pressed('left')) {
         acc += 1
       }
@@ -265,34 +292,31 @@ function keyboardUpdate() {
 
     if (keyboard.pressed('right')) {
       if (roda1.rotation.y >= -0.25) {
-        roda1.rotation.y -=tireAngle;
-        roda2.rotation.y -=tireAngle;
+        roda1.rotation.y -= tireAngle
+        roda2.rotation.y -= tireAngle
       }
-      if(!inspectMode){
+      if (!inspectMode) {
         if (speed > 0) cybertruck.rotateY(-angle)
         else if (speed < 0) cybertruck.rotateY(angle)
       }
     }
     if (keyboard.pressed('left')) {
       if (roda1.rotation.y <= 0.25) {
-        roda1.rotation.y +=tireAngle;
-        roda2.rotation.y +=tireAngle;
+        roda1.rotation.y += tireAngle
+        roda2.rotation.y += tireAngle
       }
-      if(!inspectMode){
+      if (!inspectMode) {
         if (speed > 0) cybertruck.rotateY(angle)
         else if (speed < 0) cybertruck.rotateY(-angle)
       }
-      
     }
     updateLap(cybertruck, initialPosition[0])
   } else {
     if (won == false) {
       alert('Você ganhou!')
-      bestLap()
       won = true
     }
   }
-
 }
 
 function controlledRender() {
@@ -300,117 +324,145 @@ function controlledRender() {
   var height = window.innerHeight
 
   // Set main viewport
+
   renderer.setViewport(0, 0, width, height) // Reset viewport
   renderer.setScissorTest(false) // Disable scissor to paint the entire window
   renderer.setClearColor('rgb(80, 70, 170)')
   renderer.clear() // Clean the window
   renderer.render(scene, camera)
-
   // Set virtual camera viewport
-  var offset = 30
-  renderer.setViewport(offset, height - 300 - offset, 400, 300) // Set virtual camera viewport
-  renderer.setScissor(offset, height - 300 - offset, 400, 300) // Set scissor with the same size as the viewport
-  renderer.setScissorTest(true) // Enable scissor to paint only the scissor are (i.e., the small viewport)
-  renderer.setClearColor('rgb(60, 50, 150)') // Use a darker clear color in the small viewport
-  renderer.clear() // Clean the small viewport
-  virtualCamera.position.set(50, 50, 140)
-  virtualCamera.lookAt(50, 50, 0)
-  virtualCamera.up.set(0, 0, 1)
-  renderer.render(scene, virtualCamera) // Render scene of the virtual camera
+  if (!inspectMode) {
+    var offset = 30
+    renderer.setViewport(offset, height - 300 - offset, 400, 300) // Set virtual camera viewport
+    renderer.setScissor(offset, height - 300 - offset, 400, 300) // Set scissor with the same size as the viewport
+    renderer.setScissorTest(true) // Enable scissor to paint only the scissor are (i.e., the small viewport)
+    renderer.setClearColor('rgb(60, 50, 150)') // Use a darker clear color in the small viewport
+    renderer.clear() // Clean the small viewport
+    virtualCamera.position.set(50, 50, 140)
+    virtualCamera.lookAt(50, 50, 0)
+    virtualCamera.up.set(0, 0, 1)
+    renderer.render(scene, virtualCamera) // Render scene of the virtual camera
+  }
 }
 
 // ----------------------------------- physics ------------------------------------
-function createWireFrame(mesh) {	
+function createWireFrame(mesh) {
   // wireframe
-  var geo = new THREE.EdgesGeometry( mesh.geometry ); // or WireframeGeometry
-  var mat = new THREE.LineBasicMaterial( { color: "rgb(80, 80, 80)", linewidth: 1.5} );
-  var wireframe = new THREE.LineSegments( geo, mat );
-  mesh.add( wireframe );
+  var geo = new THREE.EdgesGeometry(mesh.geometry) // or WireframeGeometry
+  var mat = new THREE.LineBasicMaterial({
+    color: 'rgb(80, 80, 80)',
+    linewidth: 1.5,
+  })
+  var wireframe = new THREE.LineSegments(geo, mat)
+  mesh.add(wireframe)
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-var materialInteractive = new THREE.MeshPhongMaterial( { color: "rgb(255, 50, 50)" } );
-var materialDynamic = new THREE.MeshPhongMaterial( { color: "rgba(255, 160, 0)" } );
-var materialGround = new THREE.MeshPhongMaterial({ color: "rgb(180, 180, 180)" });
-var materialWheels = new THREE.MeshPhongMaterial( { color: "rgb(30, 30, 30)" } );	
-var materialWheels2 = new THREE.MeshPhongMaterial( { color: "rgb(200, 200, 200)" } );	
+
+var materialInteractive = new THREE.MeshPhongMaterial({
+  color: 'rgb(255, 50, 50)',
+})
+var materialDynamic = new THREE.MeshPhongMaterial({
+  color: 'rgba(255, 160, 0)',
+})
+var materialGround = new THREE.MeshPhongMaterial({
+  color: 'rgb(180, 180, 180)',
+})
+var materialWheels = new THREE.MeshPhongMaterial({ color: 'rgb(30, 30, 30)' })
+var materialWheels2 = new THREE.MeshPhongMaterial({
+  color: 'rgb(200, 200, 200)',
+})
 
 // mesh
-var materialRamp = new THREE.MeshLambertMaterial( {
-  color: "rgb(120, 120, 200)",
+var materialRamp = new THREE.MeshLambertMaterial({
+  color: 'rgb(120, 120, 200)',
   polygonOffset: true,
   polygonOffsetFactor: 0.5, // positive value pushes polygon further away
-  polygonOffsetUnits: 2
-  } );
+  polygonOffsetUnits: 2,
+})
 
 // global variables
-var TRANSFORM_AUX = null;
-var ZERO_QUATERNION = new THREE.Quaternion(0, 0, 0, 1);
+var TRANSFORM_AUX = null
+var ZERO_QUATERNION = new THREE.Quaternion(0, 0, 0, 1)
 
 // Graphics variables
-var clock = new THREE.Clock();
+var clock = new THREE.Clock()
 
 // Physics variables
-var collisionConfiguration;
-var dispatcher;
-var broadphase;
-var solver;
-var physicsWorld;
+var collisionConfiguration
+var dispatcher
+var broadphase
+var solver
+var physicsWorld
 
-var syncList = [];
+var syncList = []
 
 // Start physics
-Ammo().then(function() {
-  initPhysics();
-  createObjects();	
-  render();
-});
+Ammo().then(function () {
+  initPhysics()
+  createObjects()
+  render()
+})
 
 function initPhysics() {
   // Physics configuration
-  collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
-  dispatcher = new Ammo.btCollisionDispatcher( collisionConfiguration );
-  broadphase = new Ammo.btDbvtBroadphase();
-  solver = new Ammo.btSequentialImpulseConstraintSolver();
-  physicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration );
-  physicsWorld.setGravity( new Ammo.btVector3( 0, 0, -9.82));
+  collisionConfiguration = new Ammo.btDefaultCollisionConfiguration()
+  dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration)
+  broadphase = new Ammo.btDbvtBroadphase()
+  solver = new Ammo.btSequentialImpulseConstraintSolver()
+  physicsWorld = new Ammo.btDiscreteDynamicsWorld(
+    dispatcher,
+    broadphase,
+    solver,
+    collisionConfiguration
+  )
+  physicsWorld.setGravity(new Ammo.btVector3(0, 0, -9.82))
 }
 
 function createFloor() {
-  let pos = { x: 0, y: 0, z: -0.5 };
-  let scale = { x: 400, y: 0.5, z: 400 };
-  let quat = { x: 0, y: 0, z: 0, w: 1 };
-  let mass = 0;
+  let pos = { x: 0, y: 0, z: -0.5 }
+  let scale = { x: 400, y: 0.5, z: 400 }
+  let quat = { x: 0, y: 0, z: 0, w: 1 }
+  let mass = 0
 
-  let blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: 0xf9c834 }));
-  blockPlane.position.set(pos.x, pos.y, pos.z);
-  blockPlane.scale.set(scale.x, scale.y, scale.z);
-  blockPlane.castShadow = true;
-  blockPlane.receiveShadow = true;
+  let blockPlane = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(),
+    new THREE.MeshPhongMaterial({ color: 0xf9c834 })
+  )
+  blockPlane.position.set(pos.x, pos.y, pos.z)
+  blockPlane.scale.set(scale.x, scale.y, scale.z)
+  blockPlane.castShadow = true
+  blockPlane.receiveShadow = true
   blockPlane.rotateX(Math.PI / 2)
-  scene.add(blockPlane);
+  scene.add(blockPlane)
 
   // AMMO
-   let transform = new Ammo.btTransform();
-   transform.setIdentity();
-   transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-   transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-   let motionState = new Ammo.btDefaultMotionState(transform);
- 
-   let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
-   colShape.setMargin(0.05);
- 
-   let localInertia = new Ammo.btVector3(0, 0, 0);
-   colShape.calculateLocalInertia(mass, localInertia);
- 
-   let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
-   let body = new Ammo.btRigidBody(rbInfo);
- 
-   body.setFriction(1);
-   body.setRollingFriction(1);
-   body.setActivationState(4);
-   body.setRestitution(1)
- 
-   physicsWorld.addRigidBody(body);
+  let transform = new Ammo.btTransform()
+  transform.setIdentity()
+  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z))
+  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w))
+  let motionState = new Ammo.btDefaultMotionState(transform)
+
+  let colShape = new Ammo.btBoxShape(
+    new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5)
+  )
+  colShape.setMargin(0.05)
+
+  let localInertia = new Ammo.btVector3(0, 0, 0)
+  colShape.calculateLocalInertia(mass, localInertia)
+
+  let rbInfo = new Ammo.btRigidBodyConstructionInfo(
+    mass,
+    motionState,
+    colShape,
+    localInertia
+  )
+  let body = new Ammo.btRigidBody(rbInfo)
+
+  body.setFriction(1)
+  body.setRollingFriction(1)
+  body.setActivationState(4)
+  body.setRestitution(1)
+
+  physicsWorld.addRigidBody(body)
 }
 
 function createObjects() {
@@ -430,55 +482,73 @@ function createObjects() {
   createWireFrame(ramp);	
 
   // Vehicle
-  createVehicle(new THREE.Vector3(4, 8, 1.5), new THREE.Quaternion(0.7071, 0, 0, 0.7071));
+  createVehicle(
+    new THREE.Vector3(4, 8, 1.5),
+    new THREE.Quaternion(0.7071, 0, 0, 0.7071)
+  )
 }
-  
-function  createBox(pos, quat, w, l, h, mass = 0, friction = 1, material, receiveShadow = false) {
-  if(!TRANSFORM_AUX)
-    TRANSFORM_AUX = new Ammo.btTransform();
-    var shape = new THREE.BoxGeometry(w, l, h, 1, 1, 1);
-    var geometry = new Ammo.btBoxShape(new Ammo.btVector3(w * 0.5, l * 0.5, h * 0.5));
 
-    var mesh = new THREE.Mesh(shape, material);
-    mesh.castShadow = true;
-    mesh.receiveShadow = receiveShadow;
-    mesh.position.copy(pos);
-    mesh.quaternion.copy(quat);
-    mesh.rotateX(Math.PI / 2)
-    scene.add( mesh );
+function createBox(
+  pos,
+  quat,
+  w,
+  l,
+  h,
+  mass = 0,
+  friction = 1,
+  material,
+  receiveShadow = false
+) {
+  if (!TRANSFORM_AUX) TRANSFORM_AUX = new Ammo.btTransform()
+  var shape = new THREE.BoxGeometry(w, l, h, 1, 1, 1)
+  var geometry = new Ammo.btBoxShape(
+    new Ammo.btVector3(w * 0.5, l * 0.5, h * 0.5)
+  )
 
-    var transform = new Ammo.btTransform();
-    transform.setIdentity();
-    transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-    transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, 90, quat.w));
-    var motionState = new Ammo.btDefaultMotionState(transform);
+  var mesh = new THREE.Mesh(shape, material)
+  mesh.castShadow = true
+  mesh.receiveShadow = receiveShadow
+  mesh.position.copy(pos)
+  mesh.quaternion.copy(quat)
+  mesh.rotateX(Math.PI / 2)
+  scene.add(mesh)
 
-    var localInertia = new Ammo.btVector3(0, 0, 0);
-    geometry.calculateLocalInertia(mass, localInertia);
+  var transform = new Ammo.btTransform()
+  transform.setIdentity()
+  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z))
+  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, 90, quat.w))
+  var motionState = new Ammo.btDefaultMotionState(transform)
 
-    var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, geometry, localInertia);
-    var body = new Ammo.btRigidBody(rbInfo);
-    body.setFriction(friction);
+  var localInertia = new Ammo.btVector3(0, 0, 0)
+  geometry.calculateLocalInertia(mass, localInertia)
 
-    physicsWorld.addRigidBody( body );
+  var rbInfo = new Ammo.btRigidBodyConstructionInfo(
+    mass,
+    motionState,
+    geometry,
+    localInertia
+  )
+  var body = new Ammo.btRigidBody(rbInfo)
+  body.setFriction(friction)
 
-    if (mass > 0) {
-      // Sync physics and graphics
-      function sync(dt) {
-        var ms = body.getMotionState();
-        if (ms) {
-          ms.getWorldTransform(TRANSFORM_AUX);
-          var p = TRANSFORM_AUX.getOrigin();
-          var q = TRANSFORM_AUX.getRotation();
-          mesh.position.set(p.x(), p.y(), p.z());
-          mesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
-        }
+  physicsWorld.addRigidBody(body)
+
+  if (mass > 0) {
+    // Sync physics and graphics
+    function sync(dt) {
+      var ms = body.getMotionState()
+      if (ms) {
+        ms.getWorldTransform(TRANSFORM_AUX)
+        var p = TRANSFORM_AUX.getOrigin()
+        var q = TRANSFORM_AUX.getRotation()
+        mesh.position.set(p.x(), p.y(), p.z())
+        mesh.quaternion.set(q.x(), q.y(), q.z(), q.w())
       }
-      syncList.push(sync);
+    }
+    syncList.push(sync)
   }
-  return mesh;
+  return mesh
 }
-
 
 function createWheelMesh(radius, width) {
   var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
@@ -491,11 +561,11 @@ function createWheelMesh(radius, width) {
 }
 
 function createChassisMesh(w, l, h) {
-  var shape = new THREE.BoxGeometry(w, l, h, 1, 1, 1);
-  var mesh = new THREE.Mesh(shape, materialInteractive);
-      mesh.castShadow = true;	
+  var shape = new THREE.BoxGeometry(w, l, h, 1, 1, 1)
+  var mesh = new THREE.Mesh(shape, materialInteractive)
+  mesh.castShadow = true
   //scene.add(mesh);
-  return mesh;
+  return mesh
 }
 
 function createVehicle(pos, quat) {
@@ -505,29 +575,29 @@ function createVehicle(pos, quat) {
   var chassisLength = 20 * 0.20  //4.2;
   var massVehicle = 1000 //1000;
 
-  var wheelRadiusFront = .4;
-  var wheelWidthFront = .4;
-  var wheelAxisFrontPosition = 1.6;
-  var wheelHalfTrackFront = 1.2;
-  var wheelAxisHeightFront = .2;
+  var wheelRadiusFront = 0.4
+  var wheelWidthFront = 0.4
+  var wheelAxisFrontPosition = 1.6
+  var wheelHalfTrackFront = 1.2
+  var wheelAxisHeightFront = 0.2
 
-  var wheelRadiusBack = .5;
-  var wheelWidthBack = .5;
-  var wheelAxisPositionBack = -1.3;
-  var wheelHalfTrackBack = 1.25;
-  var wheelAxisHeightBack = 0.1;
+  var wheelRadiusBack = 0.5
+  var wheelWidthBack = 0.5
+  var wheelAxisPositionBack = -1.3
+  var wheelHalfTrackBack = 1.25
+  var wheelAxisHeightBack = 0.1
 
-  var friction = 1000;
-  var suspensionStiffness = 25.0;
-  var suspensionDamping = 2.3;
-  var suspensionCompression = 5.0;
-  var suspensionRestLength = 0.7;
-  var rollInfluence = 0.2;
+  var friction = 1000
+  var suspensionStiffness = 25.0
+  var suspensionDamping = 2.3
+  var suspensionCompression = 5.0
+  var suspensionRestLength = 0.7
+  var rollInfluence = 0.2
 
-  var steeringIncrement = .04;
-  var steeringClamp = .5;
-  var maxEngineForce = 1500;
-  var maxBreakingForce = 100;
+  var steeringIncrement = 0.04
+  var steeringClamp = 0.5
+  var maxEngineForce = 1500
+  var maxBreakingForce = 100
 
   // Chassis
   var geometry = new Ammo.btBoxShape(new Ammo.btVector3(chassisWidth * .5, chassisHeight * .5, chassisLength * .5));
@@ -549,42 +619,42 @@ function createVehicle(pos, quat) {
   chassisMesh = cybertruck;
 
   // Raycast Vehicle
-  var engineForce = 0;
-  var vehicleSteering = 0;
-  var breakingForce = 0;
-  var tuning = new Ammo.btVehicleTuning();
-  var rayCaster = new Ammo.btDefaultVehicleRaycaster(physicsWorld);
-  var vehicle = new Ammo.btRaycastVehicle(tuning, body, rayCaster);
-  vehicle.setCoordinateSystem(0, 1, 2);
-  physicsWorld.addAction(vehicle);
+  var engineForce = 0
+  var vehicleSteering = 0
+  var breakingForce = 0
+  var tuning = new Ammo.btVehicleTuning()
+  var rayCaster = new Ammo.btDefaultVehicleRaycaster(physicsWorld)
+  var vehicle = new Ammo.btRaycastVehicle(tuning, body, rayCaster)
+  vehicle.setCoordinateSystem(0, 1, 2)
+  physicsWorld.addAction(vehicle)
 
   // Wheels
-  var FRONT_LEFT = 0;
-  var FRONT_RIGHT = 1;
-  var BACK_LEFT = 2;
-  var BACK_RIGHT = 3;
-  var wheelMeshes = [];
-  var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
-  var wheelAxleCS = new Ammo.btVector3(-1, 0, 0);
+  var FRONT_LEFT = 0
+  var FRONT_RIGHT = 1
+  var BACK_LEFT = 2
+  var BACK_RIGHT = 3
+  var wheelMeshes = []
+  var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0)
+  var wheelAxleCS = new Ammo.btVector3(-1, 0, 0)
 
   function addWheel(isFront, pos, radius, width, index) {
-
     var wheelInfo = vehicle.addWheel(
-            pos,
-            wheelDirectionCS0,
-            wheelAxleCS,
-            suspensionRestLength,
-            radius,
-            tuning,
-            isFront);
+      pos,
+      wheelDirectionCS0,
+      wheelAxleCS,
+      suspensionRestLength,
+      radius,
+      tuning,
+      isFront
+    )
 
-    wheelInfo.set_m_suspensionStiffness(suspensionStiffness);
-    wheelInfo.set_m_wheelsDampingRelaxation(suspensionDamping);
-    wheelInfo.set_m_wheelsDampingCompression(suspensionCompression);
-    wheelInfo.set_m_frictionSlip(friction);
-    wheelInfo.set_m_rollInfluence(rollInfluence);
+    wheelInfo.set_m_suspensionStiffness(suspensionStiffness)
+    wheelInfo.set_m_wheelsDampingRelaxation(suspensionDamping)
+    wheelInfo.set_m_wheelsDampingCompression(suspensionCompression)
+    wheelInfo.set_m_frictionSlip(friction)
+    wheelInfo.set_m_rollInfluence(rollInfluence)
 
-    wheelMeshes[index] = createWheelMesh(radius, width);
+    wheelMeshes[index] = createWheelMesh(radius, width)
   }
 
   //addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
@@ -600,81 +670,74 @@ function createVehicle(pos, quat) {
 
   // Sync keybord actions and physics and graphics
   function sync(dt) {
-    var speed = vehicle.getCurrentSpeedKmHour();
-    breakingForce = 0;
-    engineForce = 10;
+    var speed = vehicle.getCurrentSpeedKmHour()
+    breakingForce = 0
+    engineForce = 10
 
     if (keyboard.pressed('X')) {
-        if (speed < -1)
-            breakingForce = maxBreakingForce;
-        else engineForce = maxEngineForce;
+      if (speed < -1) breakingForce = maxBreakingForce
+      else engineForce = maxEngineForce
     }
     if (keyboard.pressed('down')) {
-        if (speed > 1)
-            breakingForce = maxBreakingForce;
-        else engineForce = -maxEngineForce / 2;
+      if (speed > 1) breakingForce = maxBreakingForce
+      else engineForce = -maxEngineForce / 2
     }
     if (keyboard.pressed('left')) {
-        if (vehicleSteering < steeringClamp)
-            vehicleSteering += steeringIncrement;
-    }
-    else {
-        if (keyboard.pressed('right')) {
-            if (vehicleSteering > -steeringClamp)
-                vehicleSteering -= steeringIncrement;
-        }
+      if (vehicleSteering < steeringClamp) vehicleSteering += steeringIncrement
+    } else {
+      if (keyboard.pressed('right')) {
+        if (vehicleSteering > -steeringClamp)
+          vehicleSteering -= steeringIncrement
+      } else {
+        if (vehicleSteering < -steeringIncrement)
+          vehicleSteering += steeringIncrement
         else {
-            if (vehicleSteering < -steeringIncrement)
-                vehicleSteering += steeringIncrement;
-            else {
-                if (vehicleSteering > steeringIncrement)
-                    vehicleSteering -= steeringIncrement;
-                else {
-                    vehicleSteering = 0;
-                }
-            }
+          if (vehicleSteering > steeringIncrement)
+            vehicleSteering -= steeringIncrement
+          else {
+            vehicleSteering = 0
+          }
         }
+      }
     }
-    vehicle.applyEngineForce(engineForce, BACK_LEFT);
-    vehicle.applyEngineForce(engineForce, BACK_RIGHT);
+    vehicle.applyEngineForce(engineForce, BACK_LEFT)
+    vehicle.applyEngineForce(engineForce, BACK_RIGHT)
 
     vehicle.setBrake(breakingForce, BACK_LEFT);
     vehicle.setBrake(breakingForce, BACK_RIGHT);
 
-    vehicle.setSteeringValue(vehicleSteering, FRONT_LEFT);
-    vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT);
+    vehicle.setSteeringValue(vehicleSteering, FRONT_LEFT)
+    vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT)
 
-    var tm, p, q, i;
-    var n = vehicle.getNumWheels();
+    var tm, p, q, i
+    var n = vehicle.getNumWheels()
 
     for(i = 0; i < 4; i ++)
       wheelMeshes[i] = wheels[i];
 
     for (i = 0; i < n; i++) {
-        vehicle.updateWheelTransform(i, true);
-        tm = vehicle.getWheelTransformWS(i);
-        p = tm.getOrigin();
-        q = tm.getRotation();
-        wheelMeshes[i].position.set(p.x(), p.y(), p.z());
-        wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w());
+      vehicle.updateWheelTransform(i, true)
+      tm = vehicle.getWheelTransformWS(i)
+      p = tm.getOrigin()
+      q = tm.getRotation()
+      wheelMeshes[i].position.set(p.x(), p.y(), p.z())
+      wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w())
     }
 
-    tm = vehicle.getChassisWorldTransform();
-    p = tm.getOrigin();
-    q = tm.getRotation();
-    chassisMesh.position.set(p.x(), p.y(), p.z());
-    chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
+    tm = vehicle.getChassisWorldTransform()
+    p = tm.getOrigin()
+    q = tm.getRotation()
+    chassisMesh.position.set(p.x(), p.y(), p.z())
+    chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w())
   }
-  syncList.push(sync);
+  syncList.push(sync)
 }
 
 function render() {
   // AmmoJs
-  var dt = clock.getDelta();
-    for (var i = 0; i < syncList.length; i++)
-      syncList[i](dt);
-    physicsWorld.stepSimulation( dt, 10 );
-
+  var dt = clock.getDelta()
+  for (var i = 0; i < syncList.length; i++) syncList[i](dt)
+  physicsWorld.stepSimulation(dt, 10)
 
   stats.update() // Update FPS
   if (inspectMode) {
@@ -694,18 +757,30 @@ function gameMode() {
   var obj
 
   if (inspectMode) {
+    speedometer.changeVisibility('hidden')
+    actualLapBox.changeVisibility('hidden')
+    bestLapBox.changeVisibility('hidden')
+    totalTimeBox.changeVisibility('hidden')
+
     cybertruck.position.set(0, 0, 0)
-    
-    if (entryInspect == false) inspectCamera.position.set(5, -10, 10)
+    if (entryInspect == false) {
+      inspectCamera.position.set(5, -10, 10)
+    }
     camera = inspectCamera
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
       if (scene.children[i].name != `Cybertruck`) obj.visible = false
-      spotLight.visible = true;
+      spotLight.visible = true
     }
   } else {
-    spotLight.visible = false;
+    if (laps.length == 0) bestLapBox.changeVisibility('hidden')
+    else bestLapBox.changeVisibility('')
+    actualLapBox.changeVisibility('')
+    speedometer.changeVisibility('')
+    totalTimeBox.changeVisibility('')
+
+    spotLight.visible = false
     if (entryInspect) {
       camera = gameCamera
 
@@ -715,6 +790,7 @@ function gameMode() {
       }
       carStartPosition()
       timer.start()
+      totalTimer.start()
       entryInspect = false
     }
   }
@@ -815,7 +891,7 @@ function removeRoad() {
   }
 }
 
-function movementOfWheels(dir) {
+function movementOfWheels() {
   var height = 7.5 * 0.3 //7.5
   let fps = 60,
     scaleBy = 30,
@@ -824,14 +900,16 @@ function movementOfWheels(dir) {
     rpm = feetPerMin / (2 * Math.PI * (tireRadius / 12)),
     incRotate = Math.PI * 2 * (rpm / 6e4) * (1e3 / fps)
 
-  let rotateAngle = incRotate / scaleBy;
-  
-  let calotas = [];
-  wheels.forEach(wheel =>{
-    calotas.push(wheel.children.filter((part) => part.name == "calota")[0].children[0]);
+  let rotateAngle = incRotate / scaleBy
+
+  let calotas = []
+  wheels.forEach((wheel) => {
+    calotas.push(
+      wheel.children.filter((part) => part.name == 'calota')[0].children[0]
+    )
   })
-  calotas[0].rotateY(rotateAngle);
-  calotas[1].rotateY(-rotateAngle);
-  calotas[2].rotateY(rotateAngle);
-  calotas[3].rotateY(-rotateAngle);
+  calotas[0].rotateY(rotateAngle)
+  calotas[1].rotateY(-rotateAngle)
+  calotas[2].rotateY(rotateAngle)
+  calotas[3].rotateY(-rotateAngle)
 }

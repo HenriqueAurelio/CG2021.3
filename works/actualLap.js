@@ -1,10 +1,10 @@
-export default class bestLap {
+export default class actualLap {
   constructor(defaultText) {
     this.box = document.createElement('div')
     this.box.id = 'box'
     this.box.style.padding = '6px 14px'
-    this.box.style.bottom = '15px'
-    this.box.style.left = '230px'
+    this.box.style.bottom = '60px'
+    this.box.style.left = '0'
     this.box.style.position = 'fixed'
     this.box.style.backgroundColor = 'rgba(100,100,255,0.3)'
     this.box.style.color = 'white'

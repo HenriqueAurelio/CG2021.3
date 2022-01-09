@@ -18,4 +18,7 @@ export default class speedometer {
   changeMessage(newText) {
     this.textnode.nodeValue = newText
   }
+  changeVisibility(newText) {
+    this.box.style.visibility = newText
+  }
 }
