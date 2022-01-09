@@ -535,7 +535,11 @@ function createVehicle(pos, quat) {
   transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
   transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
   let motionState = new Ammo.btDefaultMotionState(transform);
-
+  
+  var localInertia = new Ammo.btVector3(0, 0, 0);
+  geometry.calculateLocalInertia(massVehicle, localInertia);
+  var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(massVehicle, motionState, geometry, localInertia));
+  /*
   let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
   colShape.setMargin(0.05);23
 
@@ -544,7 +548,7 @@ function createVehicle(pos, quat) {
 
   let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
   let body = new Ammo.btRigidBody(rbInfo);
-  body.setActivationState(4);
+  body.setActivationState(4);*/
 
   physicsWorld.addRigidBody(body);
   var chassisMesh = createChassisMesh(chassisWidth, chassisHeight, chassisLength);
@@ -645,8 +649,8 @@ function createVehicle(pos, quat) {
     var tm, p, q, i;
     var n = vehicle.getNumWheels();
 
-    for(i = 0; i < 4; i ++)
-      wheelMeshes[i] = wheels[i];
+    //for(i = 0; i < 4; i ++)
+      //wheelMeshes[i] = wheels[i];
 
     for (i = 0; i < n; i++) {
         vehicle.updateWheelTransform(i, true);
