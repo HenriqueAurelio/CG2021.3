@@ -80,7 +80,7 @@ let foraDaPista = false
 var inspectMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
-cybertruck.position.z = 5
+cybertruck.position.set(0, 9.5, 1)
 cybertruck.rotateY(22)
 scene.add(cybertruck)
 // Camera
@@ -314,7 +314,6 @@ function keyboardUpdate() {
   } else {
     if (won == false) {
       alert('Você ganhou!')
-      bestLapFunction()
       won = true
     }
   }
@@ -852,8 +851,6 @@ function gameMode() {
     cybertruck.position.set(0, 0, 0)
     if (entryInspect == false) {
       inspectCamera.position.set(5, -10, 10)
-      console.log(inspectCamera.position)
-      console.log('entrou no inspect')
     }
     camera = inspectCamera
     entryInspect = true
