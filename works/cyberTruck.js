@@ -1006,7 +1006,6 @@ export default class Cybertruck extends THREE.Object3D {
 
     //Flipping
 
-    let reverseFaceDraws = (a) => a.reverse()
     let rightSideVerticesArr = this.flipFunction(
       JSON.parse(JSON.stringify(leftPointsDetails))
     )

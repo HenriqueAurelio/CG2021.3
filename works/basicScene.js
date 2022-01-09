@@ -223,7 +223,7 @@ function keyboardUpdate() {
     var totalTimeLap = totalTimer.getElapsedTime()
     if (
       totalTimeLap.toFixed() >= 60 &&
-      (x % 60).toFixed() == 0 &&
+      (totalTimeLap % 60).toFixed() == 0 &&
       entryTimer2
     ) {
       minutes++
@@ -238,7 +238,11 @@ function keyboardUpdate() {
       }${(totalTimeLap.toFixed() % 60).toFixed()}`
     )
     var timeLap = timer.getElapsedTime()
-    if (timeLap.toFixed() >= 60 && (x % 60).toFixed() == 0 && entryTimer) {
+    if (
+      timeLap.toFixed() >= 60 &&
+      (timeLap % 60).toFixed() == 0 &&
+      entryTimer
+    ) {
       minutes++
       entryTimer = false
     }
