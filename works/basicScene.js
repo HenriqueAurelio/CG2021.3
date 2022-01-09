@@ -147,6 +147,7 @@ var cameraPoint = cybertruck.children.filter(
 )[0]
 var wheels = [roda1, roda2, roda3, roda4]
 
+
 var won = false
 var timer = new THREE.Clock()
 timer.start()
@@ -234,6 +235,7 @@ function keyboardUpdate() {
       }
       acc -= 2
     } else if (speed < 0) {
+      
       movementOfWheels('backwards')
       if (keyboard.pressed('right') || keyboard.pressed('left')) {
         acc += 1
@@ -263,18 +265,16 @@ function keyboardUpdate() {
 
     if (keyboard.pressed('right')) {
       if (roda1.rotation.y >= -0.25) {
-        //console.log(roda1.rotation)
-        roda1.rotateX(tireAngle)
-        roda2.rotateX(-tireAngle)
+        roda1.rotation.y -=tireAngle;
+        roda2.rotation.y -=tireAngle;
       }
       if (speed > 0) cybertruck.rotateY(-angle)
       else if (speed < 0) cybertruck.rotateY(angle)
     }
     if (keyboard.pressed('left')) {
       if (roda1.rotation.y <= 0.25) {
-        //console.log(roda1.rotation)
-        roda1.rotateX(-tireAngle)
-        roda2.rotateX(tireAngle)
+        roda1.rotation.y +=tireAngle;
+        roda2.rotation.y +=tireAngle;
       }
       if (speed > 0) cybertruck.rotateOnAxis(new THREE.Vector3(0, 1, 0), angle)
       else if (speed < 0) cybertruck.rotateY(-angle)
@@ -287,7 +287,7 @@ function keyboardUpdate() {
       won = true
     }
   }
-  // }
+
 }
 
 function controlledRender() {
@@ -534,10 +534,18 @@ function createVehicle(pos, quat) {
   transform.setIdentity();
   transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
   transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-  var motionState = new Ammo.btDefaultMotionState(transform);
-  var localInertia = new Ammo.btVector3(0, 0, 0);
-  geometry.calculateLocalInertia(massVehicle, localInertia);
-  var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(massVehicle, motionState, geometry, localInertia));
+  let motionState = new Ammo.btDefaultMotionState(transform);
+
+  let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
+  colShape.setMargin(0.05);23
+
+  let localInertia = new Ammo.btVector3(0, 0, 0);
+  colShape.calculateLocalInertia(mass, localInertia);
+
+  let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
+  let body = new Ammo.btRigidBody(rbInfo);
+  body.setActivationState(4);
+
   physicsWorld.addRigidBody(body);
   var chassisMesh = createChassisMesh(chassisWidth, chassisHeight, chassisLength);
   //chassisMesh = cybertruck;
@@ -808,19 +816,20 @@ function removeRoad() {
 function movementOfWheels(dir) {
   var height = 7.5 * 0.3 //7.5
   let fps = 60,
-    scaleBy = 45,
+    scaleBy = 30,
     tireRadius = height * 0.23,
     feetPerMin = (speed * 50) / 60,
     rpm = feetPerMin / (2 * Math.PI * (tireRadius / 12)),
     incRotate = Math.PI * 2 * (rpm / 6e4) * (1e3 / fps)
 
-  wheels.forEach((e) => {
-    if (dir == 'forward') {
-      e.rotation.x += incRotate / scaleBy
-    } else {
-      e.rotation.x -= incRotate / scaleBy
-    }
-
-    if (e.rotation.x >= Math.PI * 2) e.rotation.x = 0
+  let rotateAngle = incRotate / scaleBy;
+  
+  let calotas = [];
+  wheels.forEach(wheel =>{
+    calotas.push(wheel.children.filter((part) => part.name == "calota")[0].children[0]);
   })
+  calotas[0].rotateY(rotateAngle);
+  calotas[1].rotateY(-rotateAngle);
+  calotas[2].rotateY(rotateAngle);
+  calotas[3].rotateY(-rotateAngle);
 }

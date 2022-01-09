@@ -21,7 +21,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.createCameraPoint()
     this.createBodywork()
     //this.createSupportParts()
-    //this.createTiresDetails()
+    this.createTiresDetails()
 
     this.mesh.position.set(4, 8, 5)// 1.5
     this.mesh.rotateX(Math.PI / 2)
@@ -736,6 +736,7 @@ export default class Cybertruck extends THREE.Object3D {
     let wheelHub = new THREE.Object3D()
     wheelHub.position.y = W * 0.075
     this.wheels[0].add(wheelHub)
+    wheelHub.name = "calota";
 
     let hubBaseGeo = new THREE.CylinderBufferGeometry(
         H * 0.16,
