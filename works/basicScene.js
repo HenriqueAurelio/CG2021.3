@@ -9,14 +9,14 @@ import {
   onWindowResize,
   initDefaultBasicLight,
   degreesToRadians,
-  initCamera,
 } from '../libs/util/util.js'
 import Cybertruck from './cyberTruck.js'
 import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
-import bestLap from './bestLap.js'
+import BestLap from './bestLap.js'
 import ActualLapBox from './actualLap.js'
+import TotalTime from './totalTime.js'
 
 var acc = 0
 var speed = 0
@@ -64,7 +64,8 @@ controls.show()
 
 var actualLapBox = new ActualLapBox()
 var speedometer = new Speedometer()
-var bestLapBox = new bestLap()
+var bestLapBox = new BestLap()
+var totalTimeBox = new TotalTime()
 
 // Listen window size changes
 window.addEventListener(
@@ -147,11 +148,14 @@ var cameraPoint = cybertruck.children.filter(
 var wheels = [roda1, roda2, roda3, roda4]
 
 var won = false
+var totalTimer = new THREE.Clock()
 var timer = new THREE.Clock()
 timer.start()
+totalTimer.start()
 //render()
 var minutes = 0
 var entryTimer = false
+var entryTimer2 = false
 
 function keyboardUpdate() {
   keyboard.update()
@@ -163,6 +167,7 @@ function keyboardUpdate() {
     actualLap = 0
     checkvalue = 0
     timer.start()
+    totalTimer.start()
   }
   if (keyboard.down('2')) {
     removeRoad()
@@ -171,6 +176,7 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
+    totalTimer.start()
     checkvalue = 0
   }
   if (keyboard.down('3')) {
@@ -180,6 +186,7 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
+    totalTimer.start()
   }
   if (keyboard.down('4')) {
     removeRoad()
@@ -188,6 +195,7 @@ function keyboardUpdate() {
     carStartPosition()
     actualLap = 0
     timer.start()
+    totalTimer.start()
   }
   if (keyboard.down('space')) {
     inspectMode = !inspectMode
@@ -212,18 +220,35 @@ function keyboardUpdate() {
         stringLap = 'Fourth Lap'
         break
     }
-    var x = timer.getElapsedTime()
-    if (x.toFixed() >= 60 && (x % 60).toFixed() == 0 && entryTimer) {
+    var totalTimeLap = totalTimer.getElapsedTime()
+    if (
+      totalTimeLap.toFixed() >= 60 &&
+      (x % 60).toFixed() == 0 &&
+      entryTimer2
+    ) {
+      minutes++
+      entryTimer2 = false
+    }
+    if ((totalTimeLap % 60).toFixed() == 1) {
+      entryTimer2 = true
+    }
+    totalTimeBox.changeMessage(
+      `Tempo total: ${minutes}:${
+        (totalTimeLap.toFixed() % 60).toFixed() < 10 ? '0' : ''
+      }${(totalTimeLap.toFixed() % 60).toFixed()}`
+    )
+    var timeLap = timer.getElapsedTime()
+    if (timeLap.toFixed() >= 60 && (x % 60).toFixed() == 0 && entryTimer) {
       minutes++
       entryTimer = false
     }
-    if ((x % 60).toFixed() == 1) {
+    if ((timeLap % 60).toFixed() == 1) {
       entryTimer = true
     }
     actualLapBox.changeMessage(
       `${stringLap} ${minutes}:${
-        (x.toFixed() % 60).toFixed() < 10 ? '0' : ''
-      }${(x.toFixed() % 60).toFixed()}`
+        (timeLap.toFixed() % 60).toFixed() < 10 ? '0' : ''
+      }${(timeLap.toFixed() % 60).toFixed()}`
     )
     speedometer.changeMessage((speed / 10).toFixed() + ' km/h')
     if (speed > 0) {
@@ -816,6 +841,8 @@ function gameMode() {
   if (inspectMode) {
     speedometer.changeVisibility('hidden')
     actualLapBox.changeVisibility('hidden')
+    bestLapBox.changeVisibility('hidden')
+    totalTimeBox.changeVisibility('hidden')
 
     cybertruck.position.set(0, 0, 0)
     if (entryInspect == false) {
@@ -835,6 +862,7 @@ function gameMode() {
     else bestLapBox.changeVisibility('')
     actualLapBox.changeVisibility('')
     speedometer.changeVisibility('')
+    totalTimeBox.changeVisibility('')
 
     spotLight.visible = false
     if (entryInspect) {
@@ -846,6 +874,7 @@ function gameMode() {
       }
       carStartPosition()
       timer.start()
+      totalTimer.start()
       entryInspect = false
     }
   }
