@@ -307,16 +307,19 @@ function controlledRender() {
   renderer.render(scene, camera)
 
   // Set virtual camera viewport
-  var offset = 30
-  renderer.setViewport(offset, height - 300 - offset, 400, 300) // Set virtual camera viewport
-  renderer.setScissor(offset, height - 300 - offset, 400, 300) // Set scissor with the same size as the viewport
-  renderer.setScissorTest(true) // Enable scissor to paint only the scissor are (i.e., the small viewport)
-  renderer.setClearColor('rgb(60, 50, 150)') // Use a darker clear color in the small viewport
-  renderer.clear() // Clean the small viewport
-  virtualCamera.position.set(50, 50, 140)
-  virtualCamera.lookAt(50, 50, 0)
-  virtualCamera.up.set(0, 0, 1)
-  renderer.render(scene, virtualCamera) // Render scene of the virtual camera
+  if(!inspectMode){
+    var offset = 30
+    renderer.setViewport(offset, height - 300 - offset, 400, 300) // Set virtual camera viewport
+    renderer.setScissor(offset, height - 300 - offset, 400, 300) // Set scissor with the same size as the viewport
+    renderer.setScissorTest(true) // Enable scissor to paint only the scissor are (i.e., the small viewport)
+    renderer.setClearColor('rgb(60, 50, 150)') // Use a darker clear color in the small viewport
+    renderer.clear() // Clean the small viewport
+    virtualCamera.position.set(50, 50, 140)
+    virtualCamera.lookAt(50, 50, 0)
+    virtualCamera.up.set(0, 0, 1)
+    renderer.render(scene, virtualCamera) // Render scene of the virtual camera
+
+  }
 }
 
 // ----------------------------------- physics ------------------------------------
@@ -701,8 +704,7 @@ function gameMode() {
   var obj
 
   if (inspectMode) {
-    cybertruck.position.set(0, 0, 0)
-    
+    cybertruck.position.set(0, 0, 0)    
     if (entryInspect == false) inspectCamera.position.set(5, -10, 10)
     camera = inspectCamera
     entryInspect = true
