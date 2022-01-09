@@ -1,4 +1,4 @@
-export default class bestLap {
+export default class actualLap {
   constructor(defaultText) {
     this.box = document.createElement('div')
     this.box.id = 'box'
