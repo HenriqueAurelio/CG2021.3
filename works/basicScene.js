@@ -314,7 +314,7 @@ function keyboardUpdate() {
   } else {
     if (won == false) {
       alert('Você ganhou!')
-      bestLap()
+      bestLapFunction()
       won = true
     }
   }
