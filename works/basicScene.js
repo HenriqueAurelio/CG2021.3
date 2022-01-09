@@ -154,6 +154,7 @@ timer.start()
 totalTimer.start()
 //render()
 var minutes = 0
+var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
 
@@ -226,14 +227,14 @@ function keyboardUpdate() {
       (totalTimeLap % 60).toFixed() == 0 &&
       entryTimer2
     ) {
-      minutes++
+      totalMinutes++
       entryTimer2 = false
     }
     if ((totalTimeLap % 60).toFixed() == 1) {
       entryTimer2 = true
     }
     totalTimeBox.changeMessage(
-      `Tempo total: ${minutes}:${
+      `Tempo total: ${totalMinutes}:${
         (totalTimeLap.toFixed() % 60).toFixed() < 10 ? '0' : ''
       }${(totalTimeLap.toFixed() % 60).toFixed()}`
     )
