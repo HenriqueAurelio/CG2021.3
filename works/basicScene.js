@@ -268,16 +268,21 @@ function keyboardUpdate() {
         roda1.rotation.y -=tireAngle;
         roda2.rotation.y -=tireAngle;
       }
-      if (speed > 0) cybertruck.rotateY(-angle)
-      else if (speed < 0) cybertruck.rotateY(angle)
+      if(!inspectMode){
+        if (speed > 0) cybertruck.rotateY(-angle)
+        else if (speed < 0) cybertruck.rotateY(angle)
+      }
     }
     if (keyboard.pressed('left')) {
       if (roda1.rotation.y <= 0.25) {
         roda1.rotation.y +=tireAngle;
         roda2.rotation.y +=tireAngle;
       }
-      if (speed > 0) cybertruck.rotateOnAxis(new THREE.Vector3(0, 1, 0), angle)
-      else if (speed < 0) cybertruck.rotateY(-angle)
+      if(!inspectMode){
+        if (speed > 0) cybertruck.rotateY(angle)
+        else if (speed < 0) cybertruck.rotateY(-angle)
+      }
+      
     }
     updateLap(cybertruck, initialPosition[0])
   } else {
