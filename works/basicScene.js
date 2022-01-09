@@ -17,7 +17,6 @@ import Speedometer from './speedometer.js'
 import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 import bestLap from './bestLap.js'
-import * as Ammo from '../libs/other/ammo.wasm.js';
 
 var acc = 0
 var speed = 0
@@ -88,15 +87,32 @@ let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
-var gameCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
-var inspectCamera = initCamera(new THREE.Vector3(5, -10, 10))
-//var inspectCamera =  initCamera(new THREE.Vector3(0, 60, 35))
-//inspectCamera.position.set(0, -20, 30);
+var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 500)
+var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
+inspectCamera.position.set(5, -10, 10);
 inspectCamera.up.set(0, 0, 2)
 var trackballControls = new TrackballControls(
   inspectCamera,
   renderer.domElement
 )
+
+//SpotLight InspectCamera
+const spotLight = new THREE.SpotLight( 0xffffff );
+spotLight.position.set( 100, 1000, 100 );
+
+spotLight.castShadow = true;
+
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+
+spotLight.shadow.camera.near = 1;
+spotLight.shadow.camera.far = 500;
+spotLight.shadow.camera.fov = 50;
+
+spotLight.name = 'inspectModeLight';
+spotLight.visible = false;
+scene.add( spotLight );
+
 
 var camera = gameCamera //camera.add(car)
 camera.up.set(0, 0, 1)
@@ -112,7 +128,7 @@ function cameraUpdate() {
   cameraPoint.getWorldPosition(worldPosition)
   camera.position.x = cybertruck.position.x + 20
   camera.position.y = cybertruck.position.y - 10
-  camera.position.z = cybertruck.position.z + 20
+  camera.position.z = cybertruck.position.z + 25
 
   camera.lookAt(worldPosition)
 }
@@ -134,7 +150,7 @@ var wheels = [roda1, roda2, roda3, roda4]
 var won = false
 var timer = new THREE.Clock()
 timer.start()
-render()
+//render()
 var minutes = 0
 var entryTimer = false
 
@@ -247,7 +263,7 @@ function keyboardUpdate() {
 
     if (keyboard.pressed('right')) {
       if (roda1.rotation.y >= -0.25) {
-        console.log(roda1.rotation)
+        //console.log(roda1.rotation)
         roda1.rotateX(tireAngle)
         roda2.rotateX(-tireAngle)
       }
@@ -256,7 +272,7 @@ function keyboardUpdate() {
     }
     if (keyboard.pressed('left')) {
       if (roda1.rotation.y <= 0.25) {
-        console.log(roda1.rotation)
+        //console.log(roda1.rotation)
         roda1.rotateX(-tireAngle)
         roda2.rotateX(tireAngle)
       }
@@ -298,12 +314,66 @@ function controlledRender() {
   renderer.render(scene, virtualCamera) // Render scene of the virtual camera
 }
 
-
 // ----------------------------------- physics ------------------------------------
+function createWireFrame(mesh) {	
+  // wireframe
+  var geo = new THREE.EdgesGeometry( mesh.geometry ); // or WireframeGeometry
+  var mat = new THREE.LineBasicMaterial( { color: "rgb(80, 80, 80)", linewidth: 1.5} );
+  var wireframe = new THREE.LineSegments( geo, mat );
+  mesh.add( wireframe );
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+var materialInteractive = new THREE.MeshPhongMaterial( { color: "rgb(255, 50, 50)" } );
+var materialDynamic = new THREE.MeshPhongMaterial( { color: "rgba(255, 160, 0)" } );
+var materialGround = new THREE.MeshPhongMaterial({ color: "rgb(180, 180, 180)" });
+var materialWheels = new THREE.MeshPhongMaterial( { color: "rgb(30, 30, 30)" } );	
+var materialWheels2 = new THREE.MeshPhongMaterial( { color: "rgb(200, 200, 200)" } );	
+
+// mesh
+var materialRamp = new THREE.MeshLambertMaterial( {
+  color: "rgb(120, 120, 200)",
+  polygonOffset: true,
+  polygonOffsetFactor: 0.5, // positive value pushes polygon further away
+  polygonOffsetUnits: 2
+  } );
+
+// global variables
+var TRANSFORM_AUX = null;
+var ZERO_QUATERNION = new THREE.Quaternion(0, 0, 0, 1);
+
+// Graphics variables
+var clock = new THREE.Clock();
+
+// Physics variables
+var collisionConfiguration;
+var dispatcher;
+var broadphase;
+var solver;
+var physicsWorld;
+
+var syncList = [];
+
+// Start physics
+Ammo().then(function() {
+  initPhysics();
+  createObjects();	
+  render();
+});
+
+function initPhysics() {
+  // Physics configuration
+  collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
+  dispatcher = new Ammo.btCollisionDispatcher( collisionConfiguration );
+  broadphase = new Ammo.btDbvtBroadphase();
+  solver = new Ammo.btSequentialImpulseConstraintSolver();
+  physicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration );
+  physicsWorld.setGravity( new Ammo.btVector3( 0, 0, -9.82));
+}
+
 
 function createFloor() {
-  let pos = { x: 0, y: -1, z: 0 };
-  let scale = { x: 100, y: 2, z: 100 };
+  let pos = { x: 0, y: 0, z: -0.5 };
+  let scale = { x: 400, y: 0.5, z: 400 };
   let quat = { x: 0, y: 0, z: 0, w: 1 };
   let mass = 0;
 
@@ -312,6 +382,7 @@ function createFloor() {
   blockPlane.scale.set(scale.x, scale.y, scale.z);
   blockPlane.castShadow = true;
   blockPlane.receiveShadow = true;
+  blockPlane.rotateX(Math.PI / 2)
   scene.add(blockPlane);
 
   // AMMO
@@ -338,96 +409,268 @@ function createFloor() {
    physicsWorld.addRigidBody(body);
 }
 
-function createBox() {
-  let pos = { x: -10, y: 6, z: 0 }
-  let scale = { x: 6, y: 6, z: 6 }
-  let quat = { x: 0, y: 0, z: 0, w: 1 };
-  let mass = 1;
+function createObjects() {
+  // Ground plane
+  //var ground = createBox(new THREE.Vector3(0, -0.5, 0), ZERO_QUATERNION, 100, 1, 100, 0, 2, materialGround, true);
+  //setGroundTexture(ground);
+  //createFloor()
 
-  let box = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: 0xDC143C }));
-  box.position.set(pos.x, pos.y, pos.z);
-  box.scale.set(scale.x, scale.y, scale.z);
-  box.castShadow = true;
-  box.receiveShadow = true;
-  scene.add(box);
+  // Ramps
+  var quaternion = new THREE.Quaternion(0, 0, 0, 1);
+  var ramp;
+  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15));
+  ramp = createBox(new THREE.Vector3(0, -1.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
+  createWireFrame(ramp);
+  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30));	
+  ramp = createBox(new THREE.Vector3(25, -3.0, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
+  createWireFrame(ramp);	
+  //quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-5));	
+  //ramp = createBox(new THREE.Vector3(-25, -1.5, 0), quaternion, 8, 4, 15, 0, 0, materialRamp);	
+  //createWireFrame(ramp);	
 
-  // AMMO.js
-  let transform = new Ammo.btTransform();
+  // Vehicle
+  createVehicle(new THREE.Vector3(4, 8, 1.5), new THREE.Quaternion(0.7071, 0, 0, 0.7071));
+}
+  
+function  createBox(pos, quat, w, l, h, mass = 0, friction = 1, material, receiveShadow = false) {
+  if(!TRANSFORM_AUX)
+    TRANSFORM_AUX = new Ammo.btTransform();
+    var shape = new THREE.BoxGeometry(w, l, h, 1, 1, 1);
+    var geometry = new Ammo.btBoxShape(new Ammo.btVector3(w * 0.5, l * 0.5, h * 0.5));
+
+    var mesh = new THREE.Mesh(shape, material);
+    mesh.castShadow = true;
+    mesh.receiveShadow = receiveShadow;
+    mesh.position.copy(pos);
+    mesh.quaternion.copy(quat);
+    mesh.rotateX(Math.PI / 2)
+    scene.add( mesh );
+
+    var transform = new Ammo.btTransform();
+    transform.setIdentity();
+    transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+    transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, 90, quat.w));
+    var motionState = new Ammo.btDefaultMotionState(transform);
+
+    var localInertia = new Ammo.btVector3(0, 0, 0);
+    geometry.calculateLocalInertia(mass, localInertia);
+
+    var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, geometry, localInertia);
+    var body = new Ammo.btRigidBody(rbInfo);
+    body.setFriction(friction);
+
+    physicsWorld.addRigidBody( body );
+
+    if (mass > 0) {
+      // Sync physics and graphics
+      function sync(dt) {
+        var ms = body.getMotionState();
+        if (ms) {
+          ms.getWorldTransform(TRANSFORM_AUX);
+          var p = TRANSFORM_AUX.getOrigin();
+          var q = TRANSFORM_AUX.getRotation();
+          mesh.position.set(p.x(), p.y(), p.z());
+          mesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
+        }
+      }
+      syncList.push(sync);
+  }
+  return mesh;
+}
+
+
+function createWheelMesh(radius, width) {
+  var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
+  t.rotateZ(Math.PI / 2);
+  var mesh = new THREE.Mesh(t, materialWheels);
+      mesh.castShadow = true;
+  mesh.add(new THREE.Mesh(new THREE.BoxGeometry(width * 1.5, radius * 1.75, radius*.25, 1, 1, 1), materialWheels2));
+  scene.add(mesh);
+  return mesh;
+}
+
+function createChassisMesh(w, l, h) {
+  var shape = new THREE.BoxGeometry(w, l, h, 1, 1, 1);
+  var mesh = new THREE.Mesh(shape, materialInteractive);
+      mesh.castShadow = true;	
+  //scene.add(mesh);
+  return mesh;
+}
+
+function createVehicle(pos, quat) {
+  // Vehicle contants
+  var chassisWidth = 8 * 0.3//2.0;
+  var chassisHeight = 7.5 * 0.3//1.0;
+  var chassisLength = 23 * 0.3  //4.2;
+  var massVehicle = 2000 //1000;
+
+  var wheelRadiusFront = .4;
+  var wheelWidthFront = .4;
+  var wheelAxisFrontPosition = 1.6;
+  var wheelHalfTrackFront = 1.2;
+  var wheelAxisHeightFront = .2;
+
+  var wheelRadiusBack = .5;
+  var wheelWidthBack = .5;
+  var wheelAxisPositionBack = -1.3;
+  var wheelHalfTrackBack = 1.25;
+  var wheelAxisHeightBack = 0.1;
+
+  var friction = 1000;
+  var suspensionStiffness = 25.0;
+  var suspensionDamping = 2.3;
+  var suspensionCompression = 5.0;
+  var suspensionRestLength = 0.7;
+  var rollInfluence = 0.2;
+
+  var steeringIncrement = .04;
+  var steeringClamp = .5;
+  var maxEngineForce = 1500;
+  var maxBreakingForce = 100;
+
+  // Chassis
+  var geometry = new Ammo.btBoxShape(new Ammo.btVector3(chassisWidth * .5, chassisHeight * .5, chassisLength * .5));
+  var transform = new Ammo.btTransform();
   transform.setIdentity();
   transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
   transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-  let motionState = new Ammo.btDefaultMotionState(transform);
-
-  let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
-  colShape.setMargin(0.05);
-
-  let localInertia = new Ammo.btVector3(0, 0, 0);
-  colShape.calculateLocalInertia(mass, localInertia);
-
-  let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
-  let body = new Ammo.btRigidBody(rbInfo);
-  body.setActivationState(4);
-
+  var motionState = new Ammo.btDefaultMotionState(transform);
+  var localInertia = new Ammo.btVector3(0, 0, 0);
+  geometry.calculateLocalInertia(massVehicle, localInertia);
+  var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(massVehicle, motionState, geometry, localInertia));
   physicsWorld.addRigidBody(body);
-  rigidBodies.push(box)
+  var chassisMesh = createChassisMesh(chassisWidth, chassisHeight, chassisLength);
+  //chassisMesh = cybertruck;
 
-  box.userData.physicsBody = body;
-  box.userData.draggable = true;
-}
+  // Raycast Vehicle
+  var engineForce = 0;
+  var vehicleSteering = 0;
+  var breakingForce = 0;
+  var tuning = new Ammo.btVehicleTuning();
+  var rayCaster = new Ammo.btDefaultVehicleRaycaster(physicsWorld);
+  var vehicle = new Ammo.btRaycastVehicle(tuning, body, rayCaster);
+  vehicle.setCoordinateSystem(0, 1, 2);
+  physicsWorld.addAction(vehicle);
 
-var tmpTrans// Ammo.btTransform;
-var physicsWorld// Ammo.btDiscreteDynamicsWorld;
-var rigidBodies = [];
-var resultantImpulse// Ammo.btVector3;
+  // Wheels
+  var FRONT_LEFT = 0;
+  var FRONT_RIGHT = 1;
+  var BACK_LEFT = 2;
+  var BACK_RIGHT = 3;
+  var wheelMeshes = [];
+  var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
+  var wheelAxleCS = new Ammo.btVector3(-1, 0, 0);
 
-Ammo().then(function (AmmoLib) {
+  function addWheel(isFront, pos, radius, width, index) {
 
-  tmpTrans = new Ammo.btTransform();
-  resultantImpulse = new Ammo.btVector3(0, 0, 0);
+    var wheelInfo = vehicle.addWheel(
+            pos,
+            wheelDirectionCS0,
+            wheelAxleCS,
+            suspensionRestLength,
+            radius,
+            tuning,
+            isFront);
 
-  setupPhysicsWorld();
+    wheelInfo.set_m_suspensionStiffness(suspensionStiffness);
+    wheelInfo.set_m_wheelsDampingRelaxation(suspensionDamping);
+    wheelInfo.set_m_wheelsDampingCompression(suspensionCompression);
+    wheelInfo.set_m_frictionSlip(friction);
+    wheelInfo.set_m_rollInfluence(rollInfluence);
 
-  createFloor();
-  createBox();
+    wheelMeshes[index] = createWheelMesh(radius, width);
+  }
 
-  animate();
-})
+  addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
+  addWheel(true, new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
+  addWheel(false, new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
+  addWheel(false, new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
 
-function setupPhysicsWorld() {
+  // Sync keybord actions and physics and graphics
+  function sync(dt) {
+    var speed = vehicle.getCurrentSpeedKmHour();
+    breakingForce = 0;
+    engineForce = 10;
 
-  let collisionConfiguration = new Ammo.btDefaultCollisionConfiguration(),
-    dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration),
-    overlappingPairCache = new Ammo.btDbvtBroadphase(),
-    solver = new Ammo.btSequentialImpulseConstraintSolver();
-
-  physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-  physicsWorld.setGravity(new Ammo.btVector3(0, 0,-10));
-
-}
-
-function updatePhysics(deltaTime) {
-
-  // Step world
-  physicsWorld.stepSimulation(deltaTime, 10);
-
-    // Update rigid bodies
-    for (let i = 0; i < rigidBodies.length; i++) {
-      let objThree = rigidBodies[i];
-      let objAmmo = objThree.userData.physicsBody;
-      let ms = objAmmo.getMotionState();
-      if (ms) {
-        ms.getWorldTransform(tmpTrans);
-        let p = tmpTrans.getOrigin();
-        let q = tmpTrans.getRotation();
-        objThree.position.set(p.x(), p.y(), p.z());
-        objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
-      }
+    if (keyboard.pressed('X')) {
+        if (speed < -1)
+            breakingForce = maxBreakingForce;
+        else engineForce = maxEngineForce;
     }
+    if (keyboard.pressed('down')) {
+        if (speed > 1)
+            breakingForce = maxBreakingForce;
+        else engineForce = -maxEngineForce / 2;
+    }
+    if (keyboard.pressed('left')) {
+        if (vehicleSteering < steeringClamp)
+            vehicleSteering += steeringIncrement;
+    }
+    else {
+        if (keyboard.pressed('right')) {
+            if (vehicleSteering > -steeringClamp)
+                vehicleSteering -= steeringIncrement;
+        }
+        else {
+            if (vehicleSteering < -steeringIncrement)
+                vehicleSteering += steeringIncrement;
+            else {
+                if (vehicleSteering > steeringIncrement)
+                    vehicleSteering -= steeringIncrement;
+                else {
+                    vehicleSteering = 0;
+                }
+            }
+        }
+    }
+    vehicle.applyEngineForce(engineForce, BACK_LEFT);
+    vehicle.applyEngineForce(engineForce, BACK_RIGHT);
+
+    //vehicle.setBrake(breakingForce, FRONT_LEFT);
+    //vehicle.setBrake(breakingForce, FRONT_RIGHT);
+    vehicle.setBrake(breakingForce, BACK_LEFT);
+    vehicle.setBrake(breakingForce, BACK_RIGHT);
+
+    vehicle.setSteeringValue(vehicleSteering, FRONT_LEFT);
+    vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT);
+
+    var tm, p, q, i;
+    var n = vehicle.getNumWheels();
+
+    for(i = 0; i < 4; i ++)
+      wheelMeshes[i] = wheels[i];
+
+    for (i = 0; i < n; i++) {
+        vehicle.updateWheelTransform(i, true);
+        tm = vehicle.getWheelTransformWS(i);
+        p = tm.getOrigin();
+        q = tm.getRotation();
+        wheelMeshes[i].position.set(p.x(), p.y(), p.z());
+        wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w());
+    }
+
+    tm = vehicle.getChassisWorldTransform();
+    p = tm.getOrigin();
+    q = tm.getRotation();
+    chassisMesh.position.set(p.x(), p.y(), p.z());
+    chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
+  }
+  syncList.push(sync);
 }
 
 function render() {
+  // AmmoJs
+  var dt = clock.getDelta();
+    for (var i = 0; i < syncList.length; i++)
+      syncList[i](dt);
+    physicsWorld.stepSimulation( dt, 10 );
+
+
   stats.update() // Update FPS
-  if (inspectMode) trackballControls.update()
+  if (inspectMode) {
+    spotLight.position.copy(inspectCamera)
+    trackballControls.update()
+  }
   // Enable mouse movements
   else cameraUpdate()
   keyboardUpdate()
@@ -442,14 +685,17 @@ function gameMode() {
 
   if (inspectMode) {
     cybertruck.position.set(0, 0, 0)
+    
     if (entryInspect == false) inspectCamera.position.set(5, -10, 10)
     camera = inspectCamera
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
       if (scene.children[i].name != `Cybertruck`) obj.visible = false
+      spotLight.visible = true;
     }
   } else {
+    spotLight.visible = false;
     if (entryInspect) {
       camera = gameCamera
 
