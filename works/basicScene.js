@@ -472,35 +472,14 @@ function createObjects() {
   //createFloor()
 
   // Ramps
-  var quaternion = new THREE.Quaternion(0, 0, 0, 1)
-  var ramp
-  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15))
-  ramp = createBox(
-    new THREE.Vector3(0, -1.5, 0),
-    quaternion,
-    8,
-    4,
-    10,
-    0,
-    0,
-    materialRamp
-  )
-  createWireFrame(ramp)
-  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30))
-  ramp = createBox(
-    new THREE.Vector3(25, -3.0, 0),
-    quaternion,
-    8,
-    8,
-    15,
-    0,
-    0,
-    materialRamp
-  )
-  createWireFrame(ramp)
-  //quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-5));
-  //ramp = createBox(new THREE.Vector3(-25, -1.5, 0), quaternion, 8, 4, 15, 0, 0, materialRamp);
-  //createWireFrame(ramp);
+  var quaternion = new THREE.Quaternion(0, 0, 0, 1);
+  var ramp;
+  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15));
+  ramp = createBox(new THREE.Vector3(0, -1.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
+  createWireFrame(ramp);
+  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30));	
+  ramp = createBox(new THREE.Vector3(25, -3.0, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
+  createWireFrame(ramp);	
 
   // Vehicle
   createVehicle(
@@ -572,18 +551,13 @@ function createBox(
 }
 
 function createWheelMesh(radius, width) {
-  var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1)
-  t.rotateZ(Math.PI / 2)
-  var mesh = new THREE.Mesh(t, materialWheels)
-  mesh.castShadow = true
-  mesh.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(width * 1.5, radius * 1.75, radius * 0.25, 1, 1, 1),
-      materialWheels2
-    )
-  )
-  scene.add(mesh)
-  return mesh
+  var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
+  t.rotateX(Math.PI / 2);
+  var mesh = new THREE.Mesh(t, materialWheels);
+      mesh.castShadow = true;
+  mesh.add(new THREE.Mesh(new THREE.BoxGeometry(width * 1.5, radius * 1.75, radius*.25, 1, 1, 1), materialWheels2));
+  scene.add(mesh);
+  return mesh;
 }
 
 function createChassisMesh(w, l, h) {
@@ -596,10 +570,10 @@ function createChassisMesh(w, l, h) {
 
 function createVehicle(pos, quat) {
   // Vehicle contants
-  var chassisWidth = 8 * 0.3 //2.0;
-  var chassisHeight = 7.5 * 0.3 //1.0;
-  var chassisLength = 23 * 0.3 //4.2;
-  var massVehicle = 2000 //1000;
+  var chassisWidth = 8 * 0.20//2.0;
+  var chassisHeight = 7.5 * 0.20//1.0;
+  var chassisLength = 20 * 0.20  //4.2;
+  var massVehicle = 1000 //1000;
 
   var wheelRadiusFront = 0.4
   var wheelWidthFront = 0.4
@@ -626,47 +600,23 @@ function createVehicle(pos, quat) {
   var maxBreakingForce = 100
 
   // Chassis
-  var geometry = new Ammo.btBoxShape(
-    new Ammo.btVector3(
-      chassisWidth * 0.5,
-      chassisHeight * 0.5,
-      chassisLength * 0.5
-    )
-  )
-  var transform = new Ammo.btTransform()
-  transform.setIdentity()
-  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z))
-  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w))
-  let motionState = new Ammo.btDefaultMotionState(transform)
+  var geometry = new Ammo.btBoxShape(new Ammo.btVector3(chassisWidth * .5, chassisHeight * .5, chassisLength * .5));
+  var transform = new Ammo.btTransform();
+  transform.setIdentity();
+  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+  let motionState = new Ammo.btDefaultMotionState(transform);
+  
+  var localInertia = new Ammo.btVector3(0, 0, 0);
+  geometry.calculateLocalInertia(massVehicle, localInertia);
+  var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(massVehicle, motionState, geometry, localInertia));
+  
+  geometry.setMargin(0.05);23
+  body.setActivationState(4);
 
-  var localInertia = new Ammo.btVector3(0, 0, 0)
-  geometry.calculateLocalInertia(massVehicle, localInertia)
-  var body = new Ammo.btRigidBody(
-    new Ammo.btRigidBodyConstructionInfo(
-      massVehicle,
-      motionState,
-      geometry,
-      localInertia
-    )
-  )
-  /*
-  let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
-  colShape.setMargin(0.05);23
-
-  let localInertia = new Ammo.btVector3(0, 0, 0);
-  colShape.calculateLocalInertia(mass, localInertia);
-
-  let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
-  let body = new Ammo.btRigidBody(rbInfo);
-  body.setActivationState(4);*/
-
-  physicsWorld.addRigidBody(body)
-  var chassisMesh = createChassisMesh(
-    chassisWidth,
-    chassisHeight,
-    chassisLength
-  )
-  //chassisMesh = cybertruck;
+  physicsWorld.addRigidBody(body);
+  var chassisMesh = createChassisMesh(chassisWidth, chassisHeight, chassisLength);
+  chassisMesh = cybertruck;
 
   // Raycast Vehicle
   var engineForce = 0
@@ -707,50 +657,16 @@ function createVehicle(pos, quat) {
     wheelMeshes[index] = createWheelMesh(radius, width)
   }
 
-  addWheel(
-    true,
-    new Ammo.btVector3(
-      wheelHalfTrackFront,
-      wheelAxisHeightFront,
-      wheelAxisFrontPosition
-    ),
-    wheelRadiusFront,
-    wheelWidthFront,
-    FRONT_LEFT
-  )
-  addWheel(
-    true,
-    new Ammo.btVector3(
-      -wheelHalfTrackFront,
-      wheelAxisHeightFront,
-      wheelAxisFrontPosition
-    ),
-    wheelRadiusFront,
-    wheelWidthFront,
-    FRONT_RIGHT
-  )
-  addWheel(
-    false,
-    new Ammo.btVector3(
-      -wheelHalfTrackBack,
-      wheelAxisHeightBack,
-      wheelAxisPositionBack
-    ),
-    wheelRadiusBack,
-    wheelWidthBack,
-    BACK_LEFT
-  )
-  addWheel(
-    false,
-    new Ammo.btVector3(
-      wheelHalfTrackBack,
-      wheelAxisHeightBack,
-      wheelAxisPositionBack
-    ),
-    wheelRadiusBack,
-    wheelWidthBack,
-    BACK_RIGHT
-  )
+  //addWheel(true, new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
+  //addWheel(true, new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
+  //addWheel(false, new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
+  //addWheel(false, new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
+
+  addWheel(true, new Ammo.btVector3(roda1.position.x,roda1.position.y,roda1.position.z), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
+  addWheel(true, new Ammo.btVector3(roda2.position.x,roda2.position.y,roda2.position.z), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
+  addWheel(false, new Ammo.btVector3(roda3.position.x,roda3.position.y,roda3.position.z), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
+  addWheel(false, new Ammo.btVector3(roda4.position.x,roda4.position.y,roda4.position.z), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
+
 
   // Sync keybord actions and physics and graphics
   function sync(dt) {
@@ -787,10 +703,8 @@ function createVehicle(pos, quat) {
     vehicle.applyEngineForce(engineForce, BACK_LEFT)
     vehicle.applyEngineForce(engineForce, BACK_RIGHT)
 
-    //vehicle.setBrake(breakingForce, FRONT_LEFT);
-    //vehicle.setBrake(breakingForce, FRONT_RIGHT);
-    vehicle.setBrake(breakingForce, BACK_LEFT)
-    vehicle.setBrake(breakingForce, BACK_RIGHT)
+    vehicle.setBrake(breakingForce, BACK_LEFT);
+    vehicle.setBrake(breakingForce, BACK_RIGHT);
 
     vehicle.setSteeringValue(vehicleSteering, FRONT_LEFT)
     vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT)
@@ -798,8 +712,8 @@ function createVehicle(pos, quat) {
     var tm, p, q, i
     var n = vehicle.getNumWheels()
 
-    //for(i = 0; i < 4; i ++)
-    //wheelMeshes[i] = wheels[i];
+    for(i = 0; i < 4; i ++)
+      wheelMeshes[i] = wheels[i];
 
     for (i = 0; i < n; i++) {
       vehicle.updateWheelTransform(i, true)
