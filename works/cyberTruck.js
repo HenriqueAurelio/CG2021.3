@@ -30,7 +30,7 @@ export default class Cybertruck extends THREE.Object3D {
 
   createCameraPoint() {
     const geometry = new THREE.SphereGeometry(0.2, 32, 32)
-    const material = new THREE.MeshBasicMaterial({ color: '#FFE800' })
+    const material = new THREE.MeshPhongMaterial({ color: '#FFE800' })
     const sphere = new THREE.Mesh(geometry, material)
     sphere.position.set(0.0, 0.9, 4.5)
     sphere.visible = false
@@ -210,20 +210,6 @@ export default class Cybertruck extends THREE.Object3D {
     const teacherMesh = new THREE.Mesh(geometry, material)
 
     this.mesh.add(teacherMesh)
-    // let fuelMat = new THREE.LineBasicMaterial({
-    //   color: 0x000000,
-    //   transparent: true,
-    //   opacity: 0.25,
-    // })
-    // let fuelCapVerticesArr = [
-    //     [0.4502, -0.014, -0.378],
-    //     [0.4502, -0.014, -0.4],
-    //     [0.4502, 0.06, -0.4],
-    //     [0.4502, 0.06, -0.36],
-    //   ],
-    //   fuelCapGeo = new ConvexGeometry(fuelCapVerticesArr.map(toVectors))
-    // let fuelCap = new THREE.Line(fuelCapGeo, fuelMat)
-    //this.mesh.add(fuelCap)
   }
 
   createBodywork() {
@@ -246,17 +232,17 @@ export default class Cybertruck extends THREE.Object3D {
         [0.423, -0.285, -0.4],
       ],
       backGeo = new ConvexGeometry(backVerticesArr.map(toVectors))
-    let backMat = new THREE.MeshStandardMaterial({
+    let backMat = new THREE.MeshPhongMaterial({
       color: 0x101010,
     })
     let back = new THREE.Mesh(backGeo, backMat)
     this.mesh.add(back)
 
     // B. Red Lines
-    let backLightInnerMat = new THREE.MeshBasicMaterial({
+    let backLightInnerMat = new THREE.MeshLambertMaterial({
       color: 0xd65a65,
     })
-    let redLinesMat = new THREE.MeshStandardMaterial({
+    let redLinesMat = new THREE.MeshLambertMaterial({
         color: 0xd81937,
       }),
       leftRedLinesVerticesArr = [
@@ -345,7 +331,7 @@ export default class Cybertruck extends THREE.Object3D {
         [0.226, -0.286, -0.4],
       ],
       backBumperGeo = new ConvexGeometry(backBumperVerticesArr.map(toVectors))
-    let sideMat = new THREE.MeshStandardMaterial({
+    let sideMat = new THREE.MeshPhongMaterial({
       color: 0x2b2b2b,
     })
 
@@ -389,7 +375,7 @@ export default class Cybertruck extends THREE.Object3D {
       flipXVertices = (a) => [-a[0], a[1], a[2]],
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
-    let lightMat = new THREE.MeshBasicMaterial({
+    let lightMat = new THREE.MeshLambertMaterial({
       color: 0xffffff,
     })
 
@@ -423,7 +409,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.mesh.add(frontLight)
 
     // B. Lower
-    let lowerLightMat = new THREE.MeshBasicMaterial({
+    let lowerLightMat = new THREE.MeshLambertMaterial({
         color: 0xff9e59,
       }),
       lowerLFrontLightVerticesArr = [
@@ -452,7 +438,7 @@ export default class Cybertruck extends THREE.Object3D {
 
     // Back Light
     let backLightGeo = new THREE.PlaneGeometry(W * 0.9, H * 0.06),
-      backLightMat = new THREE.MeshStandardMaterial({
+      backLightMat = new THREE.MeshLambertMaterial({
         color: 0x101010,
       }),
       backLight = new THREE.Mesh(backLightGeo, backLightMat)
@@ -466,7 +452,7 @@ export default class Cybertruck extends THREE.Object3D {
         W * 0.9 - H * 0.04,
         H * 0.02
       ),
-      backLightInnerMat = new THREE.MeshBasicMaterial({
+      backLightInnerMat = new THREE.MeshLambertMaterial({
         color: 0xd65a65,
       }),
       backLightInner = new THREE.Mesh(backLightInnerGeo, backLightInnerMat)
@@ -672,7 +658,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.mesh.add(doorOutlineBR)
 
     // C. Sliding Door
-    let slidingDoorMat = new THREE.MeshStandardMaterial({
+    let slidingDoorMat = new THREE.MeshPhongMaterial({
         color: 0x767c7f,
       }),
       slidingDoorPoints = [
@@ -744,7 +730,7 @@ export default class Cybertruck extends THREE.Object3D {
         W * 0.01,
         7
       ),
-      hubBaseMat = new THREE.MeshStandardMaterial({
+      hubBaseMat = new THREE.MeshLambertMaterial({
         color: 0x2b2b2b,
         //color: 0xb0b0b0,
       }),
@@ -823,7 +809,7 @@ export default class Cybertruck extends THREE.Object3D {
         H * 0.32,
         32
       ),
-      cylinderMat = new THREE.MeshStandardMaterial({
+      cylinderMat = new THREE.MeshPhongMaterial({
         color: 0x969696,
       }),
       leftCylinder = new THREE.Mesh(cylinderGeo, cylinderMat)
@@ -846,7 +832,7 @@ export default class Cybertruck extends THREE.Object3D {
         W * 0.72,
         32
       ),
-      axleMat = new THREE.MeshStandardMaterial({
+      axleMat = new THREE.MeshPhongMaterial({
         color: 0x7f7f7f,
       }),
       frontAxle = new THREE.Mesh(axleGeo, axleMat)
@@ -869,7 +855,7 @@ export default class Cybertruck extends THREE.Object3D {
       flipXVertices = (a) => [-a[0], a[1], a[2]],
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
-    let sideMat = new THREE.MeshStandardMaterial({
+    let sideMat = new THREE.MeshPhongMaterial({
         color: 0x2b2b2b,
       }),
       leftPointsDetails = [
@@ -1043,7 +1029,7 @@ export default class Cybertruck extends THREE.Object3D {
       toVectors = (a) => new THREE.Vector3(W * a[0], H * a[1], D * a[2])
 
     //------------- Support Parts -------------------
-    let supportMat = new THREE.MeshStandardMaterial({
+    let supportMat = new THREE.MeshLambertMaterial({
         color: 0x595959,
       }),
       frontSupportPoints = [

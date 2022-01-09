@@ -295,12 +295,12 @@ function controlledRender() {
   var height = window.innerHeight
 
   // Set main viewport
+
   renderer.setViewport(0, 0, width, height) // Reset viewport
   renderer.setScissorTest(false) // Disable scissor to paint the entire window
   renderer.setClearColor('rgb(80, 70, 170)')
   renderer.clear() // Clean the window
   renderer.render(scene, camera)
-
   // Set virtual camera viewport
   if (!inspectMode) {
     var offset = 30
@@ -818,7 +818,11 @@ function gameMode() {
     actualLapBox.changeVisibility('hidden')
 
     cybertruck.position.set(0, 0, 0)
-    if (entryInspect == false) inspectCamera.position.set(5, -10, 10)
+    if (entryInspect == false) {
+      inspectCamera.position.set(5, -10, 10)
+      console.log(inspectCamera.position)
+      console.log('entrou no inspect')
+    }
     camera = inspectCamera
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
