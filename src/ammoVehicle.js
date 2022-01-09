@@ -322,7 +322,7 @@ function sync(dt) {
     var speed = vehicle.getCurrentSpeedKmHour();
     speedometer.innerHTML = (speed < 0 ? '(R) ' : '') + Math.abs(speed).toFixed(1) + ' km/h';
     breakingForce = 0;
-    engineForce = 0;
+    engineForce = 10;
 
     if (actions.acceleration) {
         if (speed < -1)
