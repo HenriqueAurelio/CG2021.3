@@ -1006,18 +1006,150 @@ export default class Cybertruck extends THREE.Object3D {
 
     //Flipping
 
-    let rightSideVerticesArr = this.flipFunction(
-      JSON.parse(JSON.stringify(leftPointsDetails))
-    )
-    //Problema de referencia
+    let rightPointDetails = [
+      // top (0–19)
+      [-0.45, -0.1, -0.4],
+      [-0.5, -0.1, -0.3825],
+      [-0.45, 0.06, -0.36],
+      [-0.5, 0.03, -0.35],
+      [-0.45, 0.06, -0.236],
+      [-0.5, 0.03, -0.24],
+      [-0.45, -0.15, -0.18],
+      [-0.5, -0.15, -0.192],
+      [-0.41, -0.21, -0.173],
+      [-0.48, -0.21, -0.19],
+      [-0.41, -0.23, 0.2498],
+      [-0.48, -0.23, 0.261],
+      [-0.45, -0.17, 0.255],
+      [-0.5, -0.17, 0.263],
+      [-0.45, 0.06, 0.3015],
+      [-0.5, 0.03, 0.3035],
+      [-0.45, 0.06, 0.42],
+      [-0.5, 0.03, 0.4165],
+      [-0.45, -0.13, 0.46],
+      [-0.5, -0.13, 0.45],
+      // bottom (20–41)
+      [-0.45, -0.074, -0.379],
+      [-0.5, -0.1, -0.3775],
+      [-0.45, 0.04, -0.35],
+      [-0.5, 0.015, -0.348],
+      [-0.45, 0.04, -0.2505],
+      [-0.5, 0.015, -0.2435],
+      [-0.45, -0.15, -0.197],
+      [-0.5, -0.15, -0.197],
+      [-0.355, -0.29, -0.19],
+      [-0.4, -0.29, -0.19],
+      [-0.355, -0.31, 0.2582],
+      [-0.4, -0.31, 0.26],
+      [-0.45, -0.17, 0.265],
+      [-0.5, -0.17, 0.267],
+      [-0.45, 0.04, 0.3099],
+      [-0.5, 0.015, 0.3065],
+      [-0.45, 0.04, 0.418],
+      [-0.5, 0.015, 0.4135],
+      [-0.45, -0.13, 0.455],
+      [-0.5, -0.13, 0.445],
+      [-0.48, -0.21, -0.194],
+      [-0.48, -0.23, 0.265],
+    ]
+    for (let i = 0; i < rightPointDetails.length; i++) {
+      let actualVet = rightPointDetails[i]
+      actualVet[0] = W * actualVet[0]
+      actualVet[1] = H * actualVet[1]
+      actualVet[2] = D * actualVet[2]
+      rightPointDetails[i] = actualVet
+    }
 
-    let rightSideFacesArr = this.reverseFunction(leftSideFacesArr)
-    buffer = this.forFunction(rightSideFacesArr, rightSideVerticesArr)
+    let rightSideFacesArr = [
+      [rightPointDetails[0], rightPointDetails[2], rightPointDetails[3]],
+      [rightPointDetails[3], rightPointDetails[1], rightPointDetails[0]],
+      [rightPointDetails[2], rightPointDetails[4], rightPointDetails[5]],
+      [rightPointDetails[5], rightPointDetails[3], rightPointDetails[2]],
+      [rightPointDetails[4], rightPointDetails[6], rightPointDetails[7]],
+      [rightPointDetails[7], rightPointDetails[5], rightPointDetails[4]],
+      [rightPointDetails[6], rightPointDetails[8], rightPointDetails[9]],
+      [rightPointDetails[9], rightPointDetails[7], rightPointDetails[6]],
+      [rightPointDetails[8], rightPointDetails[10], rightPointDetails[11]],
+      [rightPointDetails[11], rightPointDetails[9], rightPointDetails[8]],
+      [rightPointDetails[10], rightPointDetails[12], rightPointDetails[13]],
+      [rightPointDetails[13], rightPointDetails[11], rightPointDetails[10]],
+      [rightPointDetails[12], rightPointDetails[14], rightPointDetails[15]],
+      [rightPointDetails[15], rightPointDetails[13], rightPointDetails[12]],
+      [rightPointDetails[14], rightPointDetails[16], rightPointDetails[17]],
+      [rightPointDetails[17], rightPointDetails[15], rightPointDetails[14]],
+      [rightPointDetails[16], rightPointDetails[18], rightPointDetails[19]],
+      [rightPointDetails[19], rightPointDetails[17], rightPointDetails[16]],
+      [rightPointDetails[23], rightPointDetails[22], rightPointDetails[20]],
+      [rightPointDetails[20], rightPointDetails[21], rightPointDetails[23]],
+      [rightPointDetails[25], rightPointDetails[24], rightPointDetails[22]],
+      [rightPointDetails[22], rightPointDetails[23], rightPointDetails[25]],
+      [rightPointDetails[27], rightPointDetails[26], rightPointDetails[24]],
+      [rightPointDetails[24], rightPointDetails[25], rightPointDetails[27]],
+      [rightPointDetails[31], rightPointDetails[30], rightPointDetails[28]],
+      [rightPointDetails[28], rightPointDetails[29], rightPointDetails[31]],
+      [rightPointDetails[35], rightPointDetails[34], rightPointDetails[32]],
+      [rightPointDetails[32], rightPointDetails[33], rightPointDetails[35]],
+      [rightPointDetails[37], rightPointDetails[36], rightPointDetails[34]],
+      [rightPointDetails[34], rightPointDetails[35], rightPointDetails[37]],
+      [rightPointDetails[39], rightPointDetails[38], rightPointDetails[36]],
+      [rightPointDetails[36], rightPointDetails[37], rightPointDetails[39]],
+      [rightPointDetails[0], rightPointDetails[1], rightPointDetails[21]],
+      [rightPointDetails[21], rightPointDetails[20], rightPointDetails[0]],
+      [rightPointDetails[20], rightPointDetails[22], rightPointDetails[2]],
+      [rightPointDetails[2], rightPointDetails[0], rightPointDetails[20]],
+      [rightPointDetails[22], rightPointDetails[24], rightPointDetails[4]],
+      [rightPointDetails[4], rightPointDetails[2], rightPointDetails[22]],
+      [rightPointDetails[24], rightPointDetails[26], rightPointDetails[6]],
+      [rightPointDetails[6], rightPointDetails[4], rightPointDetails[24]],
+      [rightPointDetails[26], rightPointDetails[28], rightPointDetails[8]],
+      [rightPointDetails[8], rightPointDetails[6], rightPointDetails[26]],
+      [rightPointDetails[28], rightPointDetails[30], rightPointDetails[10]],
+      [rightPointDetails[10], rightPointDetails[8], rightPointDetails[28]],
+      [rightPointDetails[30], rightPointDetails[32], rightPointDetails[12]],
+      [rightPointDetails[12], rightPointDetails[10], rightPointDetails[30]],
+      [rightPointDetails[32], rightPointDetails[34], rightPointDetails[14]],
+      [rightPointDetails[14], rightPointDetails[12], rightPointDetails[32]],
+      [rightPointDetails[34], rightPointDetails[36], rightPointDetails[16]],
+      [rightPointDetails[16], rightPointDetails[14], rightPointDetails[34]],
+      [rightPointDetails[36], rightPointDetails[38], rightPointDetails[18]],
+      [rightPointDetails[18], rightPointDetails[16], rightPointDetails[36]],
+      [rightPointDetails[3], rightPointDetails[23], rightPointDetails[21]],
+      [rightPointDetails[21], rightPointDetails[1], rightPointDetails[3]],
+      [rightPointDetails[5], rightPointDetails[25], rightPointDetails[23]],
+      [rightPointDetails[23], rightPointDetails[3], rightPointDetails[5]],
+      [rightPointDetails[7], rightPointDetails[27], rightPointDetails[25]],
+      [rightPointDetails[25], rightPointDetails[5], rightPointDetails[7]],
+      [rightPointDetails[27], rightPointDetails[7], rightPointDetails[9]],
+      [rightPointDetails[9], rightPointDetails[40], rightPointDetails[27]],
+      [rightPointDetails[40], rightPointDetails[9], rightPointDetails[29]],
+      [rightPointDetails[26], rightPointDetails[27], rightPointDetails[40]],
+      [rightPointDetails[40], rightPointDetails[29], rightPointDetails[26]],
+      [rightPointDetails[26], rightPointDetails[29], rightPointDetails[28]],
+      [rightPointDetails[11], rightPointDetails[31], rightPointDetails[29]],
+      [rightPointDetails[29], rightPointDetails[9], rightPointDetails[11]],
+      [rightPointDetails[11], rightPointDetails[41], rightPointDetails[31]],
+      [rightPointDetails[13], rightPointDetails[33], rightPointDetails[41]],
+      [rightPointDetails[41], rightPointDetails[11], rightPointDetails[13]],
+      [rightPointDetails[33], rightPointDetails[32], rightPointDetails[30]],
+      [rightPointDetails[30], rightPointDetails[41], rightPointDetails[33]],
+      [rightPointDetails[41], rightPointDetails[10], rightPointDetails[30]],
+      [rightPointDetails[30], rightPointDetails[31], rightPointDetails[41]],
+      [rightPointDetails[15], rightPointDetails[35], rightPointDetails[33]],
+      [rightPointDetails[33], rightPointDetails[13], rightPointDetails[15]],
+      [rightPointDetails[17], rightPointDetails[37], rightPointDetails[35]],
+      [rightPointDetails[35], rightPointDetails[15], rightPointDetails[17]],
+      [rightPointDetails[19], rightPointDetails[39], rightPointDetails[37]],
+      [rightPointDetails[37], rightPointDetails[17], rightPointDetails[19]],
+      [rightPointDetails[38], rightPointDetails[39], rightPointDetails[19]],
+      [rightPointDetails[19], rightPointDetails[18], rightPointDetails[38]],
+    ]
     let geometry2 = new THREE.BufferGeometry()
-    geometry2.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
-    geometry2.computeVertexNormals()
-    let rightSide = new THREE.Mesh(geometry2, material) // to avoid a flat surface
-    this.mesh.add(rightSide)
+    let buffer2 = this.forFunction(rightSideFacesArr, rightPointDetails)
+    geometry2.setAttribute('position', new THREE.BufferAttribute(buffer2, 3))
+    geometry2.computeVertexNormals() // to avoid a flat surface
+    // Show front and back polygons
+    const rightTireDetailsMesh = new THREE.Mesh(geometry2, material)
+    this.mesh.add(rightTireDetailsMesh)
   }
 
   createSupportParts() {
