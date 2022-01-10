@@ -42,11 +42,11 @@ renderer.shadowMap.type  = THREE.VSMShadowMap; // default
 
 //initDefaultBasicLight(scene, true)
 
-var ambientLight = new THREE.AmbientLight("rgb(60,60,60)");
+var ambientLight = new THREE.AmbientLight("rgb(60,60,60)",0.8);
 scene.add( ambientLight );
 
 // Create and set the spotlight
-var dirLight = new THREE.DirectionalLight("rgb(255,255,255)");
+var dirLight = new THREE.DirectionalLight("rgb(255,255,255)",0.75);
   dirLight.position.copy(new THREE.Vector3(2.0, 1.2, 0.0));
   dirLight.castShadow = true;
   // Shadow Parameters
@@ -172,9 +172,10 @@ function cameraUpdate() {
   camera.position.z = cybertruck.position.z + 25
 
   dirLight.position.x = camera.position.x
-  dirLight.position.y = camera.position.y + 10
+  dirLight.position.y = camera.position.y - 10
   dirLight.position.z = camera.position.z + 5
-  dirLight.target.updateMatrixWorld()
+  //dirLight.target.updateMatrixWorld()
+  dirLight.target = cybertruck;
 
   camera.lookAt(worldPosition)
 }
