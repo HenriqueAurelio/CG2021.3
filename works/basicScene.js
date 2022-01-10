@@ -33,39 +33,38 @@ var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
 
-
 // setShadowMap
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type  = THREE.VSMShadowMap; // default
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.VSMShadowMap // default
 
 //---------------- setLights -----------------
 
 //initDefaultBasicLight(scene, true)
 
-var ambientLight = new THREE.AmbientLight("rgb(60,60,60)",0.8);
-scene.add( ambientLight );
+var ambientLight = new THREE.AmbientLight('rgb(60,60,60)', 0.5)
+scene.add(ambientLight)
 
 // Create and set the spotlight
-var dirLight = new THREE.DirectionalLight("rgb(255,255,255)",0.75);
-  dirLight.position.copy(new THREE.Vector3(2.0, 1.2, 0.0));
-  dirLight.castShadow = true;
-  // Shadow Parameters
-  dirLight.shadow.mapSize.width = 256;
-  dirLight.shadow.mapSize.height = 256;
-  dirLight.shadow.camera.near = .1;
-  dirLight.shadow.camera.far = 400;
-  dirLight.shadow.camera.left = -5;
-  dirLight.shadow.camera.right = 5;
-  dirLight.shadow.camera.bottom = -5;
-  dirLight.shadow.camera.top = 5;
-  dirLight.shadow.bias = -0.0005;  
+var dirLight = new THREE.DirectionalLight('rgb(255,255,255)', 0.7555)
+dirLight.position.copy(new THREE.Vector3(2.0, 1.2, 0.0))
+dirLight.castShadow = true
+// Shadow Parameters
+dirLight.shadow.mapSize.width = 256
+dirLight.shadow.mapSize.height = 256
+dirLight.shadow.camera.near = 0.1
+dirLight.shadow.camera.far = 100
+dirLight.shadow.camera.left = -5
+dirLight.shadow.camera.right = 5
+dirLight.shadow.camera.bottom = -5
+dirLight.shadow.camera.top = 5
+dirLight.shadow.bias = -0.0005
 
-  // No effect on Basic and PCFSoft
-  dirLight.shadow.radius = 4;
+// No effect on Basic and PCFSoft
+dirLight.shadow.radius = 4
 
-  // Just for VSM - to be added in threejs.r132
-  dirLight.shadow.blurSamples = 2;
-scene.add(dirLight);
+// Just for VSM - to be added in threejs.r132
+dirLight.shadow.blurSamples = 2
+scene.add(dirLight)
 
 // Create helper for the spotlight shadow
 const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
@@ -120,7 +119,7 @@ let foraDaPista = false
 var inspectMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
-cybertruck.position.set(1, 10, 1.5)
+cybertruck.position.set(1, 10, 1.2)
 cybertruck.rotateY(22)
 scene.add(cybertruck)
 
@@ -172,10 +171,10 @@ function cameraUpdate() {
   camera.position.z = cybertruck.position.z + 25
 
   dirLight.position.x = camera.position.x
-  dirLight.position.y = camera.position.y - 10
-  dirLight.position.z = camera.position.z + 5
+  dirLight.position.y = camera.position.y - 15
+  dirLight.position.z = camera.position.z + 30
   //dirLight.target.updateMatrixWorld()
-  dirLight.target = cybertruck;
+  dirLight.target = cybertruck
 
   camera.lookAt(worldPosition)
 }
@@ -516,48 +515,66 @@ function createFloor() {
 }*/
 
 function createRigidBody(threeObject, physicsShape, mass, pos, quat) {
-  threeObject.position.copy (pos);
-  threeObject.quaternion.copy(quat);
-  const transform = new Ammo.btTransform();
-  transform.setIdentity();
-  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-  const motionState = new Ammo.btDefaultMotionState(transform);
-  const localInertia = new Ammo.btVector3(0, 0, 0);
-  physicsShape.calculateLocalInertia(mass, localInertia);
-  const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, physicsShape, localInertia);
-  const body = new Ammo.btRigidBody(rbInfo);
-  threeObject.userData.physicsBody = body;
-  scene.add(threeObject);
+  threeObject.position.copy(pos)
+  threeObject.quaternion.copy(quat)
+  const transform = new Ammo.btTransform()
+  transform.setIdentity()
+  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z))
+  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w))
+  const motionState = new Ammo.btDefaultMotionState(transform)
+  const localInertia = new Ammo.btVector3(0, 0, 0)
+  physicsShape.calculateLocalInertia(mass, localInertia)
+  const rbInfo = new Ammo.btRigidBodyConstructionInfo(
+    mass,
+    motionState,
+    physicsShape,
+    localInertia
+  )
+  const body = new Ammo.btRigidBody(rbInfo)
+  threeObject.userData.physicsBody = body
+  scene.add(threeObject)
   if (mass > 0) {
-  rigidBodies.push(threeObject);
-  // Disable deactivation
-  body.setActivationState(4);
+    rigidBodies.push(threeObject)
+    // Disable deactivation
+    body.setActivationState(4)
   }
-  body.setActivationState(4);
-  physicsWorld.addRigidBody(body);
+  body.setActivationState(4)
+  physicsWorld.addRigidBody(body)
 }
 
 function createParalellepiped(sx, sy, sz, mass, pos, quat, material) {
-  const threeObject = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz, 1, 1, 1), material);
-  threeObject.rotateX(Math.PI / 2);
-  const shape = new Ammo.btBoxShape(new Ammo.btVector3(sx * 0.5, sy * 0.5, sz * 0.5));
-  shape.setMargin(0.05);
+  const threeObject = new THREE.Mesh(
+    new THREE.BoxGeometry(sx, sy, sz, 1, 1, 1),
+    material
+  )
+  threeObject.rotateX(Math.PI / 2)
+  const shape = new Ammo.btBoxShape(
+    new Ammo.btVector3(sx * 0.5, sy * 0.5, sz * 0.5)
+  )
+  shape.setMargin(0.05)
 
-  createRigidBody (threeObject, shape, mass, pos, quat);
-  return threeObject;
+  createRigidBody(threeObject, shape, mass, pos, quat)
+  return threeObject
 }
 
 function addGround() {
-  const pos = new THREE.Vector3();
-  const quat = new THREE.Quaternion();
-  pos.set(50, 50, 0);
-  quat.set(0, 0, 0, 1);
-  const ground = createParalellepiped(100, 1, 100, 0, pos, quat, new THREE.MeshPhongMaterial({ color: 0xFF0000}));
-  ground.castShadow = true;
-  ground.receiveShadow = true;
-  
-  return ground;
+  const pos = new THREE.Vector3()
+  const quat = new THREE.Quaternion()
+  pos.set(50, 50, 0)
+  quat.set(0, 0, 0, 1)
+  const ground = createParalellepiped(
+    100,
+    1,
+    100,
+    0,
+    pos,
+    quat,
+    new THREE.MeshPhongMaterial({ color: 0xff0000 })
+  )
+  ground.castShadow = true
+  ground.receiveShadow = true
+
+  return ground
 }
 
 function createObjects() {
@@ -568,14 +585,32 @@ function createObjects() {
   //addGround();
 
   // Ramps
-  var quaternion = new THREE.Quaternion(0, 0, 0, 1);
-  var ramp;
-  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15));
-  ramp = createBox(new THREE.Vector3(3, -15.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
-  createWireFrame(ramp);
-  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30));	
-  ramp = createBox(new THREE.Vector3(25, -15, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
-  createWireFrame(ramp);	
+  var quaternion = new THREE.Quaternion(0, 0, 0, 1)
+  var ramp
+  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15))
+  ramp = createBox(
+    new THREE.Vector3(3, -15.5, 0),
+    quaternion,
+    8,
+    4,
+    10,
+    0,
+    0,
+    materialRamp
+  )
+  createWireFrame(ramp)
+  quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30))
+  ramp = createBox(
+    new THREE.Vector3(25, -15, 0),
+    quaternion,
+    8,
+    8,
+    15,
+    0,
+    0,
+    materialRamp
+  )
+  createWireFrame(ramp)
 
   // Vehicle
   createVehicle(
@@ -647,13 +682,18 @@ function createBox(
 }
 
 function createWheelMesh(radius, width) {
-  var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
-  t.rotateX(Math.PI / 2);
-  var mesh = new THREE.Mesh(t, materialWheels);
-      mesh.castShadow = true;
-  mesh.add(new THREE.Mesh(new THREE.BoxGeometry(width * 1.5, radius * 1.75, radius*.25, 1, 1, 1), materialWheels2));
-  scene.add(mesh);
-  return mesh;
+  var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1)
+  t.rotateX(Math.PI / 2)
+  var mesh = new THREE.Mesh(t, materialWheels)
+  mesh.castShadow = true
+  mesh.add(
+    new THREE.Mesh(
+      new THREE.BoxGeometry(width * 1.5, radius * 1.75, radius * 0.25, 1, 1, 1),
+      materialWheels2
+    )
+  )
+  scene.add(mesh)
+  return mesh
 }
 
 function createChassisMesh(w, l, h) {
@@ -666,9 +706,9 @@ function createChassisMesh(w, l, h) {
 
 function createVehicle(pos, quat) {
   // Vehicle contants
-  var chassisWidth = 8 * 0.20//2.0;
-  var chassisHeight = 7.5 * 0.20//1.0;
-  var chassisLength = 20 * 0.20  //4.2;
+  var chassisWidth = 8 * 0.2 //2.0;
+  var chassisHeight = 7.5 * 0.2 //1.0;
+  var chassisLength = 20 * 0.2 //4.2;
   var massVehicle = 1000 //1000;
 
   var wheelRadiusFront = 0.4
@@ -696,22 +736,39 @@ function createVehicle(pos, quat) {
   var maxBreakingForce = 100
 
   // Chassis
-  var geometry = new Ammo.btBoxShape(new Ammo.btVector3(chassisWidth * .5, chassisHeight * .5, chassisLength * .5));
-  var transform = new Ammo.btTransform();
-  transform.setIdentity();
-  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-  let motionState = new Ammo.btDefaultMotionState(transform);
-  
-  var localInertia = new Ammo.btVector3(0, 0, 0);
-  geometry.calculateLocalInertia(massVehicle, localInertia);
-  var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(massVehicle, motionState, geometry, localInertia));
-  
-  geometry.setMargin(0.05);
-  body.setActivationState(4);
+  var geometry = new Ammo.btBoxShape(
+    new Ammo.btVector3(
+      chassisWidth * 0.5,
+      chassisHeight * 0.5,
+      chassisLength * 0.5
+    )
+  )
+  var transform = new Ammo.btTransform()
+  transform.setIdentity()
+  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z))
+  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w))
+  let motionState = new Ammo.btDefaultMotionState(transform)
 
-  physicsWorld.addRigidBody(body);
-  var chassisMesh = createChassisMesh(chassisWidth, chassisHeight, chassisLength);
+  var localInertia = new Ammo.btVector3(0, 0, 0)
+  geometry.calculateLocalInertia(massVehicle, localInertia)
+  var body = new Ammo.btRigidBody(
+    new Ammo.btRigidBodyConstructionInfo(
+      massVehicle,
+      motionState,
+      geometry,
+      localInertia
+    )
+  )
+
+  geometry.setMargin(0.05)
+  body.setActivationState(4)
+
+  physicsWorld.addRigidBody(body)
+  var chassisMesh = createChassisMesh(
+    chassisWidth,
+    chassisHeight,
+    chassisLength
+  )
   //chassisMesh = cybertruck;
 
   // Raycast Vehicle
@@ -763,7 +820,6 @@ function createVehicle(pos, quat) {
   //addWheel(false, new Ammo.btVector3(roda3.position.x,roda3.position.y,roda3.position.z), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
   //addWheel(false, new Ammo.btVector3(roda4.position.x,roda4.position.y,roda4.position.z), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
 
-
   // Sync keybord actions and physics and graphics
   function sync(dt) {
     var speed = vehicle.getCurrentSpeedKmHour()
@@ -799,8 +855,8 @@ function createVehicle(pos, quat) {
     vehicle.applyEngineForce(engineForce, BACK_LEFT)
     vehicle.applyEngineForce(engineForce, BACK_RIGHT)
 
-    vehicle.setBrake(breakingForce, BACK_LEFT);
-    vehicle.setBrake(breakingForce, BACK_RIGHT);
+    vehicle.setBrake(breakingForce, BACK_LEFT)
+    vehicle.setBrake(breakingForce, BACK_RIGHT)
 
     vehicle.setSteeringValue(vehicleSteering, FRONT_LEFT)
     vehicle.setSteeringValue(vehicleSteering, FRONT_RIGHT)
@@ -816,9 +872,9 @@ function createVehicle(pos, quat) {
       tm = vehicle.getWheelTransformWS(i)
       p = tm.getOrigin()
       q = tm.getRotation()
-      p.setX(wheelMeshes[i].position.x) 
-      p.setY(wheelMeshes[i].position.y) 
-      p.setZ(wheelMeshes[i].position.z) 
+      p.setX(wheelMeshes[i].position.x)
+      p.setY(wheelMeshes[i].position.y)
+      p.setZ(wheelMeshes[i].position.z)
       wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w())
     }
     /*
@@ -830,8 +886,8 @@ function createVehicle(pos, quat) {
     tm = vehicle.getChassisWorldTransform()
     p = tm.getOrigin()
     q = tm.getRotation()
-    //p.setX(chassisMesh.position.x) 
-    //p.setY(chassisMesh.position.z) 
+    //p.setX(chassisMesh.position.x)
+    //p.setY(chassisMesh.position.z)
     //p.setZ(chassisMesh.position.z)
     chassisMesh.position.z = p.z()
     /*
@@ -841,7 +897,6 @@ function createVehicle(pos, quat) {
     p.setX(blockPlane.position.x) 
     p.setY(blockPlane.position.y) 
     p.setZ(blockPlane.position.z)*/
-
   }
   syncList.push(sync)
 }
@@ -857,7 +912,7 @@ function render() {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()
     //spotHelper.update();
-    shadowHelper.update();  
+    //shadowHelper.update();  
     trackballControls.update()
   }
   // Enable mouse movements
@@ -988,7 +1043,7 @@ function bestLapFunction() {
 }
 
 function carStartPosition() {
-  cybertruck.position.set(1, 10, 1.5)
+  cybertruck.position.set(1, 10, 1.2)
   cybertruck.rotation.set(Math.PI / 2, 0, 0)
   cybertruck.rotateY(22)
   roda1.rotation.set(0, 0, -Math.PI / 2)
