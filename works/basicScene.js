@@ -18,6 +18,20 @@ import BestLap from './bestLap.js'
 import ActualLapBox from './actualLap.js'
 import TotalTime from './totalTime.js'
 
+const listener = new THREE.AudioListener()
+
+// create a global audio source
+const sound = new THREE.Audio(listener)
+
+// load a sound and set it as the Audio object's buffer
+const audioLoader = new THREE.AudioLoader()
+audioLoader.load('./music.mp3', function (buffer) {
+  sound.setBuffer(buffer)
+  sound.setLoop(true)
+  sound.setVolume(0.2)
+  sound.play()
+})
+
 var acc = 0
 var speed = 0
 var maxSpeed = 500
@@ -32,6 +46,7 @@ var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
+scene.add(listener)
 
 // setShadowMap
 renderer.shadowMap.enabled = true
