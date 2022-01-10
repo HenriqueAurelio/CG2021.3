@@ -9,6 +9,8 @@ export default class Cybertruck extends THREE.Object3D {
     this.depth = 20 * 0.2 //23
 
     this.createCar()
+    this.mesh.castShadow = true
+    this.mesh.receiveShadow = true
     return this.mesh
   }
 
@@ -207,9 +209,10 @@ export default class Cybertruck extends THREE.Object3D {
     geometry.computeVertexNormals() // to avoid a flat surface
     const material = new THREE.MeshPhongMaterial({ color: 0xbac3c8 })
     material.side = THREE.DoubleSide // Show front and back polygons
-    const teacherMesh = new THREE.Mesh(geometry, material)
-
-    this.mesh.add(teacherMesh)
+    const blockMesh = new THREE.Mesh(geometry, material)
+    blockMesh.castShadow = true;
+    blockMesh.receiveShadow = true;
+    this.mesh.add(blockMesh)
   }
 
   createBodywork() {

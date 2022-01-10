@@ -33,11 +33,51 @@ var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
 
-initDefaultBasicLight(scene, true)
+
+// setShadowMap
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type  = THREE.VSMShadowMap; // default
+
+//---------------- setLights -----------------
+
+//initDefaultBasicLight(scene, true)
+
+var ambientLight = new THREE.AmbientLight("rgb(60,60,60)");
+scene.add( ambientLight );
+
+// Create and set the spotlight
+var dirLight = new THREE.DirectionalLight("rgb(255,255,255)");
+  dirLight.position.copy(new THREE.Vector3(2.0, 1.2, 0.0));
+  dirLight.castShadow = true;
+  // Shadow Parameters
+  dirLight.shadow.mapSize.width = 256;
+  dirLight.shadow.mapSize.height = 256;
+  dirLight.shadow.camera.near = .1;
+  dirLight.shadow.camera.far = 400;
+  dirLight.shadow.camera.left = -5;
+  dirLight.shadow.camera.right = 5;
+  dirLight.shadow.camera.bottom = -5;
+  dirLight.shadow.camera.top = 5;
+  dirLight.shadow.bias = -0.0005;  
+
+  // No effect on Basic and PCFSoft
+  dirLight.shadow.radius = 4;
+
+  // Just for VSM - to be added in threejs.r132
+  dirLight.shadow.blurSamples = 2;
+scene.add(dirLight);
+
+// Create helper for the spotlight shadow
+const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
+shadowHelper.visible = true;
+scene.add(shadowHelper);
+
+//---------------------------------------------------------
 
 // Show axes (parameter is size of each axis)
-var axesHelper = new THREE.AxesHelper(12)
-scene.add(axesHelper)
+//var axesHelper = new THREE.AxesHelper(12)
+//scene.add(axesHelper)
+
 var angle = degreesToRadians(1)
 var tireAngle = degreesToRadians(0.5)
 var keyboard = new KeyboardState()
@@ -83,6 +123,7 @@ let cybertruck = new Cybertruck()
 cybertruck.position.set(1, 10, 1.5)
 cybertruck.rotateY(22)
 scene.add(cybertruck)
+
 // Camera
 let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
@@ -99,7 +140,7 @@ var trackballControls = new TrackballControls(
 
 //SpotLight InspectCamera
 const spotLight = new THREE.SpotLight(0xffffff)
-spotLight.position.set(100, 1000, 100)
+spotLight.position.set(10, 10, 10)
 
 spotLight.castShadow = true
 
@@ -107,8 +148,8 @@ spotLight.shadow.mapSize.width = 1024
 spotLight.shadow.mapSize.height = 1024
 
 spotLight.shadow.camera.near = 1
-spotLight.shadow.camera.far = 500
-spotLight.shadow.camera.fov = 50
+spotLight.shadow.camera.far = 100
+spotLight.shadow.camera.fov = 40
 
 spotLight.name = 'inspectModeLight'
 spotLight.visible = false
@@ -129,6 +170,11 @@ function cameraUpdate() {
   camera.position.x = cybertruck.position.x + 20
   camera.position.y = cybertruck.position.y - 10
   camera.position.z = cybertruck.position.z + 25
+
+  dirLight.position.x = camera.position.x
+  dirLight.position.y = camera.position.y + 10
+  dirLight.position.z = camera.position.z + 5
+  dirLight.target.updateMatrixWorld()
 
   camera.lookAt(worldPosition)
 }
@@ -807,7 +853,10 @@ function render() {
 
   stats.update() // Update FPS
   if (inspectMode) {
-    spotLight.position.copy(inspectCamera)
+    spotLight.position.copy(inspectCamera.position)
+    spotLight.target.updateMatrixWorld()
+    spotHelper.update();
+    shadowHelper.update();  
     trackballControls.update()
   }
   // Enable mouse movements

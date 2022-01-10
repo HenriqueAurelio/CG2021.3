@@ -13,6 +13,8 @@ export default class road extends THREE.Mesh {
     const cube = new THREE.Mesh(geometry, material);
     cube.name = start ? "InitialPosition" : "street";
     cube.position.set(x, y);
+    cube.receiveShadow = true; 
+    cube.castShadow = true;
     return cube;
   }
 }
