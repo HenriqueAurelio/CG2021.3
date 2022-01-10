@@ -10,7 +10,6 @@ export default class Cybertruck extends THREE.Object3D {
 
     this.createCar()
     this.mesh.castShadow = true
-    this.mesh.receiveShadow = true
     return this.mesh
   }
 
@@ -210,8 +209,7 @@ export default class Cybertruck extends THREE.Object3D {
     const material = new THREE.MeshPhongMaterial({ color: 0xbac3c8 })
     material.side = THREE.DoubleSide // Show front and back polygons
     const blockMesh = new THREE.Mesh(geometry, material)
-    blockMesh.castShadow = true;
-    blockMesh.receiveShadow = true;
+    blockMesh.castShadow = true
     this.mesh.add(blockMesh)
   }
 
@@ -716,7 +714,6 @@ export default class Cybertruck extends THREE.Object3D {
     this.wheels[0].position.set(W * 0.43, H * -0.27, D * 0.36)
     this.wheels[0].rotation.z = -Math.PI / 2
     this.wheels[0].castShadow = true
-    this.wheels[0].receiveShadow = true
     this.wheels[0].name = 'tire1'
     this.mesh.add(this.wheels[0])
 
