@@ -4,7 +4,7 @@ export default class bestLap {
     this.box.id = 'box'
     this.box.style.padding = '6px 14px'
     this.box.style.bottom = '15px'
-    this.box.style.left = '230px'
+    this.box.style.left = '265px'
     this.box.style.position = 'fixed'
     this.box.style.backgroundColor = 'rgba(100,100,255,0.3)'
     this.box.style.color = 'white'

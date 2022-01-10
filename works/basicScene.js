@@ -69,7 +69,7 @@ scene.add(dirLight);
 
 // Create helper for the spotlight shadow
 const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
-shadowHelper.visible = true;
+shadowHelper.visible = false;
 scene.add(shadowHelper);
 
 //---------------------------------------------------------
@@ -856,7 +856,7 @@ function render() {
   if (inspectMode) {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()
-    spotHelper.update();
+    //spotHelper.update();
     shadowHelper.update();  
     trackballControls.update()
   }
