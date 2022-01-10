@@ -417,14 +417,16 @@ function initPhysics() {
   physicsWorld.setGravity(new Ammo.btVector3(0, 0, -9.82))
 }
 
+/*let blockPlane;
+let planetransform;
 function createFloor() {
-  let pos = { x: 0, y: 0, z: -0.5 }
+  let pos = { x: 0, y: 0, z: -50 }
   let scale = { x: 400, y: 0.5, z: 400 }
   let quat = { x: 0, y: 0, z: 0, w: 1 }
-  let mass = 0
+  let mass = 1
 
-  let blockPlane = new THREE.Mesh(
-    new THREE.BoxBufferGeometry(),
+  blockPlane = new THREE.Mesh(
+    new THREE.BoxGeometry(),
     new THREE.MeshPhongMaterial({ color: 0xf9c834 })
   )
   blockPlane.position.set(pos.x, pos.y, pos.z)
@@ -432,14 +434,15 @@ function createFloor() {
   blockPlane.castShadow = true
   blockPlane.receiveShadow = true
   blockPlane.rotateX(Math.PI / 2)
+  
   scene.add(blockPlane)
 
   // AMMO
-  let transform = new Ammo.btTransform()
-  transform.setIdentity()
-  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z))
-  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w))
-  let motionState = new Ammo.btDefaultMotionState(transform)
+  planetransform = new Ammo.btTransform()
+  planetransform.setIdentity()
+  planetransform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z))
+  planetransform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w))
+  let motionState = new Ammo.btDefaultMotionState(planetransform)
 
   let colShape = new Ammo.btBoxShape(
     new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5)
@@ -463,6 +466,51 @@ function createFloor() {
   body.setRestitution(1)
 
   physicsWorld.addRigidBody(body)
+}*/
+
+function createRigidBody(threeObject, physicsShape, mass, pos, quat) {
+  threeObject.position.copy (pos);
+  threeObject.quaternion.copy(quat);
+  const transform = new Ammo.btTransform();
+  transform.setIdentity();
+  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+  const motionState = new Ammo.btDefaultMotionState(transform);
+  const localInertia = new Ammo.btVector3(0, 0, 0);
+  physicsShape.calculateLocalInertia(mass, localInertia);
+  const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, physicsShape, localInertia);
+  const body = new Ammo.btRigidBody(rbInfo);
+  threeObject.userData.physicsBody = body;
+  scene.add(threeObject);
+  if (mass > 0) {
+  rigidBodies.push(threeObject);
+  // Disable deactivation
+  body.setActivationState(4);
+  }
+  body.setActivationState(4);
+  physicsWorld.addRigidBody(body);
+}
+
+function createParalellepiped(sx, sy, sz, mass, pos, quat, material) {
+  const threeObject = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz, 1, 1, 1), material);
+  threeObject.rotateX(Math.PI / 2);
+  const shape = new Ammo.btBoxShape(new Ammo.btVector3(sx * 0.5, sy * 0.5, sz * 0.5));
+  shape.setMargin(0.05);
+
+  createRigidBody (threeObject, shape, mass, pos, quat);
+  return threeObject;
+}
+
+function addGround() {
+  const pos = new THREE.Vector3();
+  const quat = new THREE.Quaternion();
+  pos.set(50, 50, 0);
+  quat.set(0, 0, 0, 1);
+  const ground = createParalellepiped(100, 1, 100, 0, pos, quat, new THREE.MeshPhongMaterial({ color: 0xFF0000}));
+  ground.castShadow = true;
+  ground.receiveShadow = true;
+  
+  return ground;
 }
 
 function createObjects() {
@@ -470,15 +518,16 @@ function createObjects() {
   //var ground = createBox(new THREE.Vector3(0, -0.5, 0), ZERO_QUATERNION, 100, 1, 100, 0, 2, materialGround, true);
   //setGroundTexture(ground);
   //createFloor()
+  //addGround();
 
   // Ramps
   var quaternion = new THREE.Quaternion(0, 0, 0, 1);
   var ramp;
   quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15));
-  ramp = createBox(new THREE.Vector3(0, -1.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
+  ramp = createBox(new THREE.Vector3(3, -15.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
   createWireFrame(ramp);
   quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30));	
-  ramp = createBox(new THREE.Vector3(25, -3.0, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
+  ramp = createBox(new THREE.Vector3(25, -15, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
   createWireFrame(ramp);	
 
   // Vehicle
@@ -611,12 +660,12 @@ function createVehicle(pos, quat) {
   geometry.calculateLocalInertia(massVehicle, localInertia);
   var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(massVehicle, motionState, geometry, localInertia));
   
-  geometry.setMargin(0.05);23
+  geometry.setMargin(0.05);
   body.setActivationState(4);
 
   physicsWorld.addRigidBody(body);
   var chassisMesh = createChassisMesh(chassisWidth, chassisHeight, chassisLength);
-  chassisMesh = cybertruck;
+  //chassisMesh = cybertruck;
 
   // Raycast Vehicle
   var engineForce = 0
@@ -662,10 +711,10 @@ function createVehicle(pos, quat) {
   //addWheel(false, new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
   //addWheel(false, new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
 
-  addWheel(true, new Ammo.btVector3(roda1.position.x,roda1.position.y,roda1.position.z), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
-  addWheel(true, new Ammo.btVector3(roda2.position.x,roda2.position.y,roda2.position.z), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
-  addWheel(false, new Ammo.btVector3(roda3.position.x,roda3.position.y,roda3.position.z), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
-  addWheel(false, new Ammo.btVector3(roda4.position.x,roda4.position.y,roda4.position.z), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
+  //addWheel(true, new Ammo.btVector3(roda1.position.x,roda1.position.y,roda1.position.z), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
+  //addWheel(true, new Ammo.btVector3(roda2.position.x,roda2.position.y,roda2.position.z), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
+  //addWheel(false, new Ammo.btVector3(roda3.position.x,roda3.position.y,roda3.position.z), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
+  //addWheel(false, new Ammo.btVector3(roda4.position.x,roda4.position.y,roda4.position.z), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
 
 
   // Sync keybord actions and physics and graphics
@@ -712,23 +761,40 @@ function createVehicle(pos, quat) {
     var tm, p, q, i
     var n = vehicle.getNumWheels()
 
-    for(i = 0; i < 4; i ++)
-      wheelMeshes[i] = wheels[i];
+    //for(i = 0; i < 4; i ++)
+    //  wheelMeshes[i] = wheels[i];
 
     for (i = 0; i < n; i++) {
       vehicle.updateWheelTransform(i, true)
       tm = vehicle.getWheelTransformWS(i)
       p = tm.getOrigin()
       q = tm.getRotation()
-      wheelMeshes[i].position.set(p.x(), p.y(), p.z())
+      p.setX(wheelMeshes[i].position.x) 
+      p.setY(wheelMeshes[i].position.y) 
+      p.setZ(wheelMeshes[i].position.z) 
       wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w())
     }
-
+    /*
     tm = vehicle.getChassisWorldTransform()
     p = tm.getOrigin()
     q = tm.getRotation()
     chassisMesh.position.set(p.x(), p.y(), p.z())
-    chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w())
+    chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w())*/
+    tm = vehicle.getChassisWorldTransform()
+    p = tm.getOrigin()
+    q = tm.getRotation()
+    //p.setX(chassisMesh.position.x) 
+    //p.setY(chassisMesh.position.z) 
+    //p.setZ(chassisMesh.position.z)
+    chassisMesh.position.z = p.z()
+    /*
+    tm = planetransform
+    p = tm.getOrigin()
+    q = tm.getRotation()
+    p.setX(blockPlane.position.x) 
+    p.setY(blockPlane.position.y) 
+    p.setZ(blockPlane.position.z)*/
+
   }
   syncList.push(sync)
 }
@@ -736,8 +802,8 @@ function createVehicle(pos, quat) {
 function render() {
   // AmmoJs
   var dt = clock.getDelta()
-  for (var i = 0; i < syncList.length; i++) syncList[i](dt)
   physicsWorld.stepSimulation(dt, 10)
+  for (var i = 0; i < syncList.length; i++) syncList[i](dt)
 
   stats.update() // Update FPS
   if (inspectMode) {

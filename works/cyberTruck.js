@@ -23,7 +23,7 @@ export default class Cybertruck extends THREE.Object3D {
     this.createSupportParts()
     this.createTiresDetails()
 
-    this.mesh.position.set(4, 8, 5) // 1.5
+    this.mesh.position.set(4, 8, 1.5) // 1.5
     this.mesh.rotateX(Math.PI / 2)
     this.mesh.name = 'Cybertruck'
   }
