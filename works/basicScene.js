@@ -82,9 +82,9 @@ dirLight.shadow.blurSamples = 2
 scene.add(dirLight)
 
 // Create helper for the spotlight shadow
-const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
-shadowHelper.visible = false;
-scene.add(shadowHelper);
+const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
+shadowHelper.visible = false
+scene.add(shadowHelper)
 
 //---------------------------------------------------------
 
@@ -109,6 +109,7 @@ controls.addParagraph()
 controls.add('* X to accelerate')
 controls.add('* Left/Right button to rotate')
 controls.add('* Down button to brake')
+controls.add('1,2,3,4 To change the actual map')
 controls.addParagraph()
 controls.add('Press Space button to Inspect Mode')
 controls.add('* Scroll to zoom in/out.')
@@ -927,7 +928,7 @@ function render() {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()
     //spotHelper.update();
-    //shadowHelper.update();  
+    //shadowHelper.update();
     trackballControls.update()
   }
   // Enable mouse movements
