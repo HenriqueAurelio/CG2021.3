@@ -133,6 +133,7 @@ window.addEventListener(
 
 let foraDaPista = false
 var inspectMode = false
+var thirdPersonMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
 cybertruck.position.set(1, 10, 1.2)
@@ -146,6 +147,9 @@ let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 500)
 var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
+var thirdPersonCamera = new THREE.PerspectiveCamera(40, aspect, 1, 500)
+
+//InspectCamera
 inspectCamera.position.set(5, -10, 10)
 inspectCamera.up.set(0, 0, 2)
 var trackballControls = new TrackballControls(
@@ -175,23 +179,32 @@ camera.up.set(0, 0, 1)
 scene.add(camera)
 
 // Virtual Camera
-
 var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
 
 var worldPosition = new THREE.Vector3()
 function cameraUpdate() {
+
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
-  camera.position.x = cybertruck.position.x + 20
-  camera.position.y = cybertruck.position.y - 10
-  camera.position.z = cybertruck.position.z + 25
 
-  dirLight.position.x = camera.position.x
-  dirLight.position.y = camera.position.y - 15
-  dirLight.position.z = camera.position.z + 30
-  //dirLight.target.updateMatrixWorld()
-  dirLight.target = cybertruck
+  if(thirdPersonMode){
+    camera.position.x = cybertruck.position.x + 0
+    camera.position.y = cybertruck.position.y - 14
+    camera.position.z = cybertruck.position.z + 4
+    camera.target = 'cameraPoint';
+  }
+  else{
+    camera.position.x = cybertruck.position.x + 20
+    camera.position.y = cybertruck.position.y - 10
+    camera.position.z = cybertruck.position.z + 25
 
+    dirLight.position.x = camera.position.x
+    dirLight.position.y = camera.position.y - 15
+    dirLight.position.z = camera.position.z + 30
+    //dirLight.target.updateMatrixWorld()
+    dirLight.target = cybertruck
+
+  }
   camera.lookAt(worldPosition)
 }
 
@@ -261,7 +274,16 @@ function keyboardUpdate() {
     totalTimer.start()
   }
   if (keyboard.down('space')) {
-    inspectMode = !inspectMode
+    if(inspectMode == false && thirdPersonMode == false)
+      thirdPersonMode = true;
+    else if (thirdPersonMode == true){
+      inspectMode = true;
+      thirdPersonMode = false;
+    }
+    else{
+      inspectMode = false;
+      thirdPersonMode = false;
+    }
   }
   // if (!inspectMode) {
   if (actualLap < 4) {
@@ -924,6 +946,7 @@ function render() {
   for (var i = 0; i < syncList.length; i++) syncList[i](dt)
 
   stats.update() // Update FPS
+
   if (inspectMode) {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()
@@ -960,7 +983,11 @@ function gameMode() {
       if (scene.children[i].name != `Cybertruck`) obj.visible = false
       spotLight.visible = true
     }
-  } else {
+  } 
+  else if(thirdPersonMode){ 
+    camera = thirdPersonCamera;
+  }
+  else {
     if (laps.length == 0) bestLapBox.changeVisibility('hidden')
     else bestLapBox.changeVisibility('')
     actualLapBox.changeVisibility('')
