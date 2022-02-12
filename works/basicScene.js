@@ -98,9 +98,28 @@ var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
 
 // create the ground plane
-var planeGeometry = createGroundPlaneWired(400, 400, 80, 80)
-planeGeometry.rotateX(Math.PI / 2)
-scene.add(planeGeometry)
+
+var planeGeometry = new THREE.PlaneGeometry(400, 400, 80, 80)
+var planeMaterial = new THREE.MeshLambertMaterial({
+  color: 'rgb(255,255,255)',
+  side: THREE.DoubleSide,
+})
+var plane = new THREE.Mesh(planeGeometry, planeMaterial)
+plane.rotateX(Math.PI)
+
+var textureLoader = new THREE.TextureLoader()
+var floor = textureLoader.load('../textures/grass3.jpg')
+plane.material.map = floor
+var wrapModeS = THREE.RepeatWrapping
+var wrapModeT = THREE.RepeatWrapping
+var minFilter = THREE.LinearFilter
+var magFilter = THREE.LinearFilter
+plane.material.map.repeat.set(100, 100)
+plane.material.map.wrapS = wrapModeS
+plane.material.map.wrapT = wrapModeT
+plane.material.map.minFilter = minFilter
+plane.material.map.magFilter = magFilter
+scene.add(plane)
 
 // Use this to show information onscreen
 var controls = new InfoBox()
