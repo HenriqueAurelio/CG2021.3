@@ -45,7 +45,7 @@ export default class road extends THREE.Mesh {
       var magFilter = THREE.LinearFilter
       plane.material.map.minFilter = minFilter
       plane.material.map.magFilter = magFilter
-      plane.position.set(0, 2, 0.2)
+      plane.position.set(0, -2.2, 0.2)
 
       cube.add(plane)
     }

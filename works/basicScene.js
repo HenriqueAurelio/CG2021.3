@@ -150,8 +150,7 @@ var inspectMode = false
 var thirdPersonMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
-cybertruck.position.set(1, 10, 0.9)
-cybertruck.rotateY(22)
+
 scene.add(cybertruck)
 
 // Camera
@@ -234,7 +233,7 @@ var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
 var wheels = [roda1, roda2, roda3, roda4]
-
+carStartPosition()
 var won = false
 var totalTimer = new THREE.Clock()
 var timer = new THREE.Clock()
@@ -583,7 +582,7 @@ function bestLapFunction() {
 }
 
 function carStartPosition() {
-  cybertruck.position.set(1, 10, 1.2)
+  cybertruck.position.set(1, 5, 1.2)
   cybertruck.rotation.set(Math.PI / 2, 0, 0)
   cybertruck.rotateY(22)
   roda1.rotation.set(0, 0, -Math.PI / 2)
