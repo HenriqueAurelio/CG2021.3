@@ -110,15 +110,10 @@ plane.rotateX(Math.PI)
 var textureLoader = new THREE.TextureLoader()
 var floor = textureLoader.load('../textures/grass3.jpg')
 plane.material.map = floor
-var wrapModeS = THREE.RepeatWrapping
-var wrapModeT = THREE.RepeatWrapping
-var minFilter = THREE.LinearFilter
-var magFilter = THREE.LinearFilter
 plane.material.map.repeat.set(100, 100)
-plane.material.map.wrapS = wrapModeS
-plane.material.map.wrapT = wrapModeT
-plane.material.map.minFilter = minFilter
-plane.material.map.magFilter = magFilter
+plane.material.map.wrapS = THREE.RepeatWrapping
+plane.material.map.wrapT = THREE.RepeatWrapping
+
 scene.add(plane)
 
 // Use this to show information onscreen
