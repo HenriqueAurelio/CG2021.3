@@ -49,6 +49,8 @@ var renderer = initRenderer() // View function in util/utils
 scene.add(listener)
 
 addWoodenBarrel()
+addCone()
+addCrate()
 // setShadowMap
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.VSMShadowMap // default
@@ -641,6 +643,51 @@ function movementOfWheels() {
   calotas[3].rotateY(-rotateAngle)
 }
 
+function addCone() {
+  const geometry = new THREE.ConeGeometry(1, 4, 32)
+  var defaultMaterial = new THREE.MeshLambertMaterial({
+    color: 'rgb(255,255,255)',
+    side: THREE.DoubleSide,
+  })
+  const cone = new THREE.Mesh(geometry, defaultMaterial)
+  var textureLoader = new THREE.TextureLoader()
+  var body = textureLoader.load('../textures/cone2.jpg')
+
+  var minFilter = THREE.LinearFilter
+  var magFilter = THREE.LinearFilter
+
+  // Apply texture to the 'map' property of the plane
+  cone.material.map = body
+
+  cone.material.map.minFilter = minFilter
+  cone.material.map.magFilter = magFilter
+  cone.position.set(10, 10, 10)
+
+  scene.add(cone)
+  cone.rotateX(degreesToRadians(90))
+}
+function addCrate() {
+  var minFilter = THREE.LinearFilter
+  var magFilter = THREE.LinearFilter
+
+  // Apply texture to the 'map' property of the plane
+
+  var textureLoader = new THREE.TextureLoader()
+  var body = textureLoader.load('../textures/crate.jpg')
+  const geometry = new THREE.BoxGeometry(1, 1, 1)
+  var defaultMaterial = new THREE.MeshLambertMaterial({
+    color: 'rgb(255,255,255)',
+    side: THREE.DoubleSide,
+  })
+
+  const cube = new THREE.Mesh(geometry, defaultMaterial)
+  cube.material.map = body
+
+  cube.material.map.minFilter = minFilter
+  cube.material.map.magFilter = magFilter
+  cube.position.set(0, 13, 0.9)
+  scene.add(cube)
+}
 function addWoodenBarrel() {
   var cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.25, 40, 3, true)
   var defaultMaterial = new THREE.MeshLambertMaterial({
