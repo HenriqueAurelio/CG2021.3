@@ -48,6 +48,7 @@ var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
 scene.add(listener)
 
+addWoodenBarrel()
 // setShadowMap
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.VSMShadowMap // default
@@ -622,4 +623,45 @@ function movementOfWheels() {
   calotas[1].rotateY(-rotateAngle)
   calotas[2].rotateY(rotateAngle)
   calotas[3].rotateY(-rotateAngle)
+}
+
+function addWoodenBarrel() {
+  var cylinderGeometry = new THREE.CylinderGeometry(1.0, 1.0, 10, 40, 3, true)
+  var defaultMaterial = new THREE.MeshLambertMaterial({
+    color: 'rgb(255,255,255)',
+    side: THREE.DoubleSide,
+  })
+
+  var cylinderBody = new THREE.Mesh(cylinderGeometry, defaultMaterial)
+  scene.add(cylinderBody)
+
+  var topGeometry = new THREE.CircleGeometry(1.0, 80)
+  var topMaterial = new THREE.MeshLambertMaterial({
+    color: 'rgb(255,255,255)',
+    side: THREE.DoubleSide,
+  })
+
+  var cylinderTop = new THREE.Mesh(topGeometry, topMaterial)
+  var cylinderBottom = new THREE.Mesh(topGeometry, topMaterial)
+
+  cylinderTop.rotateX(degreesToRadians(90))
+  cylinderTop.translateZ(-5.0)
+  cylinderBody.add(cylinderTop)
+  cylinderBody.position.set(1, 10, 1)
+  cylinderBottom.rotateX(degreesToRadians(90))
+  cylinderBottom.translateZ(5.0)
+  cylinderBody.rotateZ(degreesToRadians(90))
+  cylinderBody.rotateX(degreesToRadians(90))
+  cylinderBody.add(cylinderBottom)
+
+  //----------------------------------------------------------------------------
+  //-- Use TextureLoader to load texture files
+  var textureLoader = new THREE.TextureLoader()
+  var body = textureLoader.load('../textures/barrel.jpg')
+  var top = textureLoader.load('../textures/barrel.jpg')
+
+  // Apply texture to the 'map' property of the plane
+  cylinderBody.material.map = body
+  cylinderTop.material.map = top
+  cylinderBottom.material.map = top
 }
