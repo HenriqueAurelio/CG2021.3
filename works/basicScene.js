@@ -110,15 +110,10 @@ plane.rotateX(Math.PI)
 var textureLoader = new THREE.TextureLoader()
 var floor = textureLoader.load('../textures/grass3.jpg')
 plane.material.map = floor
-var wrapModeS = THREE.RepeatWrapping
-var wrapModeT = THREE.RepeatWrapping
-var minFilter = THREE.LinearFilter
-var magFilter = THREE.LinearFilter
 plane.material.map.repeat.set(100, 100)
-plane.material.map.wrapS = wrapModeS
-plane.material.map.wrapT = wrapModeT
-plane.material.map.minFilter = minFilter
-plane.material.map.magFilter = magFilter
+plane.material.map.wrapS = THREE.RepeatWrapping
+plane.material.map.wrapT = THREE.RepeatWrapping
+
 scene.add(plane)
 
 // Use this to show information onscreen
@@ -155,8 +150,7 @@ var inspectMode = false
 var thirdPersonMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
-cybertruck.position.set(1, 10, 0.9)
-cybertruck.rotateY(22)
+
 scene.add(cybertruck)
 
 // Camera
@@ -220,20 +214,13 @@ function testePosicao(){
 function cameraUpdate() {
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
-
+  var temp = new THREE.Vector3;
   if (thirdPersonMode) {
-    // camera.position.x = cybertruck.position.x + 0
-    // camera.position.y = cybertruck.position.y - 14
-    // camera.position.z = cybertruck.position.z + 4
-
-    let posicao = testePosicao();
-    //console.log(posicao)
-    camera.position.x = posicao.x
-    camera.position.y = cybertruck.position.y - 14
-    camera.position.z = cybertruck.position.z + 4
-
-    //camera.target = cameraPoint;
-  } else {
+    temp.setFromMatrixPosition(thirdCameraPoint.matrixWorld);
+    camera.position.lerp(new THREE.Vector3(temp.x, temp.y, temp.z+2), 0.1);
+    camera.lookAt(cameraPoint);
+  } 
+  else {
     cybertruck.remove(camera)
     camera.position.x = cybertruck.position.x + 20
     camera.position.y = cybertruck.position.y - 10
@@ -260,8 +247,11 @@ var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
+var thirdCameraPoint = cybertruck.children.filter(
+  (part) => part.name == 'thirdCameraPoint'
+)[0] 
 var wheels = [roda1, roda2, roda3, roda4]
-
+carStartPosition()
 var won = false
 var totalTimer = new THREE.Clock()
 var timer = new THREE.Clock()
@@ -610,7 +600,7 @@ function bestLapFunction() {
 }
 
 function carStartPosition() {
-  cybertruck.position.set(1, 10, 1.2)
+  cybertruck.position.set(1, 5, 0.9)
   cybertruck.rotation.set(Math.PI / 2, 0, 0)
   cybertruck.rotateY(22)
   roda1.rotation.set(0, 0, -Math.PI / 2)
