@@ -43,9 +43,12 @@ export default class road extends THREE.Mesh {
       var textureLoader = new THREE.TextureLoader()
       var floor = textureLoader.load('../textures/checker.jpg')
       plane.material.map = floor
-      plane.material.map.repeat.set(1, 1)
-      plane.material.map.wrapS = THREE.RepeatWrapping
-      plane.material.map.wrapT = THREE.RepeatWrapping
+      plane.material.map.wrapS = THREE.ClampToEdgeWrapping
+      plane.material.map.wrapT = THREE.ClampToEdgeWrapping
+      var minFilter = THREE.LinearFilter
+      var magFilter = THREE.LinearFilter
+      plane.material.map.minFilter = minFilter
+      plane.material.map.magFilter = magFilter
       plane.position.set(0, 2, 0.2)
       cube.add(plane)
     } else {
