@@ -28,37 +28,33 @@ export default class road extends THREE.Mesh {
 
     if (start) {
       var textureLoader = new THREE.TextureLoader()
-      // var floor = textureLoader.load('../textures/start.jpg')
-      // cube.material.map = floor
-      // cube.material.map.repeat.set(100, 100)
-      // cube.material.map.wrapS = THREE.RepeatWrapping
-      // cube.material.map.wrapT = THREE.RepeatWrapping
       const geometry = new THREE.PlaneGeometry(10, 1)
       const material = new THREE.MeshLambertMaterial({
         color: 'rgb(255,255,255)',
         side: THREE.DoubleSide,
       })
       const plane = new THREE.Mesh(geometry, material)
-      console.log(plane)
+
       var textureLoader = new THREE.TextureLoader()
       var floor = textureLoader.load('../textures/checker.jpg')
       plane.material.map = floor
-      plane.material.map.wrapS = THREE.ClampToEdgeWrapping
-      plane.material.map.wrapT = THREE.ClampToEdgeWrapping
+      plane.material.map.repeat.set(3, 1)
+      plane.material.map.wrapS = THREE.RepeatWrapping
+      plane.material.map.wrapT = THREE.RepeatWrapping
       var minFilter = THREE.LinearFilter
       var magFilter = THREE.LinearFilter
       plane.material.map.minFilter = minFilter
       plane.material.map.magFilter = magFilter
       plane.position.set(0, 2, 0.2)
+
       cube.add(plane)
-    } else {
-      var textureLoader = new THREE.TextureLoader()
-      var floor = textureLoader.load('../textures/road.jpg')
-      cube.material.map = floor
-      cube.material.map.repeat.set(100, 100)
-      cube.material.map.wrapS = THREE.RepeatWrapping
-      cube.material.map.wrapT = THREE.RepeatWrapping
     }
+    var textureLoader = new THREE.TextureLoader()
+    var floor = textureLoader.load('../textures/road.jpg')
+    cube.material.map = floor
+    cube.material.map.repeat.set(100, 100)
+    cube.material.map.wrapS = THREE.RepeatWrapping
+    cube.material.map.wrapT = THREE.RepeatWrapping
 
     return cube
   }
