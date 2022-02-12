@@ -113,6 +113,7 @@ plane.material.map = floor
 plane.material.map.repeat.set(100, 100)
 plane.material.map.wrapS = THREE.RepeatWrapping
 plane.material.map.wrapT = THREE.RepeatWrapping
+plane.anisotropy = renderer.capabilities.getMaxAnisotropy()
 
 scene.add(plane)
 
