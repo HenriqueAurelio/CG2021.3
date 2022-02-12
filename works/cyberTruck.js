@@ -33,10 +33,16 @@ export default class Cybertruck extends THREE.Object3D {
     const geometry = new THREE.SphereGeometry(0.2, 32, 32)
     const material = new THREE.MeshPhongMaterial({ color: '#FFE800' })
     const sphere = new THREE.Mesh(geometry, material)
+    const otherSphere = new THREE.Mesh(geometry, material)
+    const anotherSphere = new THREE.Mesh(geometry, material);
+    otherSphere.visible = false;
+    otherSphere.name = 'thirdCameraPoint';
+    otherSphere.position.set(0.0, 3, -11.7)
     sphere.position.set(0.0, 0.9, 4.5)
     sphere.visible = false
     sphere.name = 'cameraPoint'
     this.mesh.add(sphere)
+    this.mesh.add(otherSphere)
   }
 
   createBlock() {

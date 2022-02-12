@@ -83,9 +83,9 @@ dirLight.shadow.blurSamples = 2
 scene.add(dirLight)
 
 // Create helper for the spotlight shadow
-const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
-shadowHelper.visible = false
-scene.add(shadowHelper)
+//const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
+//shadowHelper.visible = false
+//scene.add(shadowHelper)
 
 //---------------------------------------------------------
 
@@ -194,19 +194,34 @@ scene.add(camera)
 
 // Virtual Camera
 var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
-
 var worldPosition = new THREE.Vector3()
+
+
+function testePosicao(){
+  let position = new THREE.Vector3(0,0,4.9)
+  position.copy(camera.position);
+  console.log(`function:`+ JSON.stringify(position))
+  position.applyQuaternion(cameraPoint.rotation)
+  return position.add(cameraPoint.position)
+}
+
+// function testeLookAt(){
+//   let position;
+//   position.copy(camera.position);
+//   position.applyQuaternion(cameraPoint.rotation)
+//   return position.add(cameraPoint.position)
+// }
+
 function cameraUpdate() {
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
-
+  var temp = new THREE.Vector3;
   if (thirdPersonMode) {
-    camera.position.x = cybertruck.position.x + 0
-    camera.position.y = cybertruck.position.y - 14
-    camera.position.z = cybertruck.position.z + 4
-
-    //camera.target = cameraPoint;
-  } else {
+    temp.setFromMatrixPosition(thirdCameraPoint.matrixWorld);
+    camera.position.lerp(new THREE.Vector3(temp.x, temp.y, temp.z+2), 0.1);
+    camera.lookAt(cameraPoint);
+  } 
+  else {
     cybertruck.remove(camera)
     camera.position.x = cybertruck.position.x + 20
     camera.position.y = cybertruck.position.y - 10
@@ -233,6 +248,9 @@ var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
+var thirdCameraPoint = cybertruck.children.filter(
+  (part) => part.name == 'thirdCameraPoint'
+)[0] 
 var wheels = [roda1, roda2, roda3, roda4]
 carStartPosition()
 var won = false
