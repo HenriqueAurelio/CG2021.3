@@ -582,7 +582,7 @@ function bestLapFunction() {
 }
 
 function carStartPosition() {
-  cybertruck.position.set(1, 5, 1.2)
+  cybertruck.position.set(1, 5, 0.9)
   cybertruck.rotation.set(Math.PI / 2, 0, 0)
   cybertruck.rotateY(22)
   roda1.rotation.set(0, 0, -Math.PI / 2)
