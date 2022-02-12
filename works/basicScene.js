@@ -136,7 +136,7 @@ var inspectMode = false
 var thirdPersonMode = false
 var car = new carGroup()
 let cybertruck = new Cybertruck()
-cybertruck.position.set(1, 10, 1.2)
+cybertruck.position.set(1, 10, 0.9)
 cybertruck.rotateY(22)
 scene.add(cybertruck)
 
@@ -183,20 +183,17 @@ var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
 
 var worldPosition = new THREE.Vector3()
 function cameraUpdate() {
-
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
 
-  if(thirdPersonMode){
-
+  if (thirdPersonMode) {
     camera.position.x = cybertruck.position.x + 0
     camera.position.y = cybertruck.position.y - 14
     camera.position.z = cybertruck.position.z + 4
-    
+
     //camera.target = cameraPoint;
-  }
-  else{
-    cybertruck.remove(camera);
+  } else {
+    cybertruck.remove(camera)
     camera.position.x = cybertruck.position.x + 20
     camera.position.y = cybertruck.position.y - 10
     camera.position.z = cybertruck.position.z + 25
@@ -206,7 +203,6 @@ function cameraUpdate() {
     dirLight.position.z = camera.position.z + 30
     //dirLight.target.updateMatrixWorld()
     dirLight.target = cybertruck
-
   }
   camera.lookAt(worldPosition)
 }
@@ -277,15 +273,13 @@ function keyboardUpdate() {
     totalTimer.start()
   }
   if (keyboard.down('space')) {
-    if(inspectMode == false && thirdPersonMode == false)
-      thirdPersonMode = true;
-    else if (thirdPersonMode == true){
-      inspectMode = true;
-      thirdPersonMode = false;
-    }
-    else{
-      inspectMode = false;
-      thirdPersonMode = false;
+    if (inspectMode == false && thirdPersonMode == false) thirdPersonMode = true
+    else if (thirdPersonMode == true) {
+      inspectMode = true
+      thirdPersonMode = false
+    } else {
+      inspectMode = false
+      thirdPersonMode = false
     }
   }
   // if (!inspectMode) {
@@ -431,10 +425,9 @@ function controlledRender() {
     renderer.render(scene, virtualCamera) // Render scene of the virtual camera
   }
 }
-render();
+render()
 
 function render() {
-
   stats.update() // Update FPS
 
   if (inspectMode) {
@@ -473,9 +466,9 @@ function gameMode() {
       if (scene.children[i].name != `Cybertruck`) obj.visible = false
       spotLight.visible = true
     }
-  } 
-  //else if(thirdPersonMode){ 
-    //camera = thirdPersonCamera;
+  }
+  //else if(thirdPersonMode){
+  //camera = thirdPersonCamera;
   //}
   else {
     if (laps.length == 0) bestLapBox.changeVisibility('hidden')
