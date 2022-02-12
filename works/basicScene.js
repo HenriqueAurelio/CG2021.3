@@ -198,11 +198,14 @@ var worldPosition = new THREE.Vector3()
 function cameraUpdate() {
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
-
+  var temp = new THREE.Vector3;
   if (thirdPersonMode) {
-    camera.position.x = cybertruck.position.x + 0
-    camera.position.y = cybertruck.position.y - 14
-    camera.position.z = cybertruck.position.z + 4
+    temp.setFromMatrixPosition(thirdCameraPoint.matrixWorld);
+    camera.position.lerp(new THREE.Vector3(temp.x, temp.y, temp.z+2), 0.1);
+    // camera.position.x = cybertruck.position.x + 0
+    // camera.position.y = cybertruck.position.y - 14
+    // camera.position.z = cybertruck.position.z + 4
+    camera.lookAt(cameraPoint);
 
     //camera.target = cameraPoint;
   } else {
@@ -232,6 +235,9 @@ var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
+var thirdCameraPoint = cybertruck.children.filter(
+  (part) => part.name == 'thirdCameraPoint'
+)[0] 
 var wheels = [roda1, roda2, roda3, roda4]
 carStartPosition()
 var won = false
