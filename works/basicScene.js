@@ -82,9 +82,9 @@ dirLight.shadow.blurSamples = 2
 scene.add(dirLight)
 
 // Create helper for the spotlight shadow
-//const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
-//shadowHelper.visible = false
-//scene.add(shadowHelper)
+// const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
+// shadowHelper.visible = true
+// scene.add(shadowHelper)
 
 //---------------------------------------------------------
 
@@ -218,7 +218,9 @@ function cameraUpdate() {
   if (thirdPersonMode) {
     temp.setFromMatrixPosition(thirdCameraPoint.matrixWorld);
     camera.position.lerp(new THREE.Vector3(temp.x, temp.y, temp.z+2), 0.1);
-    camera.lookAt(cameraPoint);
+    camera.lookAt(lookAtPoint);
+
+   
   } 
   else {
     cybertruck.remove(camera)
@@ -226,12 +228,12 @@ function cameraUpdate() {
     camera.position.y = cybertruck.position.y - 10
     camera.position.z = cybertruck.position.z + 25
 
-    dirLight.position.x = camera.position.x
-    dirLight.position.y = camera.position.y - 15
-    dirLight.position.z = camera.position.z + 30
-    //dirLight.target.updateMatrixWorld()
-    dirLight.target = cybertruck
   }
+
+  dirLight.position.x = camera.position.x
+  dirLight.position.y = camera.position.y - 15
+  dirLight.position.z = camera.position.z + 30
+  dirLight.target = cybertruck
   camera.lookAt(worldPosition)
 }
 
@@ -249,7 +251,10 @@ var cameraPoint = cybertruck.children.filter(
 )[0]
 var thirdCameraPoint = cybertruck.children.filter(
   (part) => part.name == 'thirdCameraPoint'
-)[0] 
+)[0]
+var lookAtPoint = cybertruck.children.filter(
+  (part) => part.name == 'lookAtPoint'
+)[0]
 var wheels = [roda1, roda2, roda3, roda4]
 carStartPosition()
 var won = false
