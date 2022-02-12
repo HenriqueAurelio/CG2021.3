@@ -196,11 +196,10 @@ scene.add(camera)
 var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
 var worldPosition = new THREE.Vector3()
 
-
-function testePosicao(){
-  let position = new THREE.Vector3(0,0,4.9)
-  position.copy(camera.position);
-  console.log(`function:`+ JSON.stringify(position))
+function testePosicao() {
+  let position = new THREE.Vector3(0, 0, 4.9)
+  position.copy(camera.position)
+  console.log(`function:` + JSON.stringify(position))
   position.applyQuaternion(cameraPoint.rotation)
   return position.add(cameraPoint.position)
 }
@@ -215,13 +214,12 @@ function testePosicao(){
 function cameraUpdate() {
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
-  var temp = new THREE.Vector3;
+  var temp = new THREE.Vector3()
   if (thirdPersonMode) {
-    temp.setFromMatrixPosition(thirdCameraPoint.matrixWorld);
-    camera.position.lerp(new THREE.Vector3(temp.x, temp.y, temp.z+2), 0.1);
-    camera.lookAt(cameraPoint);
-  } 
-  else {
+    temp.setFromMatrixPosition(thirdCameraPoint.matrixWorld)
+    camera.position.lerp(new THREE.Vector3(temp.x, temp.y, temp.z + 2), 0.1)
+    camera.lookAt(cameraPoint)
+  } else {
     cybertruck.remove(camera)
     camera.position.x = cybertruck.position.x + 20
     camera.position.y = cybertruck.position.y - 10
@@ -250,7 +248,7 @@ var cameraPoint = cybertruck.children.filter(
 )[0]
 var thirdCameraPoint = cybertruck.children.filter(
   (part) => part.name == 'thirdCameraPoint'
-)[0] 
+)[0]
 var wheels = [roda1, roda2, roda3, roda4]
 carStartPosition()
 var won = false
@@ -644,7 +642,7 @@ function movementOfWheels() {
 }
 
 function addWoodenBarrel() {
-  var cylinderGeometry = new THREE.CylinderGeometry(1.0, 1.0, 10, 40, 3, true)
+  var cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.25, 40, 3, true)
   var defaultMaterial = new THREE.MeshLambertMaterial({
     color: 'rgb(255,255,255)',
     side: THREE.DoubleSide,
@@ -653,7 +651,7 @@ function addWoodenBarrel() {
   var cylinderBody = new THREE.Mesh(cylinderGeometry, defaultMaterial)
   scene.add(cylinderBody)
 
-  var topGeometry = new THREE.CircleGeometry(1.0, 80)
+  var topGeometry = new THREE.CircleGeometry(0.5, 80)
   var topMaterial = new THREE.MeshLambertMaterial({
     color: 'rgb(255,255,255)',
     side: THREE.DoubleSide,
@@ -663,23 +661,45 @@ function addWoodenBarrel() {
   var cylinderBottom = new THREE.Mesh(topGeometry, topMaterial)
 
   cylinderTop.rotateX(degreesToRadians(90))
-  cylinderTop.translateZ(-5.0)
   cylinderBody.add(cylinderTop)
-  cylinderBody.position.set(1, 10, 1)
-  cylinderBottom.rotateX(degreesToRadians(90))
-  cylinderBottom.translateZ(5.0)
-  cylinderBody.rotateZ(degreesToRadians(90))
+  cylinderBody.position.set(1, 10, 0.9)
   cylinderBody.rotateX(degreesToRadians(90))
   cylinderBody.add(cylinderBottom)
 
+  cylinderBottom.rotateX(degreesToRadians(90))
+  cylinderBottom.translateZ(0.625)
+  cylinderTop.translateZ(-0.625)
   //----------------------------------------------------------------------------
   //-- Use TextureLoader to load texture files
   var textureLoader = new THREE.TextureLoader()
   var body = textureLoader.load('../textures/barrel.jpg')
   var top = textureLoader.load('../textures/barrel.jpg')
 
+  var minFilter = THREE.LinearFilter
+  var magFilter = THREE.LinearFilter
   // Apply texture to the 'map' property of the plane
   cylinderBody.material.map = body
   cylinderTop.material.map = top
   cylinderBottom.material.map = top
+
+  cylinderBody.material.map.repeat.set(1, 1)
+  cylinderBody.material.map.wrapS = THREE.RepeatWrapping
+  cylinderBody.material.map.wrapT = THREE.RepeatWrapping
+
+  cylinderBody.material.map.minFilter = minFilter
+  cylinderBody.material.map.magFilter = magFilter
+
+  cylinderTop.material.map.repeat.set(1, 1)
+  cylinderTop.material.map.wrapS = THREE.RepeatWrapping
+  cylinderTop.material.map.wrapT = THREE.RepeatWrapping
+
+  cylinderTop.material.map.minFilter = minFilter
+  cylinderTop.material.map.magFilter = magFilter
+
+  cylinderBottom.material.map.repeat.set(1, 1)
+  cylinderBottom.material.map.wrapS = THREE.RepeatWrapping
+  cylinderBottom.material.map.wrapT = THREE.RepeatWrapping
+
+  cylinderBottom.material.map.minFilter = minFilter
+  cylinderBottom.material.map.magFilter = magFilter
 }
