@@ -180,14 +180,36 @@ scene.add(camera)
 
 // Virtual Camera
 var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
-
 var worldPosition = new THREE.Vector3()
+
+
+function testePosicao(){
+  let position = new THREE.Vector3(0,0,4.9)
+  position.copy(camera.position);
+  console.log(`function:`+ JSON.stringify(position))
+  position.applyQuaternion(cameraPoint.rotation)
+  return position.add(cameraPoint.position)
+}
+
+// function testeLookAt(){
+//   let position;
+//   position.copy(camera.position);
+//   position.applyQuaternion(cameraPoint.rotation)
+//   return position.add(cameraPoint.position)
+// }
+
 function cameraUpdate() {
   //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
 
   if (thirdPersonMode) {
-    camera.position.x = cybertruck.position.x + 0
+    // camera.position.x = cybertruck.position.x + 0
+    // camera.position.y = cybertruck.position.y - 14
+    // camera.position.z = cybertruck.position.z + 4
+
+    let posicao = testePosicao();
+    //console.log(posicao)
+    camera.position.x = posicao.x
     camera.position.y = cybertruck.position.y - 14
     camera.position.z = cybertruck.position.z + 4
 
