@@ -82,9 +82,9 @@ dirLight.shadow.blurSamples = 2
 scene.add(dirLight)
 
 // Create helper for the spotlight shadow
-const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
-shadowHelper.visible = false
-scene.add(shadowHelper)
+//const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
+//shadowHelper.visible = false
+//scene.add(shadowHelper)
 
 //---------------------------------------------------------
 
