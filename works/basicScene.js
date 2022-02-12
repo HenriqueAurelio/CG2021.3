@@ -646,7 +646,7 @@ function movementOfWheels() {
 }
 
 function addCone() {
-  const geometry = new THREE.ConeGeometry(1, 4, 32)
+  const geometry = new THREE.ConeGeometry(0.2, 1, 32)
   var defaultMaterial = new THREE.MeshLambertMaterial({
     color: 'rgb(255,255,255)',
     side: THREE.DoubleSide,
@@ -663,7 +663,7 @@ function addCone() {
 
   cone.material.map.minFilter = minFilter
   cone.material.map.magFilter = magFilter
-  cone.position.set(10, 10, 10)
+  cone.position.set(0, 16, 0.9)
 
   scene.add(cone)
   cone.rotateX(degreesToRadians(90))
