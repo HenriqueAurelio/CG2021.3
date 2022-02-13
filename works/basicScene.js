@@ -52,7 +52,6 @@ scene.add(listener)
 // setShadowMap
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.VSMShadowMap // default
-renderer.setSize(window.innerWidth, window.innerHeight)
 //---------------- setLights -----------------
 
 //initDefaultBasicLight(scene, true)
@@ -97,7 +96,7 @@ var angle = degreesToRadians(1)
 var tireAngle = degreesToRadians(0.5)
 var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
-
+addSkybox()
 // create the ground plane
 
 var planeGeometry = new THREE.PlaneGeometry(400, 400, 80, 80)
@@ -169,7 +168,7 @@ let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
-var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 500)
+var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 15000)
 var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
 var thirdPersonCamera = new THREE.PerspectiveCamera(40, aspect, 1, 500)
 
@@ -206,23 +205,7 @@ scene.add(camera)
 var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
 var worldPosition = new THREE.Vector3()
 
-function testePosicao() {
-  let position = new THREE.Vector3(0, 0, 4.9)
-  position.copy(camera.position)
-  console.log(`function:` + JSON.stringify(position))
-  position.applyQuaternion(cameraPoint.rotation)
-  return position.add(cameraPoint.position)
-}
-
-// function testeLookAt(){
-//   let position;
-//   position.copy(camera.position);
-//   position.applyQuaternion(cameraPoint.rotation)
-//   return position.add(cameraPoint.position)
-// }
-
 function cameraUpdate() {
-  //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
   var temp = new THREE.Vector3()
   if (thirdPersonMode) {
@@ -246,8 +229,8 @@ function cameraUpdate() {
 // Tracks
 let roads = []
 let track = new tracks(scene, 1)
-roads = track.getRoads();
-track.createRoadItems();
+roads = track.getRoads()
+track.createRoadItems()
 
 var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
 var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
@@ -294,9 +277,9 @@ function keyboardUpdate() {
   keyboard.update()
   if (keyboard.down('1')) {
     removeRoad()
-    track = new tracks(scene, 1);
+    track = new tracks(scene, 1)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -306,9 +289,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('2')) {
     removeRoad()
-    track = new tracks(scene, 2);
+    track = new tracks(scene, 2)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -318,9 +301,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('3')) {
     removeRoad()
-    track = new tracks(scene, 3);
+    track = new tracks(scene, 3)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -329,9 +312,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('4')) {
     removeRoad()
-    track = new tracks(scene, 4);
+    track = new tracks(scene, 4)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -652,7 +635,7 @@ function removeRoad() {
       scene.children[i].name == 'InitialPosition' ||
       scene.children[i].name == 'item'
     )
-    scene.remove(removeObj)
+      scene.remove(removeObj)
   }
 }
 
@@ -680,22 +663,12 @@ function movementOfWheels() {
 }
 
 function addSkybox() {
-  let texture_front = textureLoader.load(
-    '../textures/skybox/teste2/arid2_ft.jpg'
-  )
-  let texture_back = textureLoader.load(
-    '../textures/skybox/teste2/arid2_bk.jpg'
-  )
-  let texture_left = textureLoader.load(
-    '../textures/skybox/teste2/arid2_lf.jpg'
-  )
-  let texture_right = textureLoader.load(
-    '../textures/skybox/teste2/arid2_rt.jpg'
-  )
-  let texture_top = textureLoader.load('../textures/skybox/teste2/arid2_up.jpg')
-  let texture_bottom = textureLoader.load(
-    '../textures/skybox/teste2/arid2_dn.jpg'
-  )
+  let texture_front = textureLoader.load('../textures/skybox/teste3/front.jpg')
+  let texture_back = textureLoader.load('../textures/skybox/teste3/back.jpg')
+  let texture_left = textureLoader.load('../textures/skybox/teste3/left.jpg')
+  let texture_right = textureLoader.load('../textures/skybox/teste3/right.jpg')
+  let texture_top = textureLoader.load('../textures/skybox/teste3/up.jpg')
+  let texture_bottom = textureLoader.load('../textures/skybox/teste3/down.jpg')
 
   let materialArray = []
 
@@ -706,19 +679,29 @@ function addSkybox() {
     new THREE.MeshBasicMaterial({ map: texture_back, side: THREE.DoubleSide })
   )
   materialArray.push(
-    new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
-  )
-  materialArray.push(
-    new THREE.MeshBasicMaterial({ map: texture_right, side: THREE.DoubleSide })
-  )
-  materialArray.push(
     new THREE.MeshBasicMaterial({ map: texture_top, side: THREE.DoubleSide })
   )
   materialArray.push(
     new THREE.MeshBasicMaterial({ map: texture_bottom, side: THREE.DoubleSide })
   )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_right, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
+  )
 
-  let SkyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000)
+  let SkyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000)
   let skybox = new THREE.Mesh(SkyboxGeo, materialArray)
+  skybox.position.set(0, 0, -150)
+  skybox.rotateX(degreesToRadians(90))
+  var minFilter = THREE.LinearFilter
+  var magFilter = THREE.LinearFilter
+
+  // Apply texture to the 'map' property of the plane
+
+  skybox.material.map.minFilter = minFilter
+  skybox.material.map.magFilter = magFilter
   scene.add(skybox)
+  console.log(skybox)
 }
