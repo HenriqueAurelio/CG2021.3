@@ -716,12 +716,9 @@ function addSkybox() {
   skybox.material.map.minFilter = minFilter
   skybox.material.map.magFilter = magFilter
 
-  console.log(skybox.material.map)
-
   skybox.position.set(0, 0, -60)
   skybox.name = 'skybox'
   scene.add(skybox)
-  console.log(skybox)
 }
 console.log(scene)
 
