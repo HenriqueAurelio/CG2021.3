@@ -584,8 +584,8 @@ export default class Cybertruck extends THREE.Object3D {
     this.rearlight.distance = 10
     this.rearlight.castShadow = true
     this.rearlight.shadow.mapSize = new THREE.Vector2(512, 512)
-    this.mesh.add(this.rearlight)
-    this.mesh.add(this.rearlight.target)
+    //this.mesh.add(this.rearlight)
+    //this.mesh.add(this.rearlight.target)
   }
 
   createWindows() {
