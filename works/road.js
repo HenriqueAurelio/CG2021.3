@@ -24,7 +24,7 @@ export default class road extends THREE.Mesh {
     cube.name = start ? 'InitialPosition' : 'street'
     cube.position.set(x, y)
     cube.receiveShadow = true
-    cube.castShadow = true
+    //cube.castShadow = true
 
     if (start) {
       var textureLoader = new THREE.TextureLoader()

@@ -56,35 +56,36 @@ renderer.shadowMap.type = THREE.VSMShadowMap // default
 
 //initDefaultBasicLight(scene, true)
 
-var ambientLight = new THREE.AmbientLight('rgb(60,60,60)', 0.5)
+var ambientLight = new THREE.AmbientLight('rgb(60,60,60)', 1) //0.5
 scene.add(ambientLight)
 
 // Create and set the spotlight
-var dirLight = new THREE.DirectionalLight('rgb(255,255,255)', 0.7555)
+var dirLight = new THREE.DirectionalLight('rgb(255,255,255)', 0.7555) //0.7555
 dirLight.position.copy(new THREE.Vector3(2.0, 1.2, 0.0))
 dirLight.castShadow = true
+
 // Shadow Parameters
-dirLight.shadow.mapSize.width = 256
-dirLight.shadow.mapSize.height = 256
-dirLight.shadow.camera.near = 0.1
-dirLight.shadow.camera.far = 100
-dirLight.shadow.camera.left = -5
-dirLight.shadow.camera.right = 5
-dirLight.shadow.camera.bottom = -5
-dirLight.shadow.camera.top = 5
-dirLight.shadow.bias = -0.0005
+dirLight.shadow.mapSize.width = 512 //256
+dirLight.shadow.mapSize.height = 512 //256
+dirLight.shadow.camera.near = 0.1 //0.1
+dirLight.shadow.camera.far = 100 //100
+dirLight.shadow.camera.left = -5 //-5
+dirLight.shadow.camera.right = 5 //5
+dirLight.shadow.camera.bottom = -5 //-5
+dirLight.shadow.camera.top =  5 //5
+dirLight.shadow.bias = -0.0005 //-0.0005
 
 // No effect on Basic and PCFSoft
-dirLight.shadow.radius = 4
+dirLight.shadow.radius = 4 //4
 
 // Just for VSM - to be added in threejs.r132
 dirLight.shadow.blurSamples = 2
 scene.add(dirLight)
 
 // Create helper for the spotlight shadow
-// const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
-// shadowHelper.visible = true
-// scene.add(shadowHelper)
+//const shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera)
+//shadowHelper.visible = true
+//scene.add(shadowHelper)
 
 //---------------------------------------------------------
 
@@ -211,8 +212,8 @@ function cameraUpdate() {
   }
 
   dirLight.position.x = camera.position.x
-  dirLight.position.y = camera.position.y - 15
-  dirLight.position.z = camera.position.z + 30
+  dirLight.position.y = camera.position.y -15 //-15
+  dirLight.position.z = camera.position.z +30 // 30
   dirLight.target = cybertruck
   camera.lookAt(worldPosition)
 }

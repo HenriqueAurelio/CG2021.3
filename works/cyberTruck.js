@@ -11,7 +11,7 @@ export default class Cybertruck extends THREE.Object3D {
 
     this.createCar()
     this.mesh.castShadow = true
-    return this.mesh
+    return this.mesh;
   }
 
   createCar() {
@@ -223,6 +223,7 @@ export default class Cybertruck extends THREE.Object3D {
     })
     
     const blockMesh = new THREE.Mesh(geometry, material)
+    blockMesh.castShadow =true
     
     this.applyTexture(blockMesh);
     this.mesh.add(blockMesh)
@@ -1529,130 +1530,3 @@ export default class Cybertruck extends THREE.Object3D {
     return teste
   }
 }
-
-/*
-// ----------------------------------- physics ------------------------------------
-
-function createFloor() {
-  let pos = { x: 0, y: 0, z: -0.5 };
-  let scale = { x: 400, y: 0.5, z: 400 };
-  let quat = { x: 0, y: 0, z: 0, w: 1 };
-  let mass = 0;
-
-  let blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: 0xf9c834 }));
-  blockPlane.position.set(pos.x, pos.y, pos.z);
-  blockPlane.scale.set(scale.x, scale.y, scale.z);
-  blockPlane.rotateX(Math.PI / 2)
-  blockPlane.castShadow = true;
-  blockPlane.receiveShadow = true;
-  scene.add(blockPlane);
-
-  // AMMO
-   let transform = new Ammo.btTransform();
-   transform.setIdentity();
-   transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-   transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-   let motionState = new Ammo.btDefaultMotionState(transform);
- 
-   let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
-   colShape.setMargin(0.05);
- 
-   let localInertia = new Ammo.btVector3(0, 0, 0);
-   colShape.calculateLocalInertia(mass, localInertia);
- 
-   let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
-   let body = new Ammo.btRigidBody(rbInfo);
- 
-   body.setFriction(1);
-   body.setRollingFriction(1);
-   body.setActivationState(4);
-   body.setRestitution(1)
- 
-   physicsWorld.addRigidBody(body);
-}
-
-function createBox() {
-  let pos = { x: -10, y: 6, z: 0 }
-  let scale = { x: 6, y: 6, z: 6 }
-  let quat = { x: 0, y: 0, z: 0, w: 1 };
-  let mass = 1;
-
-  let box = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: 0xDC143C }));
-  box.position.set(pos.x, pos.y, pos.z);
-  box.scale.set(scale.x, scale.y, scale.z);
-  box.castShadow = true;
-  box.receiveShadow = true;
-  scene.add(box);
-
-  // AMMO.js
-  let transform = new Ammo.btTransform();
-  transform.setIdentity();
-  transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-  transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-  let motionState = new Ammo.btDefaultMotionState(transform);
-
-  let colShape = new Ammo.btBoxShape(new Ammo.btVector3(scale.x * 0.5, scale.y * 0.5, scale.z * 0.5));
-  colShape.setMargin(0.05);
-
-  let localInertia = new Ammo.btVector3(0, 0, 0);
-  colShape.calculateLocalInertia(mass, localInertia);
-
-  let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
-  let body = new Ammo.btRigidBody(rbInfo);
-  body.setActivationState(4);
-
-  physicsWorld.addRigidBody(body);
-  rigidBodies.push(box)
-
-  box.userData.physicsBody = body;
-  box.userData.draggable = true;
-}
-
-var tmpTrans// Ammo.btTransform;
-var physicsWorld// Ammo.btDiscreteDynamicsWorld;
-var rigidBodies = [];
-var resultantImpulse// Ammo.btVector3;
-
-Ammo().then(function (AmmoLib) {
-
-  tmpTrans = new Ammo.btTransform();
-  resultantImpulse = new Ammo.btVector3(0, 0, 0);
-
-  setupPhysicsWorld();
-
-  createFloor();
-  createBox();
-})
-
-function setupPhysicsWorld() {
-
-  let collisionConfiguration = new Ammo.btDefaultCollisionConfiguration(),
-    dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration),
-    overlappingPairCache = new Ammo.btDbvtBroadphase(),
-    solver = new Ammo.btSequentialImpulseConstraintSolver();
-
-  physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-  physicsWorld.setGravity(new Ammo.btVector3(0, 0,-10));
-
-}
-
-function updatePhysics(deltaTime) {
-
-  // Step world
-  physicsWorld.stepSimulation(deltaTime, 10);
-
-    // Update rigid bodies
-    for (let i = 0; i < rigidBodies.length; i++) {
-      let objThree = rigidBodies[i];
-      let objAmmo = objThree.userData.physicsBody;
-      let ms = objAmmo.getMotionState();
-      if (ms) {
-        ms.getWorldTransform(tmpTrans);
-        let p = tmpTrans.getOrigin();
-        let q = tmpTrans.getRotation();
-        objThree.position.set(p.x(), p.y(), p.z());
-        objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
-      }
-    }
-}
-*/
