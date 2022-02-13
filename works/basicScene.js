@@ -105,7 +105,15 @@ var planeMaterial = new THREE.MeshLambertMaterial({
   side: THREE.DoubleSide,
 })
 var plane = new THREE.Mesh(planeGeometry, planeMaterial)
-plane.rotateX(Math.PI)
+
+var planeGeometry = new THREE.PlaneGeometry(10, 10, 80, 80)
+var planeMaterial = new THREE.MeshLambertMaterial({
+  color: 'rgb(255,255,255)',
+  side: THREE.DoubleSide,
+})
+var plane2 = new THREE.Mesh(planeGeometry, planeMaterial)
+plane2.position.set(0, 0, 5)
+scene.add(plane2)
 
 var textureLoader = new THREE.TextureLoader()
 var floor = textureLoader.load('../textures/grass3.jpg')
@@ -169,7 +177,7 @@ let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
 var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 15000)
-var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
+var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 15000)
 var thirdPersonCamera = new THREE.PerspectiveCamera(40, aspect, 1, 500)
 
 //InspectCamera
@@ -335,8 +343,9 @@ function keyboardUpdate() {
   }
   // if (!inspectMode) {
   if (actualLap < 4) {
-    if (keyboard.pressed('X')) acc = 5
-    else if (keyboard.pressed('down')) acc = -3
+    if (keyboard.pressed('X')) {
+      acc = 5
+    } else if (keyboard.pressed('down')) acc = -3
     else acc = 0
 
     switch (actualLap) {
@@ -516,7 +525,11 @@ function gameMode() {
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
-      if (scene.children[i].name != `Cybertruck`) obj.visible = false
+      if (
+        scene.children[i].name != `Cybertruck` &&
+        scene.children[i].name != 'skybox'
+      )
+        obj.visible = false
       spotLight.visible = true
     }
   }
@@ -690,6 +703,7 @@ function addSkybox() {
   materialArray.push(
     new THREE.MeshBasicMaterial({ map: texture_back, side: THREE.DoubleSide })
   )
+
   materialArray.push(
     new THREE.MeshBasicMaterial({ map: texture_top, side: THREE.DoubleSide })
   )
@@ -703,17 +717,19 @@ function addSkybox() {
     new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
   )
 
-  let SkyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000)
+  let SkyboxGeo = new THREE.BoxGeometry(500, 500, 500)
   let skybox = new THREE.Mesh(SkyboxGeo, materialArray)
-  skybox.position.set(0, 0, -150)
-  skybox.rotateX(degreesToRadians(90))
-  var minFilter = THREE.LinearFilter
-  var magFilter = THREE.LinearFilter
 
   // Apply texture to the 'map' property of the plane
-
+  var minFilter = THREE.LinearFilter
+  var magFilter = THREE.LinearFilter
   skybox.material.map.minFilter = minFilter
   skybox.material.map.magFilter = magFilter
+
+  console.log(skybox.material.map)
+
+  skybox.position.set(0, 0, -60)
+  skybox.name = 'skybox'
   scene.add(skybox)
   console.log(skybox)
 }
