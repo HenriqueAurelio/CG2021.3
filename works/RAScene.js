@@ -15,6 +15,10 @@ var scene	= new THREE.Scene();
 var camera = new THREE.Camera();
 scene.add(camera);
 
+// setShadowMap
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.VSMShadowMap // default
+
 // array of functions for the rendering loop
 var onRenderFcts= [];
 
@@ -100,6 +104,22 @@ onRenderFcts.push(function(){
 	renderer.render( scene, camera );
 })
 
+const spotLight = new THREE.SpotLight(0xffffff)
+spotLight.position.set(10, 10, 10)
+
+spotLight.castShadow = true
+
+spotLight.shadow.mapSize.width = 1024
+spotLight.shadow.mapSize.height = 1024
+
+spotLight.shadow.camera.near = 1
+spotLight.shadow.camera.far = 100
+spotLight.shadow.camera.fov = 40
+
+spotLight.name = 'inspectModeLight'
+spotLight.visible = false
+scene.add(spotLight)
+
 function createCybertruck()
 {
 	initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
@@ -109,7 +129,7 @@ function createCybertruck()
 	object.rotateZ(degreesToRadians(180))
 	object.rotateY(degreesToRadians(180))
 	
-	cybertruck.add(normalizeAndRescale(object,40));
+	cybertruck.add(normalizeAndRescale(object,25));
 	cybertruck.visible = true;
 }
 
@@ -126,6 +146,9 @@ function showInformation()
 // run the rendering loop
 requestAnimationFrame(function animate(nowMsec)
 {
+	spotLight.position.copy(camera.position)
+    spotLight.target.updateMatrixWorld()
+
 	var lastTimeMsec= null;	
 	// keep looping
 	requestAnimationFrame( animate );
