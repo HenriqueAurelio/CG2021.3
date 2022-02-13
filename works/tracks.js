@@ -1,13 +1,14 @@
-import road from "./road.js";
-import * as THREE from "../build/three.module.js";
-import roadItem from "./roadItem.js";
+import road from './road.js'
+import * as THREE from '../build/three.module.js'
+import roadItem from './roadItem.js'
 
-const blockSize = 10;
+const blockSize = 10
 export default class tracks {
   constructor(scene, track, xPos = 0, yPos = 0) {
-    this.scene = scene;
-    let layout = [];
-    this.roads = [];
+    this.scene = scene
+    let layout = []
+    this.roads = []
+    this.bboxes = []
 
     // [x, y, tam, roadShape]
     switch (track) {
@@ -16,9 +17,9 @@ export default class tracks {
           [0, 1, 10, 1],
           [1, 0, 10, 1],
           [0, -1, 10, 1],
-          [-1, 0, 10, 1]
-        ];
-        break;
+          [-1, 0, 10, 1],
+        ]
+        break
 
       case 2:
         layout = [
@@ -27,9 +28,9 @@ export default class tracks {
           [0, -1, 5, 1],
           [1, 0, 5, 1],
           [0, -1, 5, 1],
-          [-1, 0, 10, 1]
-        ];
-        break;
+          [-1, 0, 10, 1],
+        ]
+        break
 
       case 3:
         layout = [
@@ -42,9 +43,9 @@ export default class tracks {
           [0, -1, 6, 1],
           [-1, 0, 2, 1],
           [0, -1, 4, 1],
-          [-1, 0, 8, 1]
-          ];
-        break;
+          [-1, 0, 8, 1],
+        ]
+        break
 
       case 4:
         layout = [
@@ -56,56 +57,70 @@ export default class tracks {
           [0, -1, 5, 1],
           [-1, 0, 7, 1],
           [0, -1, 5, 1],
-          [-1, 0, 3, 1]
-        ];
-        break;
+          [-1, 0, 3, 1],
+        ]
+        break
 
       default:
-        break;
+        break
     }
 
-    let cube;
+    let cube
 
     for (let i = 0; i < layout.length; i++) {
-      let dir = layout[i];
-      let tam = dir[2];
+      let dir = layout[i]
+      let tam = dir[2]
       for (let j = 0; j < tam; j++) {
         // setStart
         if (i == 0 && j == 0)
           cube = new road(
             dir[0] * blockSize + xPos,
             dir[1] * blockSize + yPos,
-            1
-          );
+            1,
+            1,
+            track
+          )
         else
-          cube = new road(dir[0] * blockSize + xPos, dir[1] * blockSize + yPos);
-        this.scene.add(cube);
-        this.roads.push(cube);
-        xPos += dir[0] * blockSize;
-        yPos += dir[1] * blockSize;
+          cube = new road(
+            dir[0] * blockSize + xPos,
+            dir[1] * blockSize + yPos,
+            0,
+            1,
+            track
+          )
+        this.scene.add(cube)
+        this.roads.push(cube)
+        xPos += dir[0] * blockSize
+        yPos += dir[1] * blockSize
       }
     }
   }
 
-  createRoadItems(){
-    let bboxes = [];
+  createRoadItems() {
     let item = new roadItem(this.getRoads())
-    let itemCount = 0;
+    let itemCount = 0
     while (itemCount != 20) {
-      let object = item.createRoadItem();
-      this.scene.add(object);
-      bboxes.push(new THREE.Box3().setFromObject(object));
-      var bboxHelper = new THREE.Box3Helper(new THREE.Box3().setFromObject(object), 0xFF0000);
-      this.scene.add(bboxHelper);
-      itemCount ++;
+      let object = item.createRoadItem()
+      this.scene.add(object)
+      this.bboxes.push(new THREE.Box3().setFromObject(object))
+      var bboxHelper = new THREE.Box3Helper(
+        new THREE.Box3().setFromObject(object),
+        0xff0000
+      )
+      this.scene.add(bboxHelper)
+      itemCount++
     }
   }
 
+  getBboxes() {
+    return this.bboxes
+  }
+
   getRoads() {
-    return this.roads;
+    return this.roads
   }
 
   changew() {
-    this.constructor();
+    this.constructor()
   }
 }

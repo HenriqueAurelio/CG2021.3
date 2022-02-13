@@ -45,6 +45,8 @@ var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
+var isCollided = false
+var actualTrack = 1
 scene.add(listener)
 
 // setShadowMap
@@ -104,21 +106,14 @@ var planeMaterial = new THREE.MeshLambertMaterial({
 })
 var plane = new THREE.Mesh(planeGeometry, planeMaterial)
 
-var planeGeometry = new THREE.PlaneGeometry(10, 10, 80, 80)
-var planeMaterial = new THREE.MeshLambertMaterial({
-  color: 'rgb(255,255,255)',
-  side: THREE.DoubleSide,
-})
-var plane2 = new THREE.Mesh(planeGeometry, planeMaterial)
-plane2.position.set(0, 0, 5)
-//scene.add(plane2)
-
 var textureLoader = new THREE.TextureLoader()
-var floor = textureLoader.load('../textures/grass3.jpg')
-plane.material.map = floor
-plane.material.map.repeat.set(100, 100)
-plane.material.map.wrapS = THREE.RepeatWrapping
-plane.material.map.wrapT = THREE.RepeatWrapping
+if (actualTrack == 1) {
+  var floor = textureLoader.load('../textures/grass3.jpg')
+  plane.material.map = floor
+  plane.material.map.repeat.set(100, 100)
+  plane.material.map.wrapS = THREE.RepeatWrapping
+  plane.material.map.wrapT = THREE.RepeatWrapping
+}
 
 scene.add(plane)
 
@@ -158,16 +153,6 @@ var car = new carGroup()
 let cybertruck = new Cybertruck()
 
 scene.add(cybertruck)
-// var bbox = new THREE.Box3().setFromObject(cybertruck);
-// var boxHelper = new THREE.BoxHelper(cybertruck, 0xff0000);
-// boxHelper.update();
-// // If you want a visible bounding box
-// scene.add(boxHelper);
-// // If you just want the numbers
-// console.log(cybertruck);
-// // console.log(helper.box.max);
-
-
 
 // Camera
 let SCREEN_WIDTH = window.innerWidth
@@ -234,7 +219,7 @@ function cameraUpdate() {
 
 // Tracks
 let roads = []
-let track = new tracks(scene, 1)
+let track = new tracks(scene, actualTrack)
 roads = track.getRoads()
 track.createRoadItems()
 
@@ -243,7 +228,7 @@ var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
-var carBlock = cybertruck.children[0];
+var carBlock = cybertruck.children[0]
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
@@ -266,20 +251,14 @@ var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
 
-// var carBlockGeometry = carBlock.geometry;
-// carBlockGeometry.computeBoundingBox();
-// console.log(carBlock);  
-// var bbox = new THREE.Box3(carBlockGeometry.boundingBox.min, carBlockGeometry.boundingBox.max);
-// //var bbox = new THREE.Box3().setFromObject(carBlock);
-// //var boundingBox = carBlockGeometry.boundingBox.clone();
-var blockBoundingBox =  new THREE.Box3();
-carBlock.geometry.computeBoundingBox();
+var blockBoundingBox = new THREE.Box3()
+carBlock.geometry.computeBoundingBox()
 blockBoundingBox.copy(carBlock.geometry.boundingBox)
-carBlock.updateMatrixWorld(true);
-blockBoundingBox.applyMatrix4(carBlock.matrixWorld);
+carBlock.updateMatrixWorld(true)
+blockBoundingBox.applyMatrix4(carBlock.matrixWorld)
 var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
-//var boxHelper = new THREE.BoxHelper().setFromObject(carBlock);
-scene.add(box3Helper);
+
+scene.add(box3Helper)
 
 function keyboardUpdate() {
   keyboard.update()
@@ -291,6 +270,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 1
+    changePlaneTexture(actualTrack)
     checkvalue = 0
     timer.start()
     totalTimer.start()
@@ -303,6 +284,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 2
+    changePlaneTexture(actualTrack)
     timer.start()
     totalTimer.start()
     checkvalue = 0
@@ -315,6 +298,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 3
+    changePlaneTexture(actualTrack)
     timer.start()
     totalTimer.start()
   }
@@ -326,6 +311,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 4
+    changePlaneTexture(actualTrack)
     timer.start()
     totalTimer.start()
   }
@@ -423,6 +410,10 @@ function keyboardUpdate() {
       }
       foraDaPista = true
     }
+    if (isCollided) {
+      maxSpeed = 100
+      maxReverseSpeed = -60
+    }
 
     if (speed > maxSpeed) speed = maxSpeed
     if (speed < maxReverseSpeed) speed = maxReverseSpeed
@@ -487,7 +478,8 @@ render()
 
 function render() {
   stats.update() // Update FPS
-  updateBoundingBox();
+  updateBoundingBox()
+  checkCollision()
   //boxHelper.update();
   //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
@@ -676,13 +668,11 @@ function movementOfWheels() {
   calotas[3].rotateY(-rotateAngle)
 }
 
-function updateBoundingBox(){
-  
-  carBlock.geometry.computeBoundingBox();
+function updateBoundingBox() {
+  carBlock.geometry.computeBoundingBox()
   blockBoundingBox.copy(carBlock.geometry.boundingBox)
-  carBlock.updateMatrixWorld(true);
-  blockBoundingBox.applyMatrix4(carBlock.matrixWorld);
-
+  carBlock.updateMatrixWorld(true)
+  blockBoundingBox.applyMatrix4(carBlock.matrixWorld)
 }
 
 function addSkybox() {
@@ -733,10 +723,42 @@ function addSkybox() {
 }
 // console.log(scene);
 
-function checkColision(){
-  for (var i = scene.children.length - 1; i >= 2; i--) {
-    if (scene.children[i].name == 'item'){
+function checkCollision() {
+  let bboxes = track.getBboxes()
+  let filterObj
+  filterObj = bboxes.filter((bbox) => {
+    return bbox.intersectsBox(blockBoundingBox)
+  })
+  isCollided = filterObj.length !== 0
+}
 
-    }
+function changePlaneTexture(track) {
+  if (track == 1) {
+    var floor = textureLoader.load('../textures/grass3.jpg')
+    plane.material.map = floor
+    plane.material.map.repeat.set(100, 100)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
+  }
+  if (track == 2) {
+    var floor = textureLoader.load('../textures/Lava3.png')
+    plane.material.map = floor
+    plane.material.map.repeat.set(100, 100)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
+  }
+  if (track == 3) {
+    var floor = textureLoader.load('../textures/darkSand.jpg')
+    plane.material.map = floor
+    plane.material.map.repeat.set(1000, 1000)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
+  }
+  if (track == 4) {
+    var floor = textureLoader.load('../textures/brick2.jfif')
+    plane.material.map = floor
+    plane.material.map.repeat.set(100, 100)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
   }
 }
