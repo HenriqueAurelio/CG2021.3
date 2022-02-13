@@ -62,14 +62,11 @@ export default class road extends THREE.Mesh {
       cube.material.map = floor
     }
     if (track == 3) {
-      var floor = textureLoader.load('../textures/sand.jpg')
+      var floor = textureLoader.load('../textures/brick.jpg')
       cube.material.map = floor
-      cube.material.map.repeat.set(100, 100)
-      cube.material.map.wrapS = THREE.RepeatWrapping
-      cube.material.map.wrapT = THREE.RepeatWrapping
     }
     if (track == 4) {
-      var floor = textureLoader.load('../textures/brick.jpg')
+      var floor = textureLoader.load('../textures/teste.jpg')
       cube.material.map = floor
     }
     return cube

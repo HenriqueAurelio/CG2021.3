@@ -48,6 +48,7 @@ var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
 var isCollided = false
+var actualTrack = 1
 scene.add(listener)
 
 // setShadowMap
@@ -108,11 +109,13 @@ var planeMaterial = new THREE.MeshLambertMaterial({
 var plane = new THREE.Mesh(planeGeometry, planeMaterial)
 
 var textureLoader = new THREE.TextureLoader()
-var floor = textureLoader.load('../textures/grass3.jpg')
-plane.material.map = floor
-plane.material.map.repeat.set(100, 100)
-plane.material.map.wrapS = THREE.RepeatWrapping
-plane.material.map.wrapT = THREE.RepeatWrapping
+if (actualTrack == 1) {
+  var floor = textureLoader.load('../textures/grass3.jpg')
+  plane.material.map = floor
+  plane.material.map.repeat.set(100, 100)
+  plane.material.map.wrapS = THREE.RepeatWrapping
+  plane.material.map.wrapT = THREE.RepeatWrapping
+}
 
 scene.add(plane)
 
@@ -218,7 +221,7 @@ function cameraUpdate() {
 
 // Tracks
 let roads = []
-let track = new tracks(scene, 1)
+let track = new tracks(scene, actualTrack)
 roads = track.getRoads()
 track.createRoadItems()
 
@@ -269,6 +272,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 1
+    changePlaneTexture(actualTrack)
     checkvalue = 0
     timer.start()
     totalTimer.start()
@@ -281,6 +286,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 2
+    changePlaneTexture(actualTrack)
     timer.start()
     totalTimer.start()
     checkvalue = 0
@@ -293,6 +300,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 3
+    changePlaneTexture(actualTrack)
     timer.start()
     totalTimer.start()
   }
@@ -304,6 +313,8 @@ function keyboardUpdate() {
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
+    actualTrack = 4
+    changePlaneTexture(actualTrack)
     timer.start()
     totalTimer.start()
   }
@@ -721,4 +732,35 @@ function checkCollision() {
     return bbox.intersectsBox(blockBoundingBox)
   })
   isCollided = filterObj.length !== 0
+}
+
+function changePlaneTexture(track) {
+  if (track == 1) {
+    var floor = textureLoader.load('../textures/grass3.jpg')
+    plane.material.map = floor
+    plane.material.map.repeat.set(100, 100)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
+  }
+  if (track == 2) {
+    var floor = textureLoader.load('../textures/Lava3.png')
+    plane.material.map = floor
+    plane.material.map.repeat.set(100, 100)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
+  }
+  if (track == 3) {
+    var floor = textureLoader.load('../textures/darkSand.jpg')
+    plane.material.map = floor
+    plane.material.map.repeat.set(1000, 1000)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
+  }
+  if (track == 4) {
+    var floor = textureLoader.load('../textures/brick2.jfif')
+    plane.material.map = floor
+    plane.material.map.repeat.set(100, 100)
+    plane.material.map.wrapS = THREE.RepeatWrapping
+    plane.material.map.wrapT = THREE.RepeatWrapping
+  }
 }
