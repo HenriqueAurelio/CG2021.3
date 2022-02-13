@@ -4,10 +4,8 @@ import KeyboardState from '../libs/util/KeyboardState.js'
 import { TrackballControls } from '../build/jsm/controls/TrackballControls.js'
 import {
   initRenderer,
-  createGroundPlaneWired,
   InfoBox,
   onWindowResize,
-  initDefaultBasicLight,
   degreesToRadians,
 } from '../libs/util/util.js'
 import Cybertruck from './cyberTruck.js'
@@ -113,7 +111,7 @@ var planeMaterial = new THREE.MeshLambertMaterial({
 })
 var plane2 = new THREE.Mesh(planeGeometry, planeMaterial)
 plane2.position.set(0, 0, 5)
-scene.add(plane2)
+//scene.add(plane2)
 
 var textureLoader = new THREE.TextureLoader()
 var floor = textureLoader.load('../textures/grass3.jpg')
@@ -726,14 +724,14 @@ function addSkybox() {
   skybox.material.map.minFilter = minFilter
   skybox.material.map.magFilter = magFilter
 
-  console.log(skybox.material.map)
+  // console.log(skybox.material.map)
 
   skybox.position.set(0, 0, -60)
   skybox.name = 'skybox'
   scene.add(skybox)
-  console.log(skybox)
+  // console.log(skybox)
 }
-console.log(scene);
+// console.log(scene);
 
 function checkColision(){
   for (var i = scene.children.length - 1; i >= 2; i--) {
