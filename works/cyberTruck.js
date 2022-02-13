@@ -1,5 +1,6 @@
 import * as THREE from '../build/three.module.js'
 import { ConvexGeometry } from '../build/jsm/geometries/ConvexGeometry.js'
+import { degreesToRadians } from '../libs/util/util.js'
 export default class Cybertruck extends THREE.Object3D {
   constructor() {
     super()
@@ -216,27 +217,100 @@ export default class Cybertruck extends THREE.Object3D {
 
     geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
     geometry.computeVertexNormals() // to avoid a flat surface
-    const material = new THREE.MeshBasicMaterial({ 
-      color: 'rgb(255,255,255)',
+    const material = new THREE.MeshPhongMaterial({ 
+      color: 0x000000,
       side: THREE.DoubleSide
     })
     
-    var textureLoader = new THREE.TextureLoader()
-    var body = textureLoader.load('../textures/Stone.png')
-    
     const blockMesh = new THREE.Mesh(geometry, material)
     
-    blockMesh.material.map = body
-    blockMesh.material.map.repeat.set(8, 12)
-    blockMesh.material.map.wrapS = THREE.RepeatWrapping
-    blockMesh.material.map.wrapT = THREE.RepeatWrapping
-    blockMesh.castShadow = true
-    //blockMesh.receiveShadow = false
-    //blockMesh.material.map.minFilter = THREE.LinearFilter
-    //blockMesh.material.map.magFilter = THREE.LinearFilter
-    //blockMesh.material.map.repeat.set(100,100)
-
+    this.applyTexture(blockMesh);
     this.mesh.add(blockMesh)
+  }
+
+  applyTexture(mesh){
+    //ApplyTexture
+    //Back
+    var textureLoader = new THREE.TextureLoader()
+    var body = textureLoader.load('../textures/doorRollup.jpeg')
+    
+    const backMat = new THREE.MeshBasicMaterial({ 
+      color: 0xffffff,
+      side: THREE.DoubleSide
+    })
+    const backGeo = new THREE.PlaneGeometry(1.115,1.325);
+    const back = new THREE.Mesh(backGeo, backMat);
+    back.position.set(0,0.515,-1.24);
+    back.rotateX((Math.PI / 2));
+    back.rotateX(-degreesToRadians(8.72));
+    
+    back.material.map = body;
+    //back.material.map.magFilter = THREE.LinearFilter
+
+    //Front
+    textureLoader = new THREE.TextureLoader()
+    body = textureLoader.load('../textures/carbon.jpeg')
+    
+    const frontMat = new THREE.MeshPhongMaterial({ 
+      color: 0xffffff,
+      side: THREE.DoubleSide
+    })
+    const frontGeo = new THREE.PlaneGeometry(1.325,0.5);
+    const front = new THREE.Mesh(frontGeo, frontMat);
+    front.position.set(0,0.215,1.65);
+    front.rotateX((Math.PI / 2));
+    front.rotateX(degreesToRadians(22));
+    
+    front.material.map = body;
+
+    //Door
+    textureLoader = new THREE.TextureLoader()
+    body = textureLoader.load('../textures/portaTatoo.png')
+    
+    const doorMat = new THREE.MeshPhongMaterial({ 
+      color: 0xbac3c8,
+      side: THREE.DoubleSide
+    })
+    const doorGeo = new THREE.PlaneGeometry(0.43,0.43);
+    var door = new THREE.Mesh(doorGeo, doorMat);
+    door.position.set(0.73,-0.03,0.65);
+    door.rotateY((Math.PI / 2));
+    //door.rotateX(degreesToRadians(22));
+    
+    door.material.map = body;
+
+    mesh.add(back);
+    mesh.add(front);
+    mesh.add(door);
+
+    door = new THREE.Mesh(doorGeo, doorMat);
+    door.rotateY((Math.PI / 2));
+    door.position.set(-0.73,-0.03,0.65);
+    mesh.add(door);
+
+    //flame
+    textureLoader = new THREE.TextureLoader()
+    body = textureLoader.load('../textures/flame.jpeg')
+    
+    const flameMat = new THREE.MeshPhongMaterial({ 
+      color: 0xbac3c8,
+      side: THREE.DoubleSide
+    })
+    const flameGeo = new THREE.PlaneGeometry(0.31,0.40);
+    var flame = new THREE.Mesh(flameGeo, flameMat);
+    flame.position.set(0.73,0.1,-1.62);
+    flame.rotateY((Math.PI / 2));
+    flame.rotateZ(degreesToRadians(33))
+    
+    flame.material.map = body;
+
+    mesh.add(flame);
+
+    flame = new THREE.Mesh(flameGeo, flameMat);
+    flame.rotateY((Math.PI / 2));
+    flame.rotateZ(degreesToRadians(33))
+    flame.position.set(-0.73,0.1,-1.62);
+    mesh.add(flame);
   }
 
   createBodywork() {

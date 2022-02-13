@@ -4,10 +4,8 @@ import KeyboardState from '../libs/util/KeyboardState.js'
 import { TrackballControls } from '../build/jsm/controls/TrackballControls.js'
 import {
   initRenderer,
-  createGroundPlaneWired,
   InfoBox,
   onWindowResize,
-  initDefaultBasicLight,
   degreesToRadians,
 } from '../libs/util/util.js'
 import Cybertruck from './cyberTruck.js'
@@ -258,9 +256,9 @@ carBlock.geometry.computeBoundingBox()
 blockBoundingBox.copy(carBlock.geometry.boundingBox)
 carBlock.updateMatrixWorld(true)
 blockBoundingBox.applyMatrix4(carBlock.matrixWorld)
-var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
+// var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
 
-scene.add(box3Helper)
+//scene.add(box3Helper)
 
 function keyboardUpdate() {
   keyboard.update()
@@ -716,11 +714,14 @@ function addSkybox() {
   skybox.material.map.minFilter = minFilter
   skybox.material.map.magFilter = magFilter
 
+  // console.log(skybox.material.map)
+
   skybox.position.set(0, 0, -60)
   skybox.name = 'skybox'
   scene.add(skybox)
+  // console.log(skybox)
 }
-console.log(scene)
+// console.log(scene);
 
 function checkCollision() {
   let bboxes = track.getBboxes()
