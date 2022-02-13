@@ -29,7 +29,11 @@ export default class roadItem{
         
         //Colocar em posição aleatoria da estrada
         //entre [-5,5] em x e y, converter para posição real
-        let objectPos = new THREE.Vector3(block.position.x + getRandomInt(-4.8,4.8),block.position.y + getRandomInt(-4.8,4.8),0.9);
+        let objectPos = new THREE.Vector3(
+          block.position.x + getRandom(-4.5,4.5),
+          block.position.y + getRandom(-4.5,4.5),
+          0.8
+        );
 
         // itemIndex = 0-2 -> ['cone','caixa','barril']
         switch (this.itemIndex) {
