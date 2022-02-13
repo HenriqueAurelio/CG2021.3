@@ -216,11 +216,26 @@ export default class Cybertruck extends THREE.Object3D {
 
     geometry.setAttribute('position', new THREE.BufferAttribute(buffer, 3))
     geometry.computeVertexNormals() // to avoid a flat surface
-    const material = new THREE.MeshPhongMaterial({ color: 0xbac3c8 })
-    material.side = THREE.DoubleSide // Show front and back polygons
+    const material = new THREE.MeshBasicMaterial({ 
+      color: 'rgb(255,255,255)',
+      side: THREE.DoubleSide
+    })
+    
+    var textureLoader = new THREE.TextureLoader()
+    var body = textureLoader.load('../textures/Stone.png')
+    
     const blockMesh = new THREE.Mesh(geometry, material)
+    
+    blockMesh.material.map = body
+    blockMesh.material.map.repeat.set(8, 12)
+    blockMesh.material.map.wrapS = THREE.RepeatWrapping
+    blockMesh.material.map.wrapT = THREE.RepeatWrapping
     blockMesh.castShadow = true
-    blockMesh.name = "carBlock"
+    //blockMesh.receiveShadow = false
+    //blockMesh.material.map.minFilter = THREE.LinearFilter
+    //blockMesh.material.map.magFilter = THREE.LinearFilter
+    //blockMesh.material.map.repeat.set(100,100)
+
     this.mesh.add(blockMesh)
   }
 
