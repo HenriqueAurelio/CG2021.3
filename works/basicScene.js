@@ -19,6 +19,7 @@ import ActualLapBox from './actualLap.js'
 import TotalTime from './totalTime.js'
 
 const listener = new THREE.AudioListener()
+var textureLoader = new THREE.TextureLoader()
 
 // create a global audio source
 const sound = new THREE.Audio(listener)
@@ -51,7 +52,7 @@ scene.add(listener)
 // setShadowMap
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.VSMShadowMap // default
-
+renderer.setSize(window.innerWidth, window.innerHeight)
 //---------------- setLights -----------------
 
 //initDefaultBasicLight(scene, true)
@@ -651,4 +652,48 @@ function movementOfWheels() {
   calotas[1].rotateY(-rotateAngle)
   calotas[2].rotateY(rotateAngle)
   calotas[3].rotateY(-rotateAngle)
+}
+
+function addSkybox() {
+  let texture_front = textureLoader.load(
+    '../textures/skybox/teste2/arid2_ft.jpg'
+  )
+  let texture_back = textureLoader.load(
+    '../textures/skybox/teste2/arid2_bk.jpg'
+  )
+  let texture_left = textureLoader.load(
+    '../textures/skybox/teste2/arid2_lf.jpg'
+  )
+  let texture_right = textureLoader.load(
+    '../textures/skybox/teste2/arid2_rt.jpg'
+  )
+  let texture_top = textureLoader.load('../textures/skybox/teste2/arid2_up.jpg')
+  let texture_bottom = textureLoader.load(
+    '../textures/skybox/teste2/arid2_dn.jpg'
+  )
+
+  let materialArray = []
+
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_front, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_back, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_right, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_top, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_bottom, side: THREE.DoubleSide })
+  )
+
+  let SkyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000)
+  let skybox = new THREE.Mesh(SkyboxGeo, materialArray)
+  scene.add(skybox)
 }
