@@ -7,6 +7,7 @@ import {
   InfoBox,
   onWindowResize,
   degreesToRadians,
+  initDefaultBasicLight,
 } from '../libs/util/util.js'
 import Cybertruck from './cyberTruck.js'
 import Speedometer from './speedometer.js'
@@ -56,7 +57,13 @@ renderer.shadowMap.type = THREE.VSMShadowMap // default
 
 //initDefaultBasicLight(scene, true)
 
-var ambientLight = new THREE.AmbientLight('rgb(60,60,60)', 1) //0.5
+var ambientLight = new THREE.AmbientLight('rgb(60,60,60)', 0.5) //0.5
+
+// var ambientLight = new THREE.HemisphereLight(
+//   'white', // bright sky color
+//   'darkslategrey', // dim ground color
+//   0.5, // intensity
+// );
 scene.add(ambientLight)
 
 // Create and set the spotlight

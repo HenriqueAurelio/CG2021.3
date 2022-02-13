@@ -107,7 +107,7 @@ onRenderFcts.push(function(){
 const spotLight = new THREE.SpotLight(0xffffff)
 spotLight.position.set(10, 10, 10)
 
-spotLight.castShadow = true
+//spotLight.castShadow = true
 
 spotLight.shadow.mapSize.width = 1024
 spotLight.shadow.mapSize.height = 1024
