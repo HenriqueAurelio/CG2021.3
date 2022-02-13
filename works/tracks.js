@@ -103,11 +103,11 @@ export default class tracks {
       let object = item.createRoadItem()
       this.scene.add(object)
       this.bboxes.push(new THREE.Box3().setFromObject(object))
-      var bboxHelper = new THREE.Box3Helper(
-        new THREE.Box3().setFromObject(object),
-        0xff0000
-      )
-      this.scene.add(bboxHelper)
+      // var bboxHelper = new THREE.Box3Helper(
+      //   new THREE.Box3().setFromObject(object),
+      //   0xff0000
+      // )
+      //this.scene.add(bboxHelper)
       itemCount++
     }
   }
