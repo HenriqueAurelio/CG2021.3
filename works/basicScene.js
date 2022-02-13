@@ -52,7 +52,6 @@ scene.add(listener)
 // setShadowMap
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.VSMShadowMap // default
-renderer.setSize(window.innerWidth, window.innerHeight)
 //---------------- setLights -----------------
 
 //initDefaultBasicLight(scene, true)
@@ -97,7 +96,7 @@ var angle = degreesToRadians(1)
 var tireAngle = degreesToRadians(0.5)
 var keyboard = new KeyboardState()
 const coeficienteVelocidade = 1500
-
+addSkybox()
 // create the ground plane
 
 var planeGeometry = new THREE.PlaneGeometry(400, 400, 80, 80)
@@ -106,7 +105,15 @@ var planeMaterial = new THREE.MeshLambertMaterial({
   side: THREE.DoubleSide,
 })
 var plane = new THREE.Mesh(planeGeometry, planeMaterial)
-plane.rotateX(Math.PI)
+
+var planeGeometry = new THREE.PlaneGeometry(10, 10, 80, 80)
+var planeMaterial = new THREE.MeshLambertMaterial({
+  color: 'rgb(255,255,255)',
+  side: THREE.DoubleSide,
+})
+var plane2 = new THREE.Mesh(planeGeometry, planeMaterial)
+plane2.position.set(0, 0, 5)
+scene.add(plane2)
 
 var textureLoader = new THREE.TextureLoader()
 var floor = textureLoader.load('../textures/grass3.jpg')
@@ -153,14 +160,24 @@ var car = new carGroup()
 let cybertruck = new Cybertruck()
 
 scene.add(cybertruck)
+// var bbox = new THREE.Box3().setFromObject(cybertruck);
+// var boxHelper = new THREE.BoxHelper(cybertruck, 0xff0000);
+// boxHelper.update();
+// // If you want a visible bounding box
+// scene.add(boxHelper);
+// // If you just want the numbers
+// console.log(cybertruck);
+// // console.log(helper.box.max);
+
+
 
 // Camera
 let SCREEN_WIDTH = window.innerWidth
 let SCREEN_HEIGHT = window.innerHeight
 let aspect = SCREEN_WIDTH / SCREEN_HEIGHT
 
-var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 500)
-var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 500)
+var gameCamera = new THREE.PerspectiveCamera(30, aspect, 1, 15000)
+var inspectCamera = new THREE.PerspectiveCamera(50, aspect, 1, 15000)
 var thirdPersonCamera = new THREE.PerspectiveCamera(40, aspect, 1, 500)
 
 //InspectCamera
@@ -196,23 +213,7 @@ scene.add(camera)
 var virtualCamera = new THREE.PerspectiveCamera(45, 400 / 300, 1.0, 200.0)
 var worldPosition = new THREE.Vector3()
 
-function testePosicao() {
-  let position = new THREE.Vector3(0, 0, 4.9)
-  position.copy(camera.position)
-  console.log(`function:` + JSON.stringify(position))
-  position.applyQuaternion(cameraPoint.rotation)
-  return position.add(cameraPoint.position)
-}
-
-// function testeLookAt(){
-//   let position;
-//   position.copy(camera.position);
-//   position.applyQuaternion(cameraPoint.rotation)
-//   return position.add(cameraPoint.position)
-// }
-
 function cameraUpdate() {
-  //-- Update virtual camera settings --
   cameraPoint.getWorldPosition(worldPosition)
   var temp = new THREE.Vector3()
   if (thirdPersonMode) {
@@ -236,14 +237,15 @@ function cameraUpdate() {
 // Tracks
 let roads = []
 let track = new tracks(scene, 1)
-roads = track.getRoads();
-track.createRoadItems();
+roads = track.getRoads()
+track.createRoadItems()
 
 var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
 var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
+var carBlock = cybertruck.children[0];
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
@@ -266,13 +268,26 @@ var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
 
+console.log(cybertruck);
+// var carBlockGeometry = carBlock.geometry;
+// carBlockGeometry.computeBoundingBox();
+// console.log(carBlock);  
+// var bbox = new THREE.Box3(carBlockGeometry.boundingBox.min, carBlockGeometry.boundingBox.max);
+// //var bbox = new THREE.Box3().setFromObject(carBlock);
+// //var boundingBox = carBlockGeometry.boundingBox.clone();
+var blockBoundingBox =  new THREE.Box3().setFromObject(carBlock);
+var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000);
+
+var boxHelper = new THREE.BoxHelper().setFromObject(carBlock);
+scene.add(box3Helper);
+
 function keyboardUpdate() {
   keyboard.update()
   if (keyboard.down('1')) {
     removeRoad()
-    track = new tracks(scene, 1);
+    track = new tracks(scene, 1)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -282,9 +297,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('2')) {
     removeRoad()
-    track = new tracks(scene, 2);
+    track = new tracks(scene, 2)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -294,9 +309,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('3')) {
     removeRoad()
-    track = new tracks(scene, 3);
+    track = new tracks(scene, 3)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -305,9 +320,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('4')) {
     removeRoad()
-    track = new tracks(scene, 4);
+    track = new tracks(scene, 4)
     roads = track.getRoads()
-    track.createRoadItems();
+    track.createRoadItems()
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -326,8 +341,9 @@ function keyboardUpdate() {
   }
   // if (!inspectMode) {
   if (actualLap < 4) {
-    if (keyboard.pressed('X')) acc = 5
-    else if (keyboard.pressed('down')) acc = -3
+    if (keyboard.pressed('X')) {
+      acc = 5
+    } else if (keyboard.pressed('down')) acc = -3
     else acc = 0
 
     switch (actualLap) {
@@ -471,7 +487,8 @@ render()
 
 function render() {
   stats.update() // Update FPS
-
+  boxHelper.update();
+  //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()
@@ -505,7 +522,11 @@ function gameMode() {
     entryInspect = true
     for (var i = scene.children.length - 1; i >= 2; i--) {
       obj = scene.children[i]
-      if (scene.children[i].name != `Cybertruck`) obj.visible = false
+      if (
+        scene.children[i].name != `Cybertruck` &&
+        scene.children[i].name != 'skybox'
+      )
+        obj.visible = false
       spotLight.visible = true
     }
   }
@@ -627,7 +648,7 @@ function removeRoad() {
       scene.children[i].name == 'InitialPosition' ||
       scene.children[i].name == 'item'
     )
-    scene.remove(removeObj)
+      scene.remove(removeObj)
   }
 }
 
@@ -655,22 +676,12 @@ function movementOfWheels() {
 }
 
 function addSkybox() {
-  let texture_front = textureLoader.load(
-    '../textures/skybox/teste2/arid2_ft.jpg'
-  )
-  let texture_back = textureLoader.load(
-    '../textures/skybox/teste2/arid2_bk.jpg'
-  )
-  let texture_left = textureLoader.load(
-    '../textures/skybox/teste2/arid2_lf.jpg'
-  )
-  let texture_right = textureLoader.load(
-    '../textures/skybox/teste2/arid2_rt.jpg'
-  )
-  let texture_top = textureLoader.load('../textures/skybox/teste2/arid2_up.jpg')
-  let texture_bottom = textureLoader.load(
-    '../textures/skybox/teste2/arid2_dn.jpg'
-  )
+  let texture_front = textureLoader.load('../textures/skybox/teste3/front.jpg')
+  let texture_back = textureLoader.load('../textures/skybox/teste3/back.jpg')
+  let texture_left = textureLoader.load('../textures/skybox/teste3/left.jpg')
+  let texture_right = textureLoader.load('../textures/skybox/teste3/right.jpg')
+  let texture_top = textureLoader.load('../textures/skybox/teste3/up.jpg')
+  let texture_bottom = textureLoader.load('../textures/skybox/teste3/down.jpg')
 
   let materialArray = []
 
@@ -680,20 +691,33 @@ function addSkybox() {
   materialArray.push(
     new THREE.MeshBasicMaterial({ map: texture_back, side: THREE.DoubleSide })
   )
-  materialArray.push(
-    new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
-  )
-  materialArray.push(
-    new THREE.MeshBasicMaterial({ map: texture_right, side: THREE.DoubleSide })
-  )
+
   materialArray.push(
     new THREE.MeshBasicMaterial({ map: texture_top, side: THREE.DoubleSide })
   )
   materialArray.push(
     new THREE.MeshBasicMaterial({ map: texture_bottom, side: THREE.DoubleSide })
   )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_right, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
+  )
 
-  let SkyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000)
+  let SkyboxGeo = new THREE.BoxGeometry(500, 500, 500)
   let skybox = new THREE.Mesh(SkyboxGeo, materialArray)
+
+  // Apply texture to the 'map' property of the plane
+  var minFilter = THREE.LinearFilter
+  var magFilter = THREE.LinearFilter
+  skybox.material.map.minFilter = minFilter
+  skybox.material.map.magFilter = magFilter
+
+  console.log(skybox.material.map)
+
+  skybox.position.set(0, 0, -60)
+  skybox.name = 'skybox'
   scene.add(skybox)
+  console.log(skybox)
 }

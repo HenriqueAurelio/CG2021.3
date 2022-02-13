@@ -52,6 +52,7 @@ export default class road extends THREE.Mesh {
     var textureLoader = new THREE.TextureLoader()
     var floor = textureLoader.load('../textures/road.jpg')
     cube.material.map = floor
+
     cube.material.map.repeat.set(100, 100)
     cube.material.map.wrapS = THREE.RepeatWrapping
     cube.material.map.wrapT = THREE.RepeatWrapping
