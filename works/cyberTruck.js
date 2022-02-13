@@ -287,6 +287,30 @@ export default class Cybertruck extends THREE.Object3D {
     door.rotateY((Math.PI / 2));
     door.position.set(-0.73,-0.03,0.65);
     mesh.add(door);
+
+    //flame
+    textureLoader = new THREE.TextureLoader()
+    body = textureLoader.load('../textures/flame.jpeg')
+    
+    const flameMat = new THREE.MeshPhongMaterial({ 
+      color: 0xbac3c8,
+      side: THREE.DoubleSide
+    })
+    const flameGeo = new THREE.PlaneGeometry(0.31,0.40);
+    var flame = new THREE.Mesh(flameGeo, flameMat);
+    flame.position.set(0.73,0.1,-1.62);
+    flame.rotateY((Math.PI / 2));
+    flame.rotateZ(degreesToRadians(33))
+    
+    flame.material.map = body;
+
+    mesh.add(flame);
+
+    flame = new THREE.Mesh(flameGeo, flameMat);
+    flame.rotateY((Math.PI / 2));
+    flame.rotateZ(degreesToRadians(33))
+    flame.position.set(-0.73,0.1,-1.62);
+    mesh.add(flame);
   }
 
   createBodywork() {
