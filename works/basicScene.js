@@ -19,6 +19,7 @@ import ActualLapBox from './actualLap.js'
 import TotalTime from './totalTime.js'
 
 const listener = new THREE.AudioListener()
+var textureLoader = new THREE.TextureLoader()
 
 // create a global audio source
 const sound = new THREE.Audio(listener)
@@ -48,13 +49,10 @@ var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
 scene.add(listener)
 
-addWoodenBarrel()
-addCone()
-addCrate()
 // setShadowMap
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.VSMShadowMap // default
-
+renderer.setSize(window.innerWidth, window.innerHeight)
 //---------------- setLights -----------------
 
 //initDefaultBasicLight(scene, true)
@@ -247,8 +245,10 @@ function cameraUpdate() {
 
 // Tracks
 let roads = []
-roads = new tracks(scene, 1).getRoads()
-// scene.add(car)
+let track = new tracks(scene, 1)
+roads = track.getRoads();
+track.createRoadItems();
+
 var initialPosition = roads.filter((part) => part.name == 'InitialPosition')
 var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
@@ -284,7 +284,9 @@ function keyboardUpdate() {
   keyboard.update()
   if (keyboard.down('1')) {
     removeRoad()
-    roads = new tracks(scene, 1).getRoads()
+    track = new tracks(scene, 1);
+    roads = track.getRoads()
+    track.createRoadItems();
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -294,7 +296,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('2')) {
     removeRoad()
-    roads = new tracks(scene, 2).getRoads()
+    track = new tracks(scene, 2);
+    roads = track.getRoads()
+    track.createRoadItems();
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -304,7 +308,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('3')) {
     removeRoad()
-    roads = new tracks(scene, 3).getRoads()
+    track = new tracks(scene, 3);
+    roads = track.getRoads()
+    track.createRoadItems();
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -313,7 +319,9 @@ function keyboardUpdate() {
   }
   if (keyboard.down('4')) {
     removeRoad()
-    roads = new tracks(scene, 4).getRoads()
+    track = new tracks(scene, 4);
+    roads = track.getRoads()
+    track.createRoadItems();
     initialPosition = roads.filter((part) => part.name == 'InitialPosition')
     carStartPosition()
     actualLap = 0
@@ -630,9 +638,10 @@ function removeRoad() {
     removeObj = scene.children[i]
     if (
       scene.children[i].name == 'street' ||
-      scene.children[i].name == 'InitialPosition'
+      scene.children[i].name == 'InitialPosition' ||
+      scene.children[i].name == 'item'
     )
-      scene.remove(removeObj)
+    scene.remove(removeObj)
   }
 }
 
@@ -659,110 +668,46 @@ function movementOfWheels() {
   calotas[3].rotateY(-rotateAngle)
 }
 
-function addCone() {
-  const geometry = new THREE.ConeGeometry(0.2, 1, 32)
-  var defaultMaterial = new THREE.MeshLambertMaterial({
-    color: 'rgb(255,255,255)',
-    side: THREE.DoubleSide,
-  })
-  const cone = new THREE.Mesh(geometry, defaultMaterial)
-  var textureLoader = new THREE.TextureLoader()
-  var body = textureLoader.load('../textures/cone2.jpg')
+function addSkybox() {
+  let texture_front = textureLoader.load(
+    '../textures/skybox/teste2/arid2_ft.jpg'
+  )
+  let texture_back = textureLoader.load(
+    '../textures/skybox/teste2/arid2_bk.jpg'
+  )
+  let texture_left = textureLoader.load(
+    '../textures/skybox/teste2/arid2_lf.jpg'
+  )
+  let texture_right = textureLoader.load(
+    '../textures/skybox/teste2/arid2_rt.jpg'
+  )
+  let texture_top = textureLoader.load('../textures/skybox/teste2/arid2_up.jpg')
+  let texture_bottom = textureLoader.load(
+    '../textures/skybox/teste2/arid2_dn.jpg'
+  )
 
-  var minFilter = THREE.LinearFilter
-  var magFilter = THREE.LinearFilter
+  let materialArray = []
 
-  // Apply texture to the 'map' property of the plane
-  cone.material.map = body
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_front, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_back, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_right, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_top, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_bottom, side: THREE.DoubleSide })
+  )
 
-  cone.material.map.minFilter = minFilter
-  cone.material.map.magFilter = magFilter
-  cone.position.set(0, 16, 0.9)
-
-  scene.add(cone)
-  cone.rotateX(degreesToRadians(90))
-}
-function addCrate() {
-  var minFilter = THREE.LinearFilter
-  var magFilter = THREE.LinearFilter
-
-  // Apply texture to the 'map' property of the plane
-
-  var textureLoader = new THREE.TextureLoader()
-  var body = textureLoader.load('../textures/crate.jpg')
-  const geometry = new THREE.BoxGeometry(1, 1, 1)
-  var defaultMaterial = new THREE.MeshLambertMaterial({
-    color: 'rgb(255,255,255)',
-    side: THREE.DoubleSide,
-  })
-
-  const cube = new THREE.Mesh(geometry, defaultMaterial)
-  cube.material.map = body
-
-  cube.material.map.minFilter = minFilter
-  cube.material.map.magFilter = magFilter
-  cube.position.set(0, 13, 0.9)
-  scene.add(cube)
-}
-function addWoodenBarrel() {
-  var cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.25, 40, 3, true)
-  var defaultMaterial = new THREE.MeshLambertMaterial({
-    color: 'rgb(255,255,255)',
-    side: THREE.DoubleSide,
-  })
-
-  var cylinderBody = new THREE.Mesh(cylinderGeometry, defaultMaterial)
-  scene.add(cylinderBody)
-
-  var topGeometry = new THREE.CircleGeometry(0.5, 80)
-  var topMaterial = new THREE.MeshLambertMaterial({
-    color: 'rgb(255,255,255)',
-    side: THREE.DoubleSide,
-  })
-
-  var cylinderTop = new THREE.Mesh(topGeometry, topMaterial)
-  var cylinderBottom = new THREE.Mesh(topGeometry, topMaterial)
-
-  cylinderTop.rotateX(degreesToRadians(90))
-  cylinderBody.add(cylinderTop)
-  cylinderBody.position.set(1, 10, 0.9)
-  cylinderBody.rotateX(degreesToRadians(90))
-  cylinderBody.add(cylinderBottom)
-
-  cylinderBottom.rotateX(degreesToRadians(90))
-  cylinderBottom.translateZ(0.625)
-  cylinderTop.translateZ(-0.625)
-  //----------------------------------------------------------------------------
-  //-- Use TextureLoader to load texture files
-  var textureLoader = new THREE.TextureLoader()
-  var body = textureLoader.load('../textures/barrel.jpg')
-  var top = textureLoader.load('../textures/barrel.jpg')
-
-  var minFilter = THREE.LinearFilter
-  var magFilter = THREE.LinearFilter
-  // Apply texture to the 'map' property of the plane
-  cylinderBody.material.map = body
-  cylinderTop.material.map = top
-  cylinderBottom.material.map = top
-
-  cylinderBody.material.map.repeat.set(1, 1)
-  cylinderBody.material.map.wrapS = THREE.RepeatWrapping
-  cylinderBody.material.map.wrapT = THREE.RepeatWrapping
-
-  cylinderBody.material.map.minFilter = minFilter
-  cylinderBody.material.map.magFilter = magFilter
-
-  cylinderTop.material.map.repeat.set(1, 1)
-  cylinderTop.material.map.wrapS = THREE.RepeatWrapping
-  cylinderTop.material.map.wrapT = THREE.RepeatWrapping
-
-  cylinderTop.material.map.minFilter = minFilter
-  cylinderTop.material.map.magFilter = magFilter
-
-  cylinderBottom.material.map.repeat.set(1, 1)
-  cylinderBottom.material.map.wrapS = THREE.RepeatWrapping
-  cylinderBottom.material.map.wrapT = THREE.RepeatWrapping
-
-  cylinderBottom.material.map.minFilter = minFilter
-  cylinderBottom.material.map.magFilter = magFilter
+  let SkyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000)
+  let skybox = new THREE.Mesh(SkyboxGeo, materialArray)
+  scene.add(skybox)
 }
