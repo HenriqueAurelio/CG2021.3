@@ -19,6 +19,7 @@ import ActualLapBox from './actualLap.js'
 import TotalTime from './totalTime.js'
 
 const listener = new THREE.AudioListener()
+var textureLoader = new THREE.TextureLoader()
 
 // create a global audio source
 const sound = new THREE.Audio(listener)
@@ -51,10 +52,11 @@ scene.add(listener)
 addWoodenBarrel()
 addCone()
 addCrate()
+addSkybox()
 // setShadowMap
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.VSMShadowMap // default
-
+renderer.setSize(window.innerWidth, window.innerHeight)
 //---------------- setLights -----------------
 
 //initDefaultBasicLight(scene, true)
@@ -652,7 +654,6 @@ function addCone() {
     side: THREE.DoubleSide,
   })
   const cone = new THREE.Mesh(geometry, defaultMaterial)
-  var textureLoader = new THREE.TextureLoader()
   var body = textureLoader.load('../textures/cone2.jpg')
 
   var minFilter = THREE.LinearFilter
@@ -674,7 +675,6 @@ function addCrate() {
 
   // Apply texture to the 'map' property of the plane
 
-  var textureLoader = new THREE.TextureLoader()
   var body = textureLoader.load('../textures/crate.jpg')
   const geometry = new THREE.BoxGeometry(1, 1, 1)
   var defaultMaterial = new THREE.MeshLambertMaterial({
@@ -720,7 +720,6 @@ function addWoodenBarrel() {
   cylinderTop.translateZ(-0.625)
   //----------------------------------------------------------------------------
   //-- Use TextureLoader to load texture files
-  var textureLoader = new THREE.TextureLoader()
   var body = textureLoader.load('../textures/barrel.jpg')
   var top = textureLoader.load('../textures/barrel.jpg')
 
@@ -751,4 +750,59 @@ function addWoodenBarrel() {
 
   cylinderBottom.material.map.minFilter = minFilter
   cylinderBottom.material.map.magFilter = magFilter
+
+  const loader = new THREE.CubeTextureLoader()
+  const texture = loader.load([
+    '../textures/sky.jpeg',
+    '../textures/sky.jpeg',
+    '../textures/sky.jpeg',
+    '../textures/sky.jpeg',
+    '../textures/sky.jpeg',
+    '../textures/sky.jpeg',
+  ])
+  scene.background = texture
+}
+
+function addSkybox() {
+  let texture_front = textureLoader.load(
+    '../textures/skybox/teste2/arid2_ft.jpg'
+  )
+  let texture_back = textureLoader.load(
+    '../textures/skybox/teste2/arid2_bk.jpg'
+  )
+  let texture_left = textureLoader.load(
+    '../textures/skybox/teste2/arid2_lf.jpg'
+  )
+  let texture_right = textureLoader.load(
+    '../textures/skybox/teste2/arid2_rt.jpg'
+  )
+  let texture_top = textureLoader.load('../textures/skybox/teste2/arid2_up.jpg')
+  let texture_bottom = textureLoader.load(
+    '../textures/skybox/teste2/arid2_dn.jpg'
+  )
+
+  let materialArray = []
+
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_front, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_back, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_left, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_right, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_top, side: THREE.DoubleSide })
+  )
+  materialArray.push(
+    new THREE.MeshBasicMaterial({ map: texture_bottom, side: THREE.DoubleSide })
+  )
+
+  let SkyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000)
+  let skybox = new THREE.Mesh(SkyboxGeo, materialArray)
+  scene.add(skybox)
 }
