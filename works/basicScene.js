@@ -278,7 +278,17 @@ var entryTimer = false
 var entryTimer2 = false
 
 console.log(cybertruck);
-console.log(carBlock);
+// var carBlockGeometry = carBlock.geometry;
+// carBlockGeometry.computeBoundingBox();
+// console.log(carBlock);  
+// var bbox = new THREE.Box3(carBlockGeometry.boundingBox.min, carBlockGeometry.boundingBox.max);
+// //var bbox = new THREE.Box3().setFromObject(carBlock);
+// //var boundingBox = carBlockGeometry.boundingBox.clone();
+var blockBoundingBox =  new THREE.Box3().setFromObject(carBlock);
+var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000);
+
+var boxHelper = new THREE.BoxHelper().setFromObject(carBlock);
+scene.add(box3Helper);
 
 function keyboardUpdate() {
   keyboard.update()
@@ -485,7 +495,8 @@ render()
 
 function render() {
   stats.update() // Update FPS
-  //boxHelper.update();
+  boxHelper.update();
+  //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()
