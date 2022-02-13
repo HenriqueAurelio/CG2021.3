@@ -100,7 +100,7 @@ const coeficienteVelocidade = 1500
 addSkybox()
 // create the ground plane
 
-var planeGeometry = new THREE.PlaneGeometry(400, 400, 80, 80)
+var planeGeometry = new THREE.PlaneGeometry(400, 400, 64, 64)
 var planeMaterial = new THREE.MeshLambertMaterial({
   color: 'rgb(255,255,255)',
   side: THREE.DoubleSide,
@@ -677,12 +677,12 @@ function updateBoundingBox() {
 }
 
 function addSkybox() {
-  let texture_front = textureLoader.load('../textures/skybox/teste3/front.jpg')
-  let texture_back = textureLoader.load('../textures/skybox/teste3/back.jpg')
-  let texture_left = textureLoader.load('../textures/skybox/teste3/left.jpg')
-  let texture_right = textureLoader.load('../textures/skybox/teste3/right.jpg')
-  let texture_top = textureLoader.load('../textures/skybox/teste3/up.jpg')
-  let texture_bottom = textureLoader.load('../textures/skybox/teste3/down.jpg')
+  let texture_front = textureLoader.load('../textures/skybox/cloudy/front.jpg')
+  let texture_back = textureLoader.load('../textures/skybox/cloudy/back.jpg')
+  let texture_left = textureLoader.load('../textures/skybox/cloudy/left.jpg')
+  let texture_right = textureLoader.load('../textures/skybox/cloudy/right.jpg')
+  let texture_top = textureLoader.load('../textures/skybox/cloudy/up.jpg')
+  let texture_bottom = textureLoader.load('../textures/skybox/cloudy/down.jpg')
 
   let materialArray = []
 
@@ -715,12 +715,9 @@ function addSkybox() {
   skybox.material.map.minFilter = minFilter
   skybox.material.map.magFilter = magFilter
 
-  // console.log(skybox.material.map)
-
-  skybox.position.set(0, 0, -60)
+  skybox.rotateX(degreesToRadians(90))
   skybox.name = 'skybox'
   scene.add(skybox)
-  // console.log(skybox)
 }
 // console.log(scene);
 
