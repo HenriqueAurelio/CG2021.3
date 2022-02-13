@@ -155,6 +155,16 @@ var car = new carGroup()
 let cybertruck = new Cybertruck()
 
 scene.add(cybertruck)
+// var bbox = new THREE.Box3().setFromObject(cybertruck);
+// var boxHelper = new THREE.BoxHelper(cybertruck, 0xff0000);
+// boxHelper.update();
+// // If you want a visible bounding box
+// scene.add(boxHelper);
+// // If you just want the numbers
+// console.log(cybertruck);
+// // console.log(helper.box.max);
+
+
 
 // Camera
 let SCREEN_WIDTH = window.innerWidth
@@ -244,6 +254,7 @@ var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
+var carBlock = cybertruck.children[0];
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
@@ -265,6 +276,9 @@ var minutes = 0
 var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
+
+console.log(cybertruck);
+console.log(carBlock);
 
 function keyboardUpdate() {
   keyboard.update()
@@ -463,7 +477,7 @@ render()
 
 function render() {
   stats.update() // Update FPS
-
+  //boxHelper.update();
   if (inspectMode) {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()
