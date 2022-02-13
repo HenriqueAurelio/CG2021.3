@@ -1,7 +1,7 @@
 import * as THREE from '../build/three.module.js'
 
 export default class road extends THREE.Mesh {
-  constructor(x, y, start = false, shape = 1) {
+  constructor(x, y, start = false, shape = 1, track) {
     let geometry = new THREE.BoxGeometry(10, 10, 0.3)
 
     if (shape == 2) geometry = THREE.CylinderGeometry(0.125, 0.125, 2.5)
@@ -50,13 +50,28 @@ export default class road extends THREE.Mesh {
       cube.add(plane)
     }
     var textureLoader = new THREE.TextureLoader()
-    var floor = textureLoader.load('../textures/road.jpg')
-    cube.material.map = floor
-
-    cube.material.map.repeat.set(100, 100)
-    cube.material.map.wrapS = THREE.RepeatWrapping
-    cube.material.map.wrapT = THREE.RepeatWrapping
-
+    if (track == 1) {
+      var floor = textureLoader.load('../textures/road.jpg')
+      cube.material.map = floor
+      cube.material.map.repeat.set(100, 100)
+      cube.material.map.wrapS = THREE.RepeatWrapping
+      cube.material.map.wrapT = THREE.RepeatWrapping
+    }
+    if (track == 2) {
+      var floor = textureLoader.load('../textures/Stone.png')
+      cube.material.map = floor
+    }
+    if (track == 3) {
+      var floor = textureLoader.load('../textures/sand.jpg')
+      cube.material.map = floor
+      cube.material.map.repeat.set(100, 100)
+      cube.material.map.wrapS = THREE.RepeatWrapping
+      cube.material.map.wrapT = THREE.RepeatWrapping
+    }
+    if (track == 4) {
+      var floor = textureLoader.load('../textures/brick.jpg')
+      cube.material.map = floor
+    }
     return cube
   }
 }

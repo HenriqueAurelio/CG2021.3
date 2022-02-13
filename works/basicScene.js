@@ -47,7 +47,7 @@ var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
-var isCollided = false;
+var isCollided = false
 scene.add(listener)
 
 // setShadowMap
@@ -107,15 +107,6 @@ var planeMaterial = new THREE.MeshLambertMaterial({
 })
 var plane = new THREE.Mesh(planeGeometry, planeMaterial)
 
-var planeGeometry = new THREE.PlaneGeometry(10, 10, 80, 80)
-var planeMaterial = new THREE.MeshLambertMaterial({
-  color: 'rgb(255,255,255)',
-  side: THREE.DoubleSide,
-})
-var plane2 = new THREE.Mesh(planeGeometry, planeMaterial)
-plane2.position.set(0, 0, 5)
-scene.add(plane2)
-
 var textureLoader = new THREE.TextureLoader()
 var floor = textureLoader.load('../textures/grass3.jpg')
 plane.material.map = floor
@@ -161,7 +152,6 @@ var car = new carGroup()
 let cybertruck = new Cybertruck()
 
 scene.add(cybertruck)
-
 
 // Camera
 let SCREEN_WIDTH = window.innerWidth
@@ -237,7 +227,7 @@ var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
-var carBlock = cybertruck.children[0];
+var carBlock = cybertruck.children[0]
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
@@ -260,15 +250,14 @@ var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
 
-
-var blockBoundingBox =  new THREE.Box3();
-carBlock.geometry.computeBoundingBox();
+var blockBoundingBox = new THREE.Box3()
+carBlock.geometry.computeBoundingBox()
 blockBoundingBox.copy(carBlock.geometry.boundingBox)
-carBlock.updateMatrixWorld(true);
-blockBoundingBox.applyMatrix4(carBlock.matrixWorld);
+carBlock.updateMatrixWorld(true)
+blockBoundingBox.applyMatrix4(carBlock.matrixWorld)
 var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
 
-scene.add(box3Helper);
+scene.add(box3Helper)
 
 function keyboardUpdate() {
   keyboard.update()
@@ -412,7 +401,7 @@ function keyboardUpdate() {
       }
       foraDaPista = true
     }
-    if(isCollided){
+    if (isCollided) {
       maxSpeed = 100
       maxReverseSpeed = -60
     }
@@ -420,7 +409,7 @@ function keyboardUpdate() {
     if (speed > maxSpeed) speed = maxSpeed
     if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
-    cybertruck.translateZ((speed / coeficienteVelocidade))
+    cybertruck.translateZ(speed / coeficienteVelocidade)
 
     if (keyboard.pressed('right')) {
       if (roda1.rotation.y >= -0.25) {
@@ -480,8 +469,8 @@ render()
 
 function render() {
   stats.update() // Update FPS
-  updateBoundingBox();
-  checkCollision();
+  updateBoundingBox()
+  checkCollision()
   //boxHelper.update();
   //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
@@ -670,13 +659,11 @@ function movementOfWheels() {
   calotas[3].rotateY(-rotateAngle)
 }
 
-function updateBoundingBox(){
-  
-  carBlock.geometry.computeBoundingBox();
+function updateBoundingBox() {
+  carBlock.geometry.computeBoundingBox()
   blockBoundingBox.copy(carBlock.geometry.boundingBox)
-  carBlock.updateMatrixWorld(true);
-  blockBoundingBox.applyMatrix4(carBlock.matrixWorld);
-
+  carBlock.updateMatrixWorld(true)
+  blockBoundingBox.applyMatrix4(carBlock.matrixWorld)
 }
 
 function addSkybox() {
@@ -725,13 +712,13 @@ function addSkybox() {
   scene.add(skybox)
   console.log(skybox)
 }
-console.log(scene);
+console.log(scene)
 
-function checkCollision(){
-  let bboxes = track.getBboxes();
-  let filterObj;  
-  filterObj = bboxes.filter(bbox =>{
-    return (bbox.intersectsBox(blockBoundingBox))
+function checkCollision() {
+  let bboxes = track.getBboxes()
+  let filterObj
+  filterObj = bboxes.filter((bbox) => {
+    return bbox.intersectsBox(blockBoundingBox)
   })
-  isCollided = (filterObj.length !== 0)  
+  isCollided = filterObj.length !== 0
 }
