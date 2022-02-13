@@ -47,6 +47,8 @@ var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
+var collided = false;
+var oldCollided = false;
 scene.add(listener)
 
 // setShadowMap
@@ -490,6 +492,7 @@ render()
 function render() {
   stats.update() // Update FPS
   updateBoundingBox();
+  checkColision();
   //boxHelper.update();
   //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
@@ -736,9 +739,15 @@ function addSkybox() {
 console.log(scene);
 
 function checkColision(){
-  for (var i = scene.children.length - 1; i >= 2; i--) {
-    if (scene.children[i].name == 'item'){
-
-    }
-  }
+  let bboxes = track.getBboxes();
+  oldCollided = collided;
+  bboxes.forEach(bbox =>{
+      bbox.intersectsBox(blockBoundingBox) ? collided = true : collided = false;
+      if(collided === true && oldCollided == false){
+        speed*=0.2;
+        console.log("aqi");
+      }
+      oldCollided = collided;
+  })
+  
 }
