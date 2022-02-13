@@ -24,6 +24,7 @@ export default class roadItem{
     createRoadItem(){
         let block;
         let object;
+        
         // escolhe em qual road vai colocar, não podendo ser 0 e 1 por estar proximo demais da largada
         block = this.roads[getRandomInt(2,this.roads.length-1)]
         

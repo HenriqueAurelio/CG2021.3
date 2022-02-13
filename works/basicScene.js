@@ -160,6 +160,16 @@ var car = new carGroup()
 let cybertruck = new Cybertruck()
 
 scene.add(cybertruck)
+// var bbox = new THREE.Box3().setFromObject(cybertruck);
+// var boxHelper = new THREE.BoxHelper(cybertruck, 0xff0000);
+// boxHelper.update();
+// // If you want a visible bounding box
+// scene.add(boxHelper);
+// // If you just want the numbers
+// console.log(cybertruck);
+// // console.log(helper.box.max);
+
+
 
 // Camera
 let SCREEN_WIDTH = window.innerWidth
@@ -235,6 +245,7 @@ var roda1 = cybertruck.children.filter((part) => part.name == 'tire1')[0]
 var roda2 = cybertruck.children.filter((part) => part.name == 'tire2')[0]
 var roda3 = cybertruck.children.filter((part) => part.name == 'tire3')[0]
 var roda4 = cybertruck.children.filter((part) => part.name == 'tire4')[0]
+var carBlock = cybertruck.children[0];
 var cameraPoint = cybertruck.children.filter(
   (part) => part.name == 'cameraPoint'
 )[0]
@@ -256,6 +267,19 @@ var minutes = 0
 var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
+
+console.log(cybertruck);
+// var carBlockGeometry = carBlock.geometry;
+// carBlockGeometry.computeBoundingBox();
+// console.log(carBlock);  
+// var bbox = new THREE.Box3(carBlockGeometry.boundingBox.min, carBlockGeometry.boundingBox.max);
+// //var bbox = new THREE.Box3().setFromObject(carBlock);
+// //var boundingBox = carBlockGeometry.boundingBox.clone();
+var blockBoundingBox =  new THREE.Box3().setFromObject(carBlock);
+var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000);
+
+var boxHelper = new THREE.BoxHelper().setFromObject(carBlock);
+scene.add(box3Helper);
 
 function keyboardUpdate() {
   keyboard.update()
@@ -463,7 +487,8 @@ render()
 
 function render() {
   stats.update() // Update FPS
-
+  boxHelper.update();
+  //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
     spotLight.position.copy(inspectCamera.position)
     spotLight.target.updateMatrixWorld()

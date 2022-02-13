@@ -220,6 +220,7 @@ export default class Cybertruck extends THREE.Object3D {
     material.side = THREE.DoubleSide // Show front and back polygons
     const blockMesh = new THREE.Mesh(geometry, material)
     blockMesh.castShadow = true
+    blockMesh.name = "carBlock"
     this.mesh.add(blockMesh)
   }
 
