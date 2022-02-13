@@ -88,13 +88,14 @@ export default class tracks {
   }
 
   createRoadItems(){
+    let bboxes = [];
     let item = new roadItem(this.getRoads())
     let itemCount = 0;
     while (itemCount != 20) {
       let object = item.createRoadItem();
       this.scene.add(object);
-      var bboxHelper = new THREE.BoxHelper(object, 0xFF0000);
-      var bbox = new THREE.Box3().setFromObject(object);
+      bboxes.push(new THREE.Box3().setFromObject(object));
+      var bboxHelper = new THREE.Box3Helper(new THREE.Box3().setFromObject(object), 0xFF0000);
       this.scene.add(bboxHelper);
       itemCount ++;
     }

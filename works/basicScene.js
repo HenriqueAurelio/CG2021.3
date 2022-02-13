@@ -268,17 +268,19 @@ var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
 
-console.log(cybertruck);
 // var carBlockGeometry = carBlock.geometry;
 // carBlockGeometry.computeBoundingBox();
 // console.log(carBlock);  
 // var bbox = new THREE.Box3(carBlockGeometry.boundingBox.min, carBlockGeometry.boundingBox.max);
 // //var bbox = new THREE.Box3().setFromObject(carBlock);
 // //var boundingBox = carBlockGeometry.boundingBox.clone();
-var blockBoundingBox =  new THREE.Box3().setFromObject(carBlock);
-var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000);
-
-var boxHelper = new THREE.BoxHelper().setFromObject(carBlock);
+var blockBoundingBox =  new THREE.Box3();
+carBlock.geometry.computeBoundingBox();
+blockBoundingBox.copy(carBlock.geometry.boundingBox)
+carBlock.updateMatrixWorld(true);
+blockBoundingBox.applyMatrix4(carBlock.matrixWorld);
+var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
+//var boxHelper = new THREE.BoxHelper().setFromObject(carBlock);
 scene.add(box3Helper);
 
 function keyboardUpdate() {
@@ -487,7 +489,8 @@ render()
 
 function render() {
   stats.update() // Update FPS
-  boxHelper.update();
+  updateBoundingBox();
+  //boxHelper.update();
   //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
     spotLight.position.copy(inspectCamera.position)
@@ -675,6 +678,15 @@ function movementOfWheels() {
   calotas[3].rotateY(-rotateAngle)
 }
 
+function updateBoundingBox(){
+  
+  carBlock.geometry.computeBoundingBox();
+  blockBoundingBox.copy(carBlock.geometry.boundingBox)
+  carBlock.updateMatrixWorld(true);
+  blockBoundingBox.applyMatrix4(carBlock.matrixWorld);
+
+}
+
 function addSkybox() {
   let texture_front = textureLoader.load('../textures/skybox/teste3/front.jpg')
   let texture_back = textureLoader.load('../textures/skybox/teste3/back.jpg')
@@ -720,4 +732,13 @@ function addSkybox() {
   skybox.name = 'skybox'
   scene.add(skybox)
   console.log(skybox)
+}
+console.log(scene);
+
+function checkColision(){
+  for (var i = scene.children.length - 1; i >= 2; i--) {
+    if (scene.children[i].name == 'item'){
+
+    }
+  }
 }
