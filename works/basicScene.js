@@ -47,8 +47,7 @@ var removeObj
 var stats = new Stats() // To show FPS information
 var scene = new THREE.Scene() // Create main scene
 var renderer = initRenderer() // View function in util/utils
-var collided = false;
-var oldCollided = false;
+var isCollided = false;
 scene.add(listener)
 
 // setShadowMap
@@ -162,15 +161,6 @@ var car = new carGroup()
 let cybertruck = new Cybertruck()
 
 scene.add(cybertruck)
-// var bbox = new THREE.Box3().setFromObject(cybertruck);
-// var boxHelper = new THREE.BoxHelper(cybertruck, 0xff0000);
-// boxHelper.update();
-// // If you want a visible bounding box
-// scene.add(boxHelper);
-// // If you just want the numbers
-// console.log(cybertruck);
-// // console.log(helper.box.max);
-
 
 
 // Camera
@@ -270,19 +260,14 @@ var totalMinutes = 0
 var entryTimer = false
 var entryTimer2 = false
 
-// var carBlockGeometry = carBlock.geometry;
-// carBlockGeometry.computeBoundingBox();
-// console.log(carBlock);  
-// var bbox = new THREE.Box3(carBlockGeometry.boundingBox.min, carBlockGeometry.boundingBox.max);
-// //var bbox = new THREE.Box3().setFromObject(carBlock);
-// //var boundingBox = carBlockGeometry.boundingBox.clone();
+
 var blockBoundingBox =  new THREE.Box3();
 carBlock.geometry.computeBoundingBox();
 blockBoundingBox.copy(carBlock.geometry.boundingBox)
 carBlock.updateMatrixWorld(true);
 blockBoundingBox.applyMatrix4(carBlock.matrixWorld);
 var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
-//var boxHelper = new THREE.BoxHelper().setFromObject(carBlock);
+
 scene.add(box3Helper);
 
 function keyboardUpdate() {
@@ -427,11 +412,15 @@ function keyboardUpdate() {
       }
       foraDaPista = true
     }
+    if(isCollided){
+      maxSpeed = 100
+      maxReverseSpeed = -60
+    }
 
     if (speed > maxSpeed) speed = maxSpeed
     if (speed < maxReverseSpeed) speed = maxReverseSpeed
 
-    cybertruck.translateZ(speed / coeficienteVelocidade)
+    cybertruck.translateZ((speed / coeficienteVelocidade))
 
     if (keyboard.pressed('right')) {
       if (roda1.rotation.y >= -0.25) {
@@ -492,7 +481,7 @@ render()
 function render() {
   stats.update() // Update FPS
   updateBoundingBox();
-  checkColision();
+  checkCollision();
   //boxHelper.update();
   //carBlock.geometry.computeBoundingBox();
   if (inspectMode) {
@@ -738,16 +727,11 @@ function addSkybox() {
 }
 console.log(scene);
 
-function checkColision(){
+function checkCollision(){
   let bboxes = track.getBboxes();
-  oldCollided = collided;
-  bboxes.forEach(bbox =>{
-      bbox.intersectsBox(blockBoundingBox) ? collided = true : collided = false;
-      if(collided === true && oldCollided == false){
-        speed*=0.2;
-        console.log("aqi");
-      }
-      oldCollided = collided;
+  let filterObj;  
+  filterObj = bboxes.filter(bbox =>{
+    return (bbox.intersectsBox(blockBoundingBox))
   })
-  
+  isCollided = (filterObj.length !== 0)  
 }
