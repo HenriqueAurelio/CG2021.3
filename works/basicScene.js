@@ -256,9 +256,9 @@ carBlock.geometry.computeBoundingBox()
 blockBoundingBox.copy(carBlock.geometry.boundingBox)
 carBlock.updateMatrixWorld(true)
 blockBoundingBox.applyMatrix4(carBlock.matrixWorld)
-var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
+// var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
 
-scene.add(box3Helper)
+//scene.add(box3Helper)
 
 function keyboardUpdate() {
   keyboard.update()
