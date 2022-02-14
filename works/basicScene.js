@@ -11,7 +11,6 @@ import {
 } from '../libs/util/util.js'
 import Cybertruck from './cyberTruck.js'
 import Speedometer from './speedometer.js'
-import carGroup from './carGroup.js'
 import tracks from './tracks.js'
 import BestLap from './bestLap.js'
 import ActualLapBox from './actualLap.js'
@@ -41,6 +40,7 @@ var stringLap = ''
 var checkvalue = 0
 const blockSize = 10
 var entryInspect = false
+var controls = new InfoBox()
 var laps = []
 var removeObj
 var stats = new Stats() // To show FPS information
@@ -79,7 +79,7 @@ dirLight.shadow.camera.far = 100 //100
 dirLight.shadow.camera.left = -5 //-5
 dirLight.shadow.camera.right = 5 //5
 dirLight.shadow.camera.bottom = -5 //-5
-dirLight.shadow.camera.top =  5 //5
+dirLight.shadow.camera.top = 5 //5
 dirLight.shadow.bias = -0.0005 //-0.0005
 
 // No effect on Basic and PCFSoft
@@ -126,19 +126,6 @@ if (actualTrack == 1) {
 scene.add(plane)
 
 // Use this to show information onscreen
-var controls = new InfoBox()
-controls.add('Controls:')
-controls.addParagraph()
-controls.add('* X to accelerate')
-controls.add('* Left/Right button to rotate')
-controls.add('* Down button to brake')
-controls.add('1,2,3,4 To change the actual map')
-controls.addParagraph()
-controls.add('Press Space button to Inspect Mode')
-controls.add('* Scroll to zoom in/out.')
-controls.addParagraph()
-controls.add('Lap time:')
-controls.show()
 
 var actualLapBox = new ActualLapBox()
 var speedometer = new Speedometer()
@@ -157,7 +144,6 @@ window.addEventListener(
 let foraDaPista = false
 var inspectMode = false
 var thirdPersonMode = false
-var car = new carGroup()
 let cybertruck = new Cybertruck()
 
 scene.add(cybertruck)
@@ -219,8 +205,8 @@ function cameraUpdate() {
   }
 
   dirLight.position.x = camera.position.x
-  dirLight.position.y = camera.position.y -15 //-15
-  dirLight.position.z = camera.position.z +30 // 30
+  dirLight.position.y = camera.position.y - 15 //-15
+  dirLight.position.z = camera.position.z + 30 // 30
   dirLight.target = cybertruck
   camera.lookAt(worldPosition)
 }
@@ -228,6 +214,7 @@ function cameraUpdate() {
 // Tracks
 let roads = []
 let track = new tracks(scene, actualTrack)
+recreatingInfoBox()
 roads = track.getRoads()
 track.createRoadItems()
 
@@ -266,63 +253,25 @@ carBlock.updateMatrixWorld(true)
 blockBoundingBox.applyMatrix4(carBlock.matrixWorld)
 // var box3Helper = new THREE.Box3Helper(blockBoundingBox, 0xff0000)
 
-//scene.add(box3Helper)
+// scene.add(box3Helper)
 
 function keyboardUpdate() {
   keyboard.update()
   if (keyboard.down('1')) {
-    removeRoad()
-    track = new tracks(scene, 1)
-    roads = track.getRoads()
-    track.createRoadItems()
-    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-    carStartPosition()
-    actualLap = 0
     actualTrack = 1
-    changePlaneTexture(actualTrack)
-    checkvalue = 0
-    timer.start()
-    totalTimer.start()
+    keyboardEvent(actualTrack)
   }
   if (keyboard.down('2')) {
-    removeRoad()
-    track = new tracks(scene, 2)
-    roads = track.getRoads()
-    track.createRoadItems()
-    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-    carStartPosition()
-    actualLap = 0
     actualTrack = 2
-    changePlaneTexture(actualTrack)
-    timer.start()
-    totalTimer.start()
-    checkvalue = 0
+    keyboardEvent(actualTrack)
   }
   if (keyboard.down('3')) {
-    removeRoad()
-    track = new tracks(scene, 3)
-    roads = track.getRoads()
-    track.createRoadItems()
-    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-    carStartPosition()
-    actualLap = 0
     actualTrack = 3
-    changePlaneTexture(actualTrack)
-    timer.start()
-    totalTimer.start()
+    keyboardEvent(actualTrack)
   }
   if (keyboard.down('4')) {
-    removeRoad()
-    track = new tracks(scene, 4)
-    roads = track.getRoads()
-    track.createRoadItems()
-    initialPosition = roads.filter((part) => part.name == 'InitialPosition')
-    carStartPosition()
-    actualLap = 0
     actualTrack = 4
-    changePlaneTexture(actualTrack)
-    timer.start()
-    totalTimer.start()
+    keyboardEvent(actualTrack)
   }
   if (keyboard.down('space')) {
     if (inspectMode == false && thirdPersonMode == false) thirdPersonMode = true
@@ -726,7 +675,6 @@ function addSkybox() {
   skybox.name = 'skybox'
   scene.add(skybox)
 }
-// console.log(scene);
 
 function checkCollision() {
   let bboxes = track.getBboxes()
@@ -766,4 +714,40 @@ function changePlaneTexture(track) {
     plane.material.map.wrapS = THREE.RepeatWrapping
     plane.material.map.wrapT = THREE.RepeatWrapping
   }
+}
+
+function recreatingInfoBox() {
+  var element = document.getElementById('InfoxBox')
+  if (element != null) element.remove()
+
+  controls = new InfoBox()
+  controls.name = 'controls'
+  controls.add('Controls:')
+  controls.addParagraph()
+  controls.add('* X to accelerate')
+  controls.add('* Left/Right button to rotate')
+  controls.add('* Down button to brake')
+  controls.add('1,2,3,4 To change the actual map')
+  controls.addParagraph()
+  controls.add('Press Space button to Inspect Mode')
+  controls.add('* Scroll to zoom in/out.')
+  controls.addParagraph()
+  controls.add('Lap time:')
+  controls.show()
+}
+
+function keyboardEvent(trackByParms) {
+  removeRoad()
+  recreatingInfoBox()
+  track = new tracks(scene, trackByParms)
+  roads = track.getRoads()
+  track.createRoadItems()
+  initialPosition = roads.filter((part) => part.name == 'InitialPosition')
+  carStartPosition()
+  actualLap = 0
+  changePlaneTexture(actualTrack)
+  checkvalue = 0
+  timer.start()
+  totalTimer.start()
+  console.log(scene)
 }

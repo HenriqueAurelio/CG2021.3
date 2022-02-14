@@ -102,12 +102,13 @@ export default class tracks {
     while (itemCount != 20) {
       let object = item.createRoadItem()
       this.scene.add(object)
+      console.log(this.bboxes)
       this.bboxes.push(new THREE.Box3().setFromObject(object))
       // var bboxHelper = new THREE.Box3Helper(
       //   new THREE.Box3().setFromObject(object),
       //   0xff0000
       // )
-      //this.scene.add(bboxHelper)
+      // this.scene.add(bboxHelper)
       itemCount++
     }
   }
